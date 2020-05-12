@@ -70,14 +70,17 @@ endif(${APPLE})
 include_directories(${HEADER_PATHS})
 
 
-# target ei (libei)
+#target ei (libei)
 
-#set(LIB_EI_SOURCES
-#     ${SRC}/un_fichier_source.c
-#     ${SRC}/un_autre_fichier_source.c
-#)
-#
-#add_library(ei STATIC			${LIB_EI_SOURCES})
+set(LIB_EI_SOURCES
+     ${SRC}/ei_application.c
+     ${SRC}/ei_widget.c
+     ${SRC}/ei_event.c
+     ${SRC}/ei_geometrymanager.c
+     ${SRC}/ei_widgetclass.c
+)
+
+add_library(ei STATIC			${LIB_EI_SOURCES})
 
 # target minimal
 
