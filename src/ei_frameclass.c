@@ -146,9 +146,6 @@ void ei_frame_drawfunc(struct	ei_widget_t*	widget,
 
         ei_point_t* point= anchor_point(rect_to_fill, frame->text_anchor);
         ei_draw_text(surface, point, frame->text, frame->text_font, frame->color, rect_to_fill);
-        
-
-
 }
 
 
