@@ -55,14 +55,17 @@ void ei_frame_setdefaultsfunc(ei_widget_t* widget)
 {
         ei_frame_t* frame= (ei_frame_t*) widget;
         frame->text = NULL;
-        frame->color = {0xff, 0xff, 0xff, 0xff};
+        frame->color.red = 0;
+        frame->color.green = 0;
+        frame->color.blue = 0;
+        frame->color.alpha = 0xff;
         frame->border_width = 0;
-        frame->relief = NULL;
+        frame->relief = ei_relief_none;
         frame->text_font = NULL;
-        frame->text_anchor = NULL;
+        frame->text_anchor = ei_anc_none;
         frame->img = NULL;
         frame->img_rect = NULL;
-        frame->img_anchor = NULL;
+        frame->img_anchor = ei_anc_none;
 }
 
 
