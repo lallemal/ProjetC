@@ -1,10 +1,14 @@
 #include "ei_application.h"
 #include "ei_event.h"
 
+
+ei_surface_t main_window;
+
+
 void ei_app_create(ei_size_t main_window_size, ei_bool_t fullscreen)
 {
 	hw_init();
-	ei_surface_t main_window = hw_create_window(main_window_size, fullscreen);
+	main_window = hw_create_window(main_window_size, fullscreen);
 }
 
 
