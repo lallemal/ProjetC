@@ -35,7 +35,7 @@ void* ei_frame_allocfunc (void)
 }
 
 
-void* ei_frame_setdefaultsfunc(ei_widget_t* widget){
+void ei_frame_setdefaultsfunc(ei_widget_t* widget){
         ei_frame_t* frame= (ei_frame_t*)widget;
         frame.text = NULL;
         frame.color = {0xff, 0xff, 0xff, 0xff};
