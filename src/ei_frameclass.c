@@ -6,6 +6,7 @@
 * Description:      
 *****************************************************************************/
 #include <stdlib.h>
+#include <string.h>
 
 
 #include "ei_widgetclass.h"
@@ -49,6 +50,7 @@ void ei_frame_releasefunc(ei_widget_t*	widget)
 	free(&(frame->img_anchor));
 }
 
+
 void ei_frame_setdefaultsfunc(ei_widget_t* widget)
 {
         ei_frame_t* frame= (ei_frame_t*) widget;
@@ -61,4 +63,25 @@ void ei_frame_setdefaultsfunc(ei_widget_t* widget)
         frame->img = NULL;
         frame->img_rect = NULL;
         frame->img_anchor = NULL;
+}
+
+
+void ei_frame_drawnfunc(struct	ei_widget_t*	widget,
+				ei_surface_t	surface,
+				ei_surface_t	pick_surface,
+				ei_rect_t*	clipper)
+{
+
+}
+
+
+
+void ei_frame_register_class(void)
+{
+	ei_widgetclass_t frame;
+	strcpy(frame.name, "frame");
+	frame.allocfunc = &ei_frame_allocfunc;
+	frame.setdefaultsfunc = &ei_frame_setdefaultsfunc;
+	frame.releasefunc = &ei_frame_releasefunc;
+	frame.drawfunc = &ei_frame_drawnfunc;
 }
