@@ -69,7 +69,7 @@ void ei_frame_setdefaultsfunc(ei_widget_t* widget)
 }
 
 
-void ei_frame_drawnfunc(struct	ei_widget_t*	widget,
+void ei_frame_drawfunc(struct	ei_widget_t*	widget,
 				ei_surface_t	surface,
 				ei_surface_t	pick_surface,
 				ei_rect_t*	clipper)
@@ -86,5 +86,7 @@ void ei_frame_register_class(void)
 	frame.allocfunc = &ei_frame_allocfunc;
 	frame.setdefaultsfunc = &ei_frame_setdefaultsfunc;
 	frame.releasefunc = &ei_frame_releasefunc;
-	frame.drawfunc = &ei_frame_drawnfunc;
+	frame.drawfunc = &ei_frame_drawfunc;
+
+	ei_widgetclass_register(&frame);
 }
