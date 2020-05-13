@@ -13,17 +13,17 @@
 #include "ei_widget.h"
 
 typedef struct ei_frame {
-	ei_widget_t	widget;
-
-	ei_color_t	color;
-	int		border_width;
-	ei_relief_t	relief;
-	char*		text;
-	ei_font_t	text_font;
-	ei_anchor_t	text_anchor;
-	ei_surface_t	img;
-	ei_rect_t*	img_rect;
-	ei_anchor_t	img_anchor;
+	ei_widget_t		widget;
+	ei_color_t		color;
+	int			border_width;
+	ei_relief_t		relief;
+	char*			text;
+	ei_font_t		text_font;
+	ei_anchor_t		text_anchor;
+	ei_color_t		text_color;
+	ei_surface_t		img;
+	ei_rect_t*		img_rect;
+	ei_anchor_t		img_anchor;
 } ei_frame_t;
 
 
@@ -89,4 +89,52 @@ void ei_frame_register_class(void)
 	frame.drawfunc = &ei_frame_drawfunc;
 
 	ei_widgetclass_register(&frame);
+}
+
+
+void ei_frame_configure(ei_widget_t*		widget,
+			ei_size_t*		requested_size,
+			const ei_color_t*	color,
+			int*			border_width,
+			ei_relief_t*		relief,
+			char**			text,
+			ei_font_t*		text_font,
+			ei_color_t*		text_color,
+			ei_anchor_t*		text_anchor,
+			ei_surface_t*		img,
+			ei_rect_t**		img_rect,
+			ei_anchor_t*		img_anchor)
+
+{
+	ei_frame_t* frame = (ei_frame_t *) widget;
+	if (requested_size != NULL) {
+		widget->screen_location.size = *requested_size;
+	}
+	if (color != NULL) {
+		frame->color = *color;
+	}
+	if (border_width != NULL) {
+		frame->border_width = *border_width;
+	}
+	if (relief != NULL) {
+		frame->relief = *relief;
+	}
+	if (text != NULL) {
+		frame->text = *text;
+	}
+	if (text_font != NULL) {
+		frame->text_font = *text_font;
+	}
+	if (text_color != NULL) {
+		frame->text_color = *text_color;
+	}
+	if (img != NULL) {
+		frame->img = *img;
+	}
+	if (img_rect != NULL) {
+		frame->img_rect = *img_rect;
+	}
+	if (img_anchor != NULL) {
+		frame->img_anchor = *img_anchor;
+	}
 }
