@@ -28,22 +28,37 @@ typedef struct ei_frame {
 
 
 
-void* ei_frame_allocfunc (void)
+void* ei_frame_allocfunc(void)
 {
 	void *newFrame = calloc(1, sizeof(ei_frame_t));
 	return newFrame;
 }
 
 
-void ei_frame_setdefaultsfunc(ei_widget_t* widget){
-        ei_frame_t* frame= (ei_frame_t*)widget;
-        frame.text = NULL;
-        frame.color = {0xff, 0xff, 0xff, 0xff};
-        frame.border_width = 0;
-        frame.relief = NULL;
-        frame.text_font = NULL;
-        frame.text_anchor = NULL;
-        frame.img = NULL;
-        frame.img_rect = NULL;
-        frame.img_anchor = NULL;
+void ei_frame_releasefunc(ei_widget_t*	widget)
+{
+	ei_frame_t *frame = (ei_frame_t *) widget;
+	free(&(frame->color));
+	free(&(frame->border_width));
+	free(&(frame->relief));
+	free(&(frame->text));
+	free(&(frame->text_font));
+	free(&(frame->text_anchor));
+	free(&(frame->img));
+	free(&(frame->img_rect));
+	free(&(frame->img_anchor));
+}
+
+void ei_frame_setdefaultsfunc(ei_widget_t* widget)
+{
+        ei_frame_t* frame= (ei_frame_t*) widget;
+        frame->text = NULL;
+        frame->color = {0xff, 0xff, 0xff, 0xff};
+        frame->border_width = 0;
+        frame->relief = NULL;
+        frame->text_font = NULL;
+        frame->text_anchor = NULL;
+        frame->img = NULL;
+        frame->img_rect = NULL;
+        frame->img_anchor = NULL;
 }
