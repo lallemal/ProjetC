@@ -30,9 +30,6 @@ typedef struct ei_frame {
 
 void* ei_frame_allocfunc (void)
 {
-	ei_frame_t *newFrame = malloc(sizeof(ei_frame_t));
-	for (void *i = newFrame; i < newFrame + sizeof(ei_frame_t);i++) {
-		*i = 0;
-	}
+	void *newFrame = calloc(1, sizeof(ei_frame_t));
 	return newFrame;
 }
