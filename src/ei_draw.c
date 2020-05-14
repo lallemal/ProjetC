@@ -148,21 +148,22 @@ void			ei_fill			(ei_surface_t		surface,
 						 const ei_color_t*	color,
 						 const ei_rect_t*	clipper)
 {
-	ei_rect_t* dst_rect;
+	uint32_t color_rgba = ei_map_rgba(surface, color);
 	if (clipper == NULL) {
-		 *dst_rect = hw_surface_get_rect(surface);
+		 ei_rect_t rect_surface = hw_surface_get_rect(surface);
+		 uint32_t* pixel_ptr = (uint32_t *)hw_surface_get_buffer(surface);
+		 for (int i = 0; i < rect_surface.size.width * rect_surface.size.height; i++)
+			 *pixel_ptr++ = color_rgba;
 	}
 	else {
-		 dst_rect = clipper;
-	}
-	int dest_x = dst_rect->top_left.x;
-	int dest_y = dst_rect->top_left.y;
-	for (int i=0; i < dst_rect->size.height; i++) {
-		hw_surface_set_origin(surface, ei_point(dest_x, dest_y+i));
-		uint32_t* dest_pt = (uint32_t *) hw_surface_get_buffer(surface);
-		for (int j = 0; j < dst_rect->size.width; j++) {
-			*dest_pt = ei_map_rgba(surface, color);
-			dest_pt++;
+		int dest_x = clipper->top_left.x;
+		int dest_y = clipper->top_left.y;
+		for (int i=0; i < clipper->size.height; i++) {
+			hw_surface_set_origin(surface, ei_point(dest_x, dest_y+i));
+			uint32_t* dest_pt = (uint32_t *) hw_surface_get_buffer(surface);
+			for (int j = 0; j < clipper->size.width; j++) {
+				 *dest_pt++ = color_rgba;
+			}
 		}
 	}
 }

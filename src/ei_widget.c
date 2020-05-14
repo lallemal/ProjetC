@@ -30,7 +30,9 @@ void update_widget_list(ei_widget_t* child, ei_widget_t* parent)
 
 void ei_widget_destroy(ei_widget_t* widget)
 {
-	widget->destructor(widget);
+	if (widget->destructor != NULL) {
+		widget->destructor(widget);
+	}
 	widget->wclass->releasefunc(widget);
 	free(widget);
 }

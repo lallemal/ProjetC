@@ -41,7 +41,6 @@ void ei_widgetclass_register(ei_widgetclass_t* widgetclass)
 ei_widgetclass_t* ei_widgetclass_from_name(ei_widgetclass_name_t name)
 {
 	for (ei_widgetclass_t* widgetc = &sentinel; widgetc != NULL; widgetclass_suivant(&widgetc)) {
-		printf("%s, %i", widgetc->name, strcmp(name, widgetc->name));
 		if (strcmp(name, widgetc->name) == 0) {
 			return widgetc;
 		}

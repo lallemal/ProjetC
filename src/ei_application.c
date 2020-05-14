@@ -14,6 +14,9 @@ ei_widget_t* rootWidget;
 bool running = true;
 
 
+/* Point widget_pt to the next sibling of *widget_pt.
+ * Must be called when all the resources are not freed
+ **/
 void next_sibling_widget(ei_widget_t** widget_pt)
 {
 	*widget_pt = (*widget_pt)->next_sibling;
@@ -23,8 +26,10 @@ void next_sibling_widget(ei_widget_t** widget_pt)
 void destroy_widgets(ei_widget_t* begin)
 {
 	ei_widget_t* child = begin->children_head;
-	for (child; child != NULL; next_sibling_widget(&child)) {
+	while (child != NULL) {
+		ei_widget_t* nextChild = child->next_sibling;
 		destroy_widgets(child);
+		child = nextChild;
 	}
 	ei_widget_destroy(begin);
 }

@@ -44,16 +44,16 @@ void* ei_frame_allocfunc(void)
 void ei_frame_releasefunc(ei_widget_t*	widget)
 {
 	ei_frame_t *frame = (ei_frame_t *) widget;
-	free(&(frame->color));
-	free(&(frame->border_width));
-	free(&(frame->relief));
-	free(&(frame->text));
-	free(&(frame->text_font));
-	free(&(frame->text_anchor));
-	free(&(frame->text_color));
-	free(&(frame->img));
-	free(&(frame->img_rect));
-	free(&(frame->img_anchor));
+	// free(&(frame->color));
+	// free(&(frame->border_width));
+	// free(&(frame->relief));
+	//free(&(frame->text));
+	//free(&(frame->text_font));
+	//free(&(frame->text_anchor));
+	//free(&(frame->text_color));
+	//free(&(frame->img));
+	//free(&(frame->img_rect));
+	//free(&(frame->img_anchor));
 }
 
 
@@ -138,7 +138,7 @@ void ei_frame_drawfunc(struct	ei_widget_t*	widget,
         ei_frame_t* frame=(ei_frame_t*)widget;
         hw_surface_lock(surface);
         ei_color_t color_back = frame->color;
-	ei_rect_t* rect_to_fill;
+	ei_rect_t *rect_to_fill;
 	if (clipper != NULL) {
 		int x_clipper= clipper->top_left.x;
 		int y_clipper= clipper->top_left.y;
@@ -148,16 +148,18 @@ void ei_frame_drawfunc(struct	ei_widget_t*	widget,
 		int y_frame = widget->screen_location.top_left.y;
 		int height_frame = widget->screen_location.size.height;
 		int width_frame = widget->screen_location.size.width;
+		rect_to_fill = malloc(sizeof(ei_rect_t));
 
 		rect_to_fill->top_left.x=max(x_frame, x_clipper);
 		rect_to_fill->top_left.y=max(y_clipper, y_frame);
 		rect_to_fill->size.width=abs(min(x_clipper+width_clipper, x_frame+width_frame)-max(x_clipper, x_frame));
 		rect_to_fill->size.height=abs(max(y_frame, y_clipper)-min(y_frame+height_frame, y_clipper+height_clipper));
+		ei_fill(surface, &color_back, rect_to_fill);
 	}
 	else {
-		*rect_to_fill = hw_surface_get_rect(surface);
+		ei_fill(surface, &color_back, NULL);
 	}
-        ei_fill(surface, &color_back, rect_to_fill);
+
 
 	if (frame->text != NULL) {
 		int* height_text;
@@ -167,31 +169,48 @@ void ei_frame_drawfunc(struct	ei_widget_t*	widget,
 		hw_text_compute_size(frame->text, frame->text_font, width_text, height_text);
 		int64_t height_text_int= (int64_t)height_text;
 		int64_t width_text_int= (int64_t)width_text;
+		// RAJOUT D'une condition si clipper NULL
 		ei_point_t* point= anchor_point(rect_to_fill, frame->text_anchor, width_text_int, height_text_int);
 		ei_draw_text(surface, point, frame->text, frame->text_font, frame->text_color, rect_to_fill);
+
+		free(height_text);
+		free(width_text);
 	}
 
-	ei_linked_rect_t *liste_rect1=malloc(sizeof(ei_linked_rect_t));
-	liste_rect1->rect=*rect_to_fill;
-	liste_rect1->next=NULL;
-	if (frame->img != NULL) {
-		hw_surface_lock(frame->img);
-		ei_point_t* point_img=anchor_point(rect_to_fill, frame->img_anchor, frame->img_rect->size.width, frame->img_rect->size.height);
-		ei_rect_t* rect_img=malloc(sizeof(ei_rect_t));
-		rect_img->top_left = *point_img;
-		rect_img->size.width= min(rect_to_fill->size.width, frame->img_rect->size.width);
-		rect_img->size.height=min(rect_to_fill->size.height, frame->img_rect->size.height);
-		ei_copy_surface(surface, rect_img, frame->img, frame->img_rect, hw_surface_has_alpha(frame->img));
-		hw_surface_unlock(frame->img);
-		ei_linked_rect_t *liste_rect2=malloc(sizeof(ei_linked_rect_t));
-		liste_rect2->next->rect=*rect_img;
-		liste_rect2->next->next=NULL;
-		liste_rect1->next=liste_rect2;
-	}
+	if (clipper != NULL) {
+		ei_linked_rect_t *liste_rect1=malloc(sizeof(ei_linked_rect_t));
+		liste_rect1->rect=*rect_to_fill;
+		liste_rect1->next=NULL;
+		if (frame->img != NULL) {
+			hw_surface_lock(frame->img);
+			// Rajout d'une condition si clipper NULL
+			ei_point_t* point_img=anchor_point(rect_to_fill, frame->img_anchor, frame->img_rect->size.width, frame->img_rect->size.height);
+			ei_rect_t* rect_img=malloc(sizeof(ei_rect_t));
+			rect_img->top_left = *point_img;
+			rect_img->size.width= min(rect_to_fill->size.width, frame->img_rect->size.width);
+			rect_img->size.height=min(rect_to_fill->size.height, frame->img_rect->size.height);
+			ei_copy_surface(surface, rect_img, frame->img, frame->img_rect, hw_surface_has_alpha(frame->img));
+			hw_surface_unlock(frame->img);
+			ei_linked_rect_t *liste_rect2=malloc(sizeof(ei_linked_rect_t));
+			liste_rect2->next->rect=*rect_img;
+			liste_rect2->next->next=NULL;
+			liste_rect1->next=liste_rect2;
 
-
+			free(liste_rect2);
+		}
         hw_surface_unlock(surface);
         hw_surface_update_rects(surface, liste_rect1);
+	free(rect_to_fill);
+	free(liste_rect1);
+	}
+	else {
+		hw_surface_unlock(surface);
+		hw_surface_update_rects(surface, NULL);
+	}
+
+
+
+
 }
 
 
