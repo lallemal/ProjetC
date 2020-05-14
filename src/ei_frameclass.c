@@ -14,6 +14,9 @@
 #include "ei_draw.h"
 
 
+#define max(a,b) (a>=b?a:b)
+#define min(a,b) (a<=b?a:b)
+
 typedef struct ei_frame {
 	ei_widget_t	widget;
 
@@ -28,7 +31,6 @@ typedef struct ei_frame {
 	ei_rect_t*	img_rect;
 	ei_anchor_t	img_anchor;
 } ei_frame_t;
-
 
 
 
@@ -68,59 +70,63 @@ void ei_frame_setdefaultsfunc(ei_widget_t* widget)
         frame->img_anchor = ei_anc_center;
 }
 
-
-ei_point_t* anchor_point(ei_rect_t* rect, ei_anchor_t anchor)
+/**
+ * @brief	Fonction to know where is the point at the top right corner in the rectangle
+ *
+ * @param	rect		Global rectangle which will contain the text or the image
+ * @param	anchor		The anchor link to the text or the image.
+ * @param	width_text	width of the text or the image
+ * @param	height_text	height of the text or the image
+ *
+ * @return			The point at the top right of the text or the image
+ */
+ei_point_t* anchor_point(ei_rect_t* rect, ei_anchor_t anchor, int width_text, int height_text)
 {
+        ei_point_t* point=malloc(sizeof(ei_point_t));
         int x_rect=rect->top_left.x;
         int y_rect=rect->top_left.y;
         int width=rect->size.width;
         int height=rect->size.height;
-        int x_point;
-        int y_point;
         if (anchor == ei_anc_center){
-                x_point=(x_rect+x_rect+width)/2;
-                y_point=(y_rect+y_rect+height)/2;
+                point->x=min((x_rect+x_rect+width)/2, x_rect+width-width_text);
+                point->y=min((y_rect+y_rect+height)/2, y_rect+height-height_text);
         };
         if(anchor == ei_anc_north){
-                x_point=(x_rect+x_rect+width)/2;
-                y_point=y_rect;
+                point->x=min((x_rect+x_rect+width)/2, x_rect+width-width_text);
+                point->y=y_rect;
         };
         if(anchor == ei_anc_northeast){
-                x_point=x_rect+width;
-                y_point=y_rect;
+                point->x=x_rect+width-width_text;
+                point->y=y_rect;
         };
         if(anchor == ei_anc_east){
-                x_point=x_rect+width;
-                y_point=(y_rect+y_rect+height)/2;
+                point->x=x_rect+width-width_text;
+                point->y=min((y_rect+y_rect+height)/2, y_rect+height-height_text);
         };
         if(anchor == ei_anc_southeast){
-                x_point=x_rect+width;
-                y_point=y_rect+height;
+                point->x=x_rect+width-width_text;
+                point->y=y_rect+height-height_text;
         };
         if(anchor == ei_anc_south){
-                x_point=(x_rect+x_rect+width)/2;
-                y_point=y_rect;
+                point->x=min((x_rect+x_rect+width)/2, x_rect+width-width_text);
+                point->y=y_rect+height-height_text;
         };
         if(anchor == ei_anc_southwest){
-                x_point=x_rect;
-                y_point=y_rect+height;
+                point->x=x_rect;
+                point->y=y_rect+height-height_text;
         };
         if(anchor == ei_anc_west){
-                x_point=x_rect;
-                y_point=(y_rect+y_rect+height)/2;
+                point->x=x_rect;
+                point->y=min((y_rect+y_rect+height)/2, y_rect+height-height_text);
         };
         if(anchor == ei_anc_northwest){
-                x_point=x_rect;
-                y_point=y_rect;
+                point->x=x_rect;
+                point->y=y_rect;
         };
-        ei_point_t* point;
-        point->x=x_point;
-        point->y=y_point;
         return point;
 }
 
-#define max(a,b) (a>=b?a:b)
-#define min(a,b) (a<=b?a:b)
+
 
 void ei_frame_drawfunc(struct	ei_widget_t*	widget,
 				ei_surface_t	surface,
@@ -129,6 +135,7 @@ void ei_frame_drawfunc(struct	ei_widget_t*	widget,
 {
         ei_frame_t* frame=(ei_frame_t*)widget;
         hw_surface_lock(surface);
+        hw_surface_lock(frame->img);
         ei_color_t color_back = frame->color;
         int x_clipper= clipper->top_left.x;
         int y_clipper= clipper->top_left.y;
@@ -146,8 +153,35 @@ void ei_frame_drawfunc(struct	ei_widget_t*	widget,
         rect_to_fill->size.height=abs(max(y_frame, y_clipper)-min(y_frame+height_frame, y_clipper+height_clipper));
         ei_fill(surface, &color_back, rect_to_fill);
 
-        ei_point_t* point= anchor_point(rect_to_fill, frame->text_anchor);
-        ei_draw_text(surface, point, frame->text, frame->text_font, frame->color, rect_to_fill);
+        int* height_text;
+        height_text=malloc(sizeof(int));
+        int* width_text;
+        width_text = malloc(sizeof(int));
+        hw_text_compute_size(frame->text, frame->text_font, width_text, height_text);
+        int64_t height_text_int= (int64_t)height_text;
+        int64_t width_text_int= (int64_t)width_text;
+        ei_point_t* point= anchor_point(rect_to_fill, frame->text_anchor, width_text_int, height_text_int);
+        ei_draw_text(surface, point, frame->text, frame->text_font, frame->text_color, rect_to_fill);
+
+
+        ei_point_t* point_img=anchor_point(rect_to_fill, frame->img_anchor, frame->img_rect->size.width, frame->img_rect->size.height);
+        ei_rect_t* rect_img=malloc(sizeof(ei_rect_t));
+        rect_img->top_left = *point;
+        rect_img->size.width= min(rect_to_fill->size.width, frame->img_rect->size.width);
+        rect_img->size.height=min(rect_to_fill->size.height, frame->img_rect->size.height);
+        ei_copy_surface(surface, rect_img, frame->img, frame->img_rect, hw_surface_has_alpha(frame->img));
+
+
+        ei_linked_rect_t *liste_rect1=malloc(sizeof(ei_linked_rect_t));
+        liste_rect1->rect=*rect_to_fill;
+        liste_rect1->next=NULL;
+        ei_linked_rect_t *liste_rect2=malloc(sizeof(ei_linked_rect_t));
+        liste_rect2->next->rect=*rect_img;
+        liste_rect2->next->next=NULL;
+        liste_rect1->next=liste_rect2;
+        hw_surface_unlock(surface);
+        hw_surface_unlock(frame->img);
+        hw_surface_update_rects(surface, liste_rect1);
 }
 
 
