@@ -5,33 +5,44 @@
 * Created:          05/12/20
 * Description:      Implementation for widgets management.
 *****************************************************************************/
+#include <stdlib.h>
 
 #include "ei_widget.h"
+#include "ei_widgetclass.h"
+
+
+
+
+void update_widget_list(ei_widget_t* child, ei_widget_t* parent)
+{
+	child->parent = parent;
+	if (parent != NULL) {
+		parent->children_tail->next_sibling = child;
+		parent->children_tail = child;
+		if (parent->children_head == NULL) {
+			parent->children_head = child;
+		}
+	}
+}
+
+
+void ei_widget_destroy(ei_widget_t* widget)
+{
+	widget->destructor(widget);
+	widget->wclass->releasefunc(widget);
+	free(widget);
+}
+
 
 ei_widget_t*	ei_widget_create	(ei_widgetclass_name_t	class_name,
 					 ei_widget_t*		parent,
 					 void*			user_data,
 					 ei_widget_destructor_t	destructor)
 {
-
-}
-
-
-
-
-
-void		ei_frame_configure	(ei_widget_t*		widget,
-					 ei_size_t*		requested_size,
-					 const ei_color_t*	color,
-					 int*			border_width,
-					 ei_relief_t*		relief,
-					 char**			text,
-					 ei_font_t*		text_font,
-					 ei_color_t*		text_color,
-					 ei_anchor_t*		text_anchor,
-					 ei_surface_t*		img,
-					 ei_rect_t**		img_rect,
-					 ei_anchor_t*		img_anchor)
-{
-
+	ei_widgetclass_t* widgetclass = ei_widgetclass_from_name(class_name);
+	ei_widget_t* newWidget = (ei_widget_t *)widgetclass->allocfunc();
+	newWidget->user_data = user_data;
+	newWidget->destructor = destructor;
+	update_widget_list(newWidget, parent);
+	return newWidget;
 }

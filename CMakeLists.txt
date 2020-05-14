@@ -78,6 +78,7 @@ set(LIB_EI_SOURCES
      ${SRC}/ei_event.c
      ${SRC}/ei_geometrymanager.c
      ${SRC}/ei_widgetclass.c
+     ${SRC}/ei_frameclass.c
 )
 
 add_library(ei STATIC			${LIB_EI_SOURCES})

@@ -11,6 +11,8 @@
 
 #include "ei_widgetclass.h"
 #include "ei_widget.h"
+#include "ei_draw.h"
+
 
 typedef struct ei_frame {
 	ei_widget_t	widget;
