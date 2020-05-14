@@ -11,12 +11,12 @@
 ei_surface_t main_window;
 ei_surface_t pick_surface;
 ei_widget_t* rootWidget;
-bool running;
+bool running = true;
 
 
 void next_sibling_widget(ei_widget_t** widget_pt)
 {
-	*widget_pt = (*widget_pt)->parent;
+	*widget_pt = (*widget_pt)->next_sibling;
 }
 
 
@@ -78,7 +78,7 @@ void ei_app_run(void)
 	event.type = ei_ev_none;
 	while (running) {
 		draw_widgets(rootWidget, main_window, pick_surface);
-		if (event.type != ei_ev_keydown) {
+		if (event.type == ei_ev_keydown) {
 			ei_app_quit_request();
 		}
 		hw_event_wait_next(&event);

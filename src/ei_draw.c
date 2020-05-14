@@ -141,3 +141,28 @@ int			ei_copy_surface		(ei_surface_t		destination,
 	hw_surface_set_origin(destination, ei_point_zero());
 	hw_surface_set_origin(source, ei_point_zero());
 }
+
+
+
+void			ei_fill			(ei_surface_t		surface,
+						 const ei_color_t*	color,
+						 const ei_rect_t*	clipper)
+{
+	ei_rect_t* dst_rect;
+	if (clipper == NULL) {
+		 *dst_rect = hw_surface_get_rect(surface);
+	}
+	else {
+		 dst_rect = clipper;
+	}
+	int dest_x = dst_rect->top_left.x;
+	int dest_y = dst_rect->top_left.y;
+	for (int i=0; i < dst_rect->size.height; i++) {
+		hw_surface_set_origin(surface, ei_point(dest_x, dest_y+i));
+		uint32_t* dest_pt = (uint32_t *) hw_surface_get_buffer(surface);
+		for (int j = 0; j < dst_rect->size.width; j++) {
+			*dest_pt = ei_map_rgba(surface, color);
+			dest_pt++;
+		}
+	}
+}

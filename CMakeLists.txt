@@ -43,6 +43,7 @@ elseif(${UNIX})
 	set(EIBASE			${PLATFORM_DIR}/libeibase${WORDS_BIT_SIZE}.a)
 	set(PLATFORM_LIB_FLAGS		${EIBASE}
 					-L${PLATFORM_DIR} ${LIB_FLAGS} -lm)
+	add_definitions(-g)
 
 	message(STATUS "Building for Linux with eibase: ${EI_BASE}")
 

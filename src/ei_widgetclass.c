@@ -5,14 +5,15 @@
 * Created:          05/13/20
 * Description:      
 *****************************************************************************/
+#include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+#include <stdio.h>
 
 #include "ei_widgetclass.h"
-#include "stdlib.h"
 
 // save the head of the widgetclass head
-ei_widgetclass_t sentinel;
+ei_widgetclass_t sentinel = {"sentinel", NULL, NULL, NULL, NULL, NULL, NULL};
 
 /*
  * @brief	Update the pointer of widgetclass to the next one
@@ -39,7 +40,8 @@ void ei_widgetclass_register(ei_widgetclass_t* widgetclass)
 
 ei_widgetclass_t* ei_widgetclass_from_name(ei_widgetclass_name_t name)
 {
-	for (ei_widgetclass_t* widgetc = &sentinel;widgetc != NULL; widgetclass_suivant(&widgetc)) {
+	for (ei_widgetclass_t* widgetc = &sentinel; widgetc != NULL; widgetclass_suivant(&widgetc)) {
+		printf("%s, %i", widgetc->name, strcmp(name, widgetc->name));
 		if (strcmp(name, widgetc->name) == 0) {
 			return widgetc;
 		}

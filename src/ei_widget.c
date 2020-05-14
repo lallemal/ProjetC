@@ -17,11 +17,13 @@ void update_widget_list(ei_widget_t* child, ei_widget_t* parent)
 {
 	child->parent = parent;
 	if (parent != NULL) {
-		parent->children_tail->next_sibling = child;
-		parent->children_tail = child;
 		if (parent->children_head == NULL) {
 			parent->children_head = child;
 		}
+		else {
+			parent->children_tail->next_sibling = child;
+		}
+		parent->children_tail = child;
 	}
 }
 
@@ -40,9 +42,12 @@ ei_widget_t*	ei_widget_create	(ei_widgetclass_name_t	class_name,
 					 ei_widget_destructor_t	destructor)
 {
 	ei_widgetclass_t* widgetclass = ei_widgetclass_from_name(class_name);
-	ei_widget_t* newWidget = (ei_widget_t *)widgetclass->allocfunc();
-	newWidget->user_data = user_data;
-	newWidget->destructor = destructor;
-	update_widget_list(newWidget, parent);
-	return newWidget;
+	if (widgetclass != NULL) {
+		ei_widget_t* newWidget = (ei_widget_t *)widgetclass->allocfunc();
+		newWidget->wclass = widgetclass;
+		newWidget->user_data = user_data;
+		newWidget->destructor = destructor;
+		update_widget_list(newWidget, parent);
+		return newWidget;
+	}
 }
