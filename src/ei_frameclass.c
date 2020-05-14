@@ -50,6 +50,7 @@ void ei_frame_releasefunc(ei_widget_t*	widget)
 	free(&(frame->text));
 	free(&(frame->text_font));
 	free(&(frame->text_anchor));
+	free(&(frame->text_color));
 	free(&(frame->img));
 	free(&(frame->img_rect));
 	free(&(frame->img_anchor));
@@ -61,6 +62,7 @@ void ei_frame_setdefaultsfunc(ei_widget_t* widget)
         ei_frame_t* frame= (ei_frame_t*) widget;
         frame->text = NULL;
         frame->color = ei_default_background_color;
+        frame->border_width=0;
         frame->relief = ei_relief_none;
         frame->text_font = ei_default_font;
         frame->text_anchor = ei_anc_center;
