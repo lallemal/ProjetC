@@ -9,6 +9,7 @@
 
 #include "ei_draw.h"
 #include "hw_interface.h"
+#include "ei_utils.h"
 
 
 #define max(a,b) (a>=b?a:b)
@@ -54,4 +55,31 @@ void			ei_draw_text		(ei_surface_t		surface,
 	ei_rect_t text_rect = {*where, text_size};
 	ei_rect_t destRect = inter_rect(clipper, &text_rect);
 	ei_copy_surface(surface, &destRect, text_surface, NULL, EI_FALSE);
+}
+
+
+
+int			ei_copy_surface		(ei_surface_t		destination,
+						 const ei_rect_t*	dst_rect,
+						 const ei_surface_t	source,
+						 const ei_rect_t*	src_rect,
+						 const ei_bool_t	alpha)
+{
+	int dest_x = dst_rect->top_left.x;
+	int dest_y = dst_rect->top_left.y;
+	int src_x = src_rect->top_left.x;
+	int src_y = src_rect->top_left.y;
+	for (int i=0; i< dst_rect->size.height; i++) {
+		hw_surface_set_origin(destination, ei_point(dest_x, dest_y+i));
+		hw_surface_set_origin(source, ei_point(src_x, src_y+i));
+		uint8_t* dest_pt = hw_surface_get_buffer(destination);
+		uint8_t* src_pt  = hw_surface_get_buffer(source);
+		for (int j = 0; j<dst_rect->size.height; j++) {
+			update_pixel(destination, &dest_pt, destination, source, &src_pt, alpha);
+			dest_pt++;
+			src_pt++;
+		}
+	}
+	hw_surface_set_origin(destination, ei_point_zero());
+	hw_surface_set_origin(source, ei_point_zero());
 }
