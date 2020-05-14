@@ -46,6 +46,7 @@ ei_color_t ei_map_color (ei_surface_t surface, const uint32_t rgba)
 	else {
 		color.alpha = 0;
 	}
+	return color;
 
 }
 
@@ -125,17 +126,18 @@ int			ei_copy_surface		(ei_surface_t		destination,
 	int dest_y = dst_rect->top_left.y;
 	int src_x = src_rect->top_left.x;
 	int src_y = src_rect->top_left.y;
-	for (int i=0; i< dst_rect->size.height; i++) {
+	for (int i=0; i < dst_rect->size.height; i++) {
 		hw_surface_set_origin(destination, ei_point(dest_x, dest_y+i));
 		hw_surface_set_origin(source, ei_point(src_x, src_y+i));
 		uint32_t* dest_pt = (uint32_t *) hw_surface_get_buffer(destination);
 		uint32_t* src_pt  = (uint32_t *) hw_surface_get_buffer(source);
-		for (int j = 0; j<dst_rect->size.height; j++) {
+		for (int j = 0; j < dst_rect->size.width; j++) {
 			update_pixel(destination, dest_pt, source, src_pt, alpha);
 			dest_pt++;
 			src_pt++;
 		}
 	}
+	//  Reset the origin of surface to 0,0
 	hw_surface_set_origin(destination, ei_point_zero());
 	hw_surface_set_origin(source, ei_point_zero());
 }
