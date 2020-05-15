@@ -80,7 +80,9 @@ set(LIB_EI_SOURCES
      ${SRC}/ei_geometrymanager.c
      ${SRC}/ei_widgetclass.c
      ${SRC}/ei_frameclass.c
+     ${SRC}/ei_buttonclass.c
      ${SRC}/ei_draw.c
+     ${SRC}/traverse_tools.c
 )
 
 add_library(ei STATIC			${LIB_EI_SOURCES})
