@@ -70,6 +70,8 @@ void ei_app_create(ei_size_t main_window_size, ei_bool_t fullscreen)
 
 void ei_app_free(void)
 {
+	hw_surface_free(pick_surface);
+	hw_surface_free(main_window);
 	destroy_widgets(rootWidget);
 	hw_quit();
 }
