@@ -225,17 +225,22 @@ void ei_frame_drawfunc(struct	ei_widget_t*	widget,
         //mise en place de la liste contenant les rectangles à update (si NULL update toute la surface)
         //pour le texte et la couleur (si il y a du texte)
         ei_linked_rect_t *liste_rect1=malloc(sizeof(ei_linked_rect_t));
-        liste_rect1->rect=*rect_to_fill;
-        liste_rect1->next=NULL;
-
-        //pour l'image (si il y a une image
         ei_linked_rect_t *liste_rect2=malloc(sizeof(ei_linked_rect_t));
-        if (frame->img != NULL){
-                liste_rect2->next->rect=*rect_img;
-                liste_rect2->next->next=NULL;
-                liste_rect1->next=liste_rect2;
-        }
 
+        if (rect_to_fill == NULL){
+                liste_rect1 = NULL;
+        }
+        else {
+                liste_rect1->rect = *rect_to_fill;
+                liste_rect1->next = NULL;
+
+                //pour l'image (si il y a une image
+                if (frame->img != NULL) {
+                        liste_rect2->next->rect = *rect_img;
+                        liste_rect2->next->next = NULL;
+                        liste_rect1->next = liste_rect2;
+                }
+        }
         //on unlock et update les changements
         hw_surface_unlock(surface);
         hw_surface_update_rects(surface, liste_rect1);
