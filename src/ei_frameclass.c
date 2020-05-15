@@ -408,8 +408,8 @@ void ei_frame_drawfunc(struct	ei_widget_t*	widget,
         hw_surface_update_rects(surface, liste_rect1);
 
         //on libère la mémoire
-        free(liste_rect1);
         free(liste_rect2);
+        free(liste_rect1);
         free(rect_to_fill);
         free(rect_img);
 }

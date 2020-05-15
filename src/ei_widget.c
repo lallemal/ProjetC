@@ -9,6 +9,7 @@
 
 #include "ei_widget.h"
 #include "ei_widgetclass.h"
+#include "traverse_tools.h"
 
 
 
@@ -30,6 +31,26 @@ void update_widget_list(ei_widget_t* child, ei_widget_t* parent)
 
 void ei_widget_destroy(ei_widget_t* widget)
 {
+	if (widget->parent != NULL) {
+		ei_widget_t* parent_child = widget->parent->children_head;
+		if (parent_child == widget) {
+			widget->parent->children_head = widget->next_sibling;
+			if (widget->parent->children_tail == widget) {
+				widget->parent->children_tail = NULL;
+			}
+
+		}
+		else {
+			while (parent_child->next_sibling != widget) {
+				parent_child = parent_child->next_sibling;
+			}
+			parent_child->next_sibling = widget->next_sibling;
+			if (parent_child->next_sibling == NULL) {
+				widget->parent->children_tail = parent_child;
+			}
+		}	
+	}
+	destroy_widgets(widget);
 	if (widget->destructor != NULL) {
 		widget->destructor(widget);
 	}

@@ -6,6 +6,7 @@
 #include "ei_event.h"
 #include "ei_widgetclass.h"
 #include "ei_widget.h"
+#include "traverse_tools.h"
 
 
 ei_surface_t main_window;
@@ -14,55 +15,13 @@ ei_widget_t* rootWidget;
 bool running = true;
 
 
-/* Point widget_pt to the next sibling of *widget_pt.
- * Must be called when all the resources are not freed
- **/
-void next_sibling_widget(ei_widget_t** widget_pt)
-{
-	*widget_pt = (*widget_pt)->next_sibling;
-}
-
-
-void destroy_widgets(ei_widget_t* begin)
-{
-	ei_widget_t* child = begin->children_head;
-	while (child != NULL) {
-		ei_widget_t* nextChild = child->next_sibling;
-		destroy_widgets(child);
-		child = nextChild;
-	}
-	ei_widget_destroy(begin);
-}
-
-
-void draw_widgets      (ei_widget_t* begin,
-			ei_surface_t surface,
-			ei_surface_t pick_surface)
-{
-	ei_widget_t* child = begin->children_head;
-
-	if (begin->parent != NULL) {
-		begin->wclass->drawfunc(begin, surface, pick_surface, &(begin->parent->screen_location));
-	}
-	else {
-		begin->wclass->drawfunc(begin, surface, pick_surface, NULL);
-	}
-	// draw all the child and their child recursively
-	for (child; child != NULL; next_sibling_widget(&child)) {
-		draw_widgets(child, surface, pick_surface);
-	}
-}
-
-
-
-
-
 void ei_app_create(ei_size_t main_window_size, ei_bool_t fullscreen)
 {
 	hw_init();
 	main_window = hw_create_window(main_window_size, fullscreen);
 	pick_surface = hw_surface_create(main_window, main_window_size, false);
 	ei_frame_register_class();
+	ei_button_register_class();
 	rootWidget = ei_widget_create("frame", NULL, NULL, NULL);
 	ei_frame_configure(rootWidget, &main_window_size, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 }
@@ -72,7 +31,11 @@ void ei_app_free(void)
 {
 	hw_surface_free(pick_surface);
 	hw_surface_free(main_window);
-	destroy_widgets(rootWidget);
+	ei_widget_destroy(rootWidget);
+	ei_widgetclass_t* sentinel = ei_widgetclass_from_name("sentinel");
+	if (sentinel->next != NULL) {
+		destroy_widgetclass(sentinel->next);
+	}
 	hw_quit();
 }
 
@@ -99,6 +62,3 @@ ei_widget_t* ei_app_root_widget(void)
 {
 	return  rootWidget;
 }
-
-
-
