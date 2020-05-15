@@ -44,16 +44,20 @@ void* ei_frame_allocfunc(void)
 void ei_frame_releasefunc(ei_widget_t*	widget)
 {
 	ei_frame_t *frame = (ei_frame_t *) widget;
-	// free(&(frame->color));
-	// free(&(frame->border_width));
-	// free(&(frame->relief));
-	//free(&(frame->text));
+	//free(&(frame->color));
+	//free(&(frame->border_width));
+	//free(&(frame->relief));
 	//free(&(frame->text_font));
 	//free(&(frame->text_anchor));
 	//free(&(frame->text_color));
 	//free(&(frame->img));
-	//free(&(frame->img_rect));
-	//free(&(frame->img_anchor));
+	if (frame->img_rect != NULL) {
+		free(frame->img_rect);
+	}
+	if (frame->text != NULL) {
+		free(frame->text);
+	}
+	// free(&(frame->img_anchor));
 }
 
 
@@ -70,7 +74,10 @@ void ei_frame_setdefaultsfunc(ei_widget_t* widget)
         frame->img = NULL;
         frame->img_rect = NULL;
         frame->img_anchor = ei_anc_center;
+	frame->widget.screen_location.top_left.x = 0;
+	frame->widget.screen_location.top_left.y = 0;
 }
+
 
 /**
  * @brief	Fonction to know where is the point at the top right corner in the rectangle

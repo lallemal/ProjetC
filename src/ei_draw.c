@@ -16,7 +16,7 @@
 #define min(a,b) (a<=b?a:b)
 
 
-uint32_t		ei_map_rgba		(ei_surface_t surface, const ei_color_t* color)
+uint32_t ei_map_rgba(ei_surface_t surface, const ei_color_t* color)
 {
 	int ir, ig, ib, ia;
 	hw_surface_get_channel_indices(surface, &ir, &ig, &ib, &ia);
@@ -31,6 +31,16 @@ uint32_t		ei_map_rgba		(ei_surface_t surface, const ei_color_t* color)
 }
 
 
+/**
+ * \brief	Converts a 32 bits integer into red, blue, green, alpha colors
+ *		using the order of the channels of the surface.
+ *
+ * @param	surface		The surface where to store this pixel.
+ * @param	rgba		The integer to convert.
+ *
+ * @return	ei_color_t : a color with the four channel.
+ *
+ */
 ei_color_t ei_map_color (ei_surface_t surface, const uint32_t rgba)
 {
 	int ir, ig, ib, ia;
@@ -51,6 +61,16 @@ ei_color_t ei_map_color (ei_surface_t surface, const uint32_t rgba)
 }
 
 
+/**
+ * @brief Update the pixel on a surface with the source pixel. Combinate the two pixel if alpha
+ * if enabled.
+ *
+ * @param destination	Destination surface which contains original pixel
+ * @param dest_pt	pointer to the pixel on the destination surface.
+ * @param source	Source surface which contains the new pixel to place
+ * @param src_pt	pointer to the pixel on the source surface.
+ * @param alpha		bool which indicate if source pixel has alpha.
+ */
 void update_pixel	(ei_surface_t destination,
 			uint32_t* dest_pt,
 			ei_surface_t source,
@@ -73,6 +93,14 @@ void update_pixel	(ei_surface_t destination,
 
 
 
+/**
+ * @brief Make the intersection of 2 rectangle
+ *
+ * @param rect1		first rectangle
+ * @param rect2		second rectangle
+ *
+ * @return		rectangle which is the intersection of the two others
+ */
 ei_rect_t inter_rect(const ei_rect_t* rect1, const ei_rect_t* rect2)
 {
 	int x1_min = rect1->top_left.x;
@@ -97,15 +125,12 @@ ei_rect_t inter_rect(const ei_rect_t* rect1, const ei_rect_t* rect2)
 }
 
 
-
-
-
-void			ei_draw_text		(ei_surface_t		surface,
-						 const ei_point_t*	where,
-						 const char*		text,
-						 const ei_font_t	font,
-						 ei_color_t		color,
-						 const ei_rect_t*	clipper)
+void ei_draw_text       (ei_surface_t		surface,
+			const ei_point_t*	where,
+			const char*		text,
+			const ei_font_t		font,
+			ei_color_t		color,
+			const ei_rect_t*	clipper)
 {
 	ei_surface_t text_surface = hw_text_create_surface(text, font, color);
 	ei_size_t text_size = hw_surface_get_size(text_surface);
@@ -115,20 +140,22 @@ void			ei_draw_text		(ei_surface_t		surface,
 }
 
 
-
-int			ei_copy_surface		(ei_surface_t		destination,
-						 const ei_rect_t*	dst_rect,
-						 const ei_surface_t	source,
-						 const ei_rect_t*	src_rect,
-						 const ei_bool_t	alpha)
+int ei_copy_surface    (ei_surface_t		destination,
+			const ei_rect_t*	dst_rect,
+			const ei_surface_t	source,
+			const ei_rect_t*	src_rect,
+			const ei_bool_t		alpha)
 {
+	// Coordinates of each top left rectangle.
 	int dest_x = dst_rect->top_left.x;
 	int dest_y = dst_rect->top_left.y;
 	int src_x = src_rect->top_left.x;
 	int src_y = src_rect->top_left.y;
 	for (int i=0; i < dst_rect->size.height; i++) {
+		// point the origin of surfaces on begin of line.
 		hw_surface_set_origin(destination, ei_point(dest_x, dest_y+i));
 		hw_surface_set_origin(source, ei_point(src_x, src_y+i));
+		// Call the pointer to the origin of buffer.
 		uint32_t* dest_pt = (uint32_t *) hw_surface_get_buffer(destination);
 		uint32_t* src_pt  = (uint32_t *) hw_surface_get_buffer(source);
 		for (int j = 0; j < dst_rect->size.width; j++) {
@@ -149,8 +176,9 @@ void			ei_fill			(ei_surface_t		surface,
 						 const ei_rect_t*	clipper)
 {
 	uint32_t color_rgba = ei_map_rgba(surface, color);
+	ei_rect_t rect_surface = hw_surface_get_rect(surface);
+	// if clipper is NULL, fill the entire surface with the color
 	if (clipper == NULL) {
-		 ei_rect_t rect_surface = hw_surface_get_rect(surface);
 		 uint32_t* pixel_ptr = (uint32_t *)hw_surface_get_buffer(surface);
 		 for (int i = 0; i < rect_surface.size.width * rect_surface.size.height; i++)
 			 *pixel_ptr++ = color_rgba;
@@ -158,12 +186,15 @@ void			ei_fill			(ei_surface_t		surface,
 	else {
 		int dest_x = clipper->top_left.x;
 		int dest_y = clipper->top_left.y;
+		uint32_t* dest_pt = (uint32_t *) hw_surface_get_buffer(surface);
+		// go to the top left of the clipper
+		dest_pt += dest_x + dest_y * rect_surface.size.width;
 		for (int i=0; i < clipper->size.height; i++) {
-			hw_surface_set_origin(surface, ei_point(dest_x, dest_y+i));
-			uint32_t* dest_pt = (uint32_t *) hw_surface_get_buffer(surface);
 			for (int j = 0; j < clipper->size.width; j++) {
 				 *dest_pt++ = color_rgba;
 			}
+			// go to the next beginning of line of the clipper
+			dest_pt += rect_surface.size.width - (dest_x + clipper->size.width) + dest_x;
 		}
 	}
 }

@@ -40,16 +40,17 @@ void draw_widgets      (ei_widget_t* begin,
 			ei_surface_t pick_surface)
 {
 	ei_widget_t* child = begin->children_head;
-	for (child; child != NULL; next_sibling_widget(&child)) {
-		draw_widgets(child, surface, pick_surface);
-	}
+
 	if (begin->parent != NULL) {
 		begin->wclass->drawfunc(begin, surface, pick_surface, &(begin->parent->screen_location));
 	}
 	else {
 		begin->wclass->drawfunc(begin, surface, pick_surface, NULL);
 	}
-
+	// draw all the child and their child recursively
+	for (child; child != NULL; next_sibling_widget(&child)) {
+		draw_widgets(child, surface, pick_surface);
+	}
 }
 
 
@@ -63,11 +64,14 @@ void ei_app_create(ei_size_t main_window_size, ei_bool_t fullscreen)
 	pick_surface = hw_surface_create(main_window, main_window_size, false);
 	ei_frame_register_class();
 	rootWidget = ei_widget_create("frame", NULL, NULL, NULL);
+	ei_frame_configure(rootWidget, &main_window_size, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 }
 
 
 void ei_app_free(void)
 {
+	hw_surface_free(pick_surface);
+	hw_surface_free(main_window);
 	destroy_widgets(rootWidget);
 	hw_quit();
 }
