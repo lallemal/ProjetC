@@ -150,6 +150,144 @@ ei_point_t* anchor_point(ei_surface_t surface, ei_rect_t* rect, ei_anchor_t anch
         return point;
 }
 
+/**
+ * @brief	Fonction which give a clearer color fr the relief
+ *
+ * @param       color         actual color of the frame
+ *
+ * @return		        a clearer color of the actual color of the frame
+ */
+
+ei_color_t clear_color(ei_color_t color)
+{
+        ei_color_t color_clearer;
+        if (color.blue>10) {
+                color_clearer.blue = color.blue - 10;
+        }
+        else{
+                color_clearer.blue = color.blue;
+        }
+        if (color.green>10) {
+                color_clearer.green = color.green - 10;
+        }
+        else{
+                color_clearer.green = color.green;
+        }
+        if (color.red>10) {
+                color_clearer.red = color.red - 10;
+        }
+        else{
+                color_clearer.red = color.red;
+        }
+        color_clearer.alpha=color.alpha;
+        return color_clearer;
+}
+
+/**
+ * @brief	Fonction which give a darker color fr the relief
+ *
+ * @param       color         actual color of the frame
+ *
+ * @return		        a darker color of the actual color of the frame
+ */
+
+ei_color_t dark_color(ei_color_t color)
+{
+        ei_color_t color_darker;
+        if (color.blue<254) {
+                color_darker.blue = color.blue + 10;
+        }
+        else{
+                color_darker.blue = color.blue;
+        }
+        if (color.green<254) {
+                color_darker.green = color.green + 10;
+        }
+        else{
+                color_darker.green = color.green;
+        }
+        if (color.red<254) {
+                color_darker.red = color.red + 10;
+        }
+        else{
+                color_darker.red = color.red;
+        }
+        color_darker.alpha=color.alpha;
+        return color_darker;
+}
+
+/**
+ * @brief	Fonction which draw up and down of the rect to make a relief.
+ *
+ * @param       rect_to_fill    rectangle in whiwh there is the separatition in two colors to make the relief
+ * @param	surface		Global surface of the frame
+ * @param	frame		frame which has relief
+ * @param	clipper 	clipper of the rect_to_fill
+ * @param	clear_up	booleen which means if we want the clearer color on the top (depends on the value of relief)
+ *
+ */
+void draw_up_and_down_relief(ei_rect_t* rect_to_fill, ei_surface_t surface, ei_color_t color, ei_rect_t* clipper, ei_bool_t clear_up){
+
+        //up
+        ei_linked_point_t *list_point_up1 = malloc(sizeof(ei_linked_point_t));
+        ei_linked_point_t *list_point_up2 = malloc(sizeof(ei_linked_point_t));
+        ei_linked_point_t *list_point_up3 = malloc(sizeof(ei_linked_point_t));
+
+        ei_point_t first_point_up = rect_to_fill->top_left;
+        ei_point_t second_point_up = *anchor_point(surface, rect_to_fill, ei_anc_southwest,
+                                                   rect_to_fill->size.width,
+                                                   rect_to_fill->size.height);
+        ei_point_t third_point_up = *anchor_point(surface, rect_to_fill, ei_anc_northeast,
+                                                  rect_to_fill->size.width,
+                                                  rect_to_fill->size.height);
+        list_point_up1->point = first_point_up;
+        list_point_up2->point = second_point_up;
+        list_point_up3->point = third_point_up;
+        list_point_up1->next = list_point_up2;
+        list_point_up2->next = list_point_up3;
+        list_point_up3->next = NULL;
+        if (clear_up == EI_TRUE) {
+                ei_draw_polygon(rect_to_fill, list_point_up1, clear_color(color), clipper);
+        }
+        else{
+                ei_draw_polygon(rect_to_fill, list_point_up1, dark_color(color), clipper);
+        }
+        free(list_point_up1);
+        free(list_point_up2);
+        free(list_point_up3);
+
+        //down
+        ei_linked_point_t *list_point_down1 = malloc(sizeof(ei_linked_point_t));
+        ei_linked_point_t *list_point_down2 = malloc(sizeof(ei_linked_point_t));
+        ei_linked_point_t *list_point_down3 = malloc(sizeof(ei_linked_point_t));
+
+        ei_point_t first_point_down =  *anchor_point(surface, rect_to_fill, ei_anc_southeast,
+                                                     rect_to_fill->size.width,
+                                                     rect_to_fill->size.height);
+        ei_point_t second_point_down = *anchor_point(surface, rect_to_fill, ei_anc_southwest,
+                                                     rect_to_fill->size.width,
+                                                     rect_to_fill->size.height);
+        ei_point_t third_point_down = *anchor_point(surface, rect_to_fill, ei_anc_northeast,
+                                                    rect_to_fill->size.width,
+                                                    rect_to_fill->size.height);
+        list_point_down1->point = first_point_down;
+        list_point_down2->point = second_point_down;
+        list_point_down3->point = third_point_down;
+        list_point_down1->next = list_point_down2;
+        list_point_down2->next = list_point_down3;
+        list_point_down3->next = NULL;
+        if (clear_up==EI_TRUE) {
+                ei_draw_polygon(rect_to_fill, list_point_down1, dark_color(color), clipper);
+        }
+        else{
+                ei_draw_polygon(rect_to_fill, list_point_down1, clear_color(color), clipper);
+        }
+        free(list_point_down1);
+        free(list_point_down2);
+        free(list_point_down3);
+}
+
+
 void ei_frame_drawfunc(struct	ei_widget_t*	widget,
                        ei_surface_t	surface,
                        ei_surface_t	pick_surface,
@@ -241,6 +379,30 @@ void ei_frame_drawfunc(struct	ei_widget_t*	widget,
                         liste_rect1->next = liste_rect2;
                 }
         }
+
+
+        //Création de relief
+        int border= frame->border_width;
+        if (border>0) {
+                if (rect_to_fill != NULL) {
+                        if (frame->relief == ei_relief_raised) {
+                                draw_up_and_down_relief(rect_to_fill, surface, frame->color, clipper, EI_TRUE);
+                        }
+                        if (frame->relief == ei_relief_sunken) {
+                                draw_up_and_down_relief(rect_to_fill, surface, frame->color, clipper, EI_FALSE);
+                        }
+                }
+                else{
+                        if (frame->relief == ei_relief_raised) {
+                                draw_up_and_down_relief(surface, surface, frame->color, clipper, EI_TRUE);
+                        }
+                        if (frame->relief == ei_relief_sunken) {
+                                draw_up_and_down_relief(surface, surface, frame->color, clipper, EI_FALSE);
+                        }
+                }
+        }
+
+
         //on unlock et update les changements
         hw_surface_unlock(surface);
         hw_surface_update_rects(surface, liste_rect1);
