@@ -75,6 +75,7 @@ include_directories(${HEADER_PATHS})
 set(LIB_EI_SOURCES
      		${SRC}/ei_geometrymanager.c
 		${SRC}/ei_placer.c
+		${SRC}/utils.c
 )
 
 add_library(ei STATIC			${LIB_EI_SOURCES})
