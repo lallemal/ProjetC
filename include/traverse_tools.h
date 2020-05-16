@@ -50,4 +50,14 @@ void draw_widgets      (ei_widget_t* begin,
 			ei_surface_t surface,
 			ei_surface_t pick_surface);
 
+
+
+
+/**
+ * @brief		Free all widgets linked with begin
+ *
+ * @param begin		Head of the chained lists that has to be freed
+ */
+void free_linked_rect(ei_linked_rect_t* begin);
+
 #endif /* ifndef TRAVERSE_H */

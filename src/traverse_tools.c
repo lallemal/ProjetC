@@ -58,3 +58,13 @@ void draw_widgets      (ei_widget_t* begin,
 		draw_widgets(child, surface, pick_surface);
 	}
 }
+
+
+void free_linked_rect(ei_linked_rect_t* begin)
+{
+	if (begin != NULL) {
+		ei_linked_rect_t* next = begin->next;
+		free(begin);
+		free_linked_rect(next)
+	}
+}
