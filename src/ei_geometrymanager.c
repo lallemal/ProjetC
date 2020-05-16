@@ -88,8 +88,8 @@ void			ei_place			(ei_widget_t*		widget,
         to_configure->width             = is_defined(width)     ? *width        : widget->requested_size.width;
         to_configure->rel_x             = is_defined(rel_x)     ? *rel_x        : 0.0;
         to_configure->rel_y             = is_defined(rel_y)     ? *rel_y        : 0.0;
-        to_configure->rel_width         = is_defined(rel_width) ? *rel_width    : 0.0;
-        to_configure->rel_height        = is_defined(rel_height)? *rel_height   : 0.0;
+        to_configure->rel_width         = is_defined(rel_width) ? *rel_width    : -1.0;
+        to_configure->rel_height        = is_defined(rel_height)? *rel_height   : -1.0;
 
         ei_run_func(widget);
 }
