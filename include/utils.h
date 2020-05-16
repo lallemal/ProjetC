@@ -24,4 +24,9 @@ int                     is_defined(void *param);
 * @brief	Check if the allocation worked, print a message if there is a problem
 */
 void                    *safe_malloc(size_t size);
+
+/**
+* @brief	Return the maximum between two int
+*/
+int                     max(int a, int b);
 #endif //PROJETC_IG_UTILS_H
