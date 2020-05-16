@@ -69,7 +69,7 @@ ei_point_t* anchor_point(ei_surface_t surface, ei_rect_t* rect, ei_anchor_t anch
         return point;
 }
 
-ei_color_t clear_color(ei_color_t color)
+ei_color_t dark_color(ei_color_t color)
 {
         ei_color_t color_clearer;
         if (color.blue>10) {
@@ -95,7 +95,7 @@ ei_color_t clear_color(ei_color_t color)
 }
 
 
-ei_color_t dark_color(ei_color_t color)
+ei_color_t clear_color(ei_color_t color)
 {
         ei_color_t color_darker;
         if (color.blue<254) {
@@ -121,7 +121,7 @@ ei_color_t dark_color(ei_color_t color)
 }
 
 
-void draw_up_and_down_relief(ei_rect_t* rect_to_fill, ei_surface_t surface, ei_color_t color, ei_rect_t* clipper, ei_bool_t clear_up)
+void draw_up_and_down_relief(ei_rect_t* rect_to_fill, ei_surface_t surface, ei_color_t color, ei_bool_t clear_up)
 {
 
         //up
@@ -143,10 +143,10 @@ void draw_up_and_down_relief(ei_rect_t* rect_to_fill, ei_surface_t surface, ei_c
         list_point_up2->next = list_point_up3;
         list_point_up3->next = NULL;
         if (clear_up == EI_TRUE) {
-                ei_draw_polygon(rect_to_fill, list_point_up1, clear_color(color), clipper);
+                ei_draw_polygon(surface, list_point_up1, clear_color(color), rect_to_fill);
         }
         else{
-                ei_draw_polygon(rect_to_fill, list_point_up1, dark_color(color), clipper);
+                ei_draw_polygon(surface, list_point_up1, dark_color(color), rect_to_fill);
         }
         free(list_point_up1);
         free(list_point_up2);
@@ -173,12 +173,13 @@ void draw_up_and_down_relief(ei_rect_t* rect_to_fill, ei_surface_t surface, ei_c
         list_point_down2->next = list_point_down3;
         list_point_down3->next = NULL;
         if (clear_up==EI_TRUE) {
-                ei_draw_polygon(rect_to_fill, list_point_down1, dark_color(color), clipper);
+                ei_draw_polygon(surface, list_point_down1, dark_color(color), rect_to_fill);
         }
         else{
-                ei_draw_polygon(rect_to_fill, list_point_down1, clear_color(color), clipper);
+                ei_draw_polygon(surface, list_point_down1, clear_color(color), rect_to_fill);
         }
         free(list_point_down1);
         free(list_point_down2);
         free(list_point_down3);
+
 }
