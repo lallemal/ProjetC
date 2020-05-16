@@ -145,7 +145,7 @@ void draw_up_and_down_relief(ei_rect_t* rect_to_fill, ei_surface_t surface, ei_c
         if (clear_up == EI_TRUE) {
                 ei_draw_polygon(surface, list_point_up1, clear_color(color), rect_to_fill);
         }
-        else{
+        if (clear_up== EI_FALSE){
                 ei_draw_polygon(surface, list_point_up1, dark_color(color), rect_to_fill);
         }
         free(list_point_up1);
@@ -175,11 +175,14 @@ void draw_up_and_down_relief(ei_rect_t* rect_to_fill, ei_surface_t surface, ei_c
         if (clear_up==EI_TRUE) {
                 ei_draw_polygon(surface, list_point_down1, dark_color(color), rect_to_fill);
         }
-        else{
+        if (clear_up==EI_FALSE){
                 ei_draw_polygon(surface, list_point_down1, clear_color(color), rect_to_fill);
         }
         free(list_point_down1);
         free(list_point_down2);
         free(list_point_down3);
 
+
+
 }
+

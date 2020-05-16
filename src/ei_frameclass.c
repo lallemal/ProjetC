@@ -12,6 +12,7 @@
 #include "ei_widgetclass.h"
 #include "ei_widget.h"
 #include "ei_draw.h"
+#include "ei_application.h"
 #include "draw_tools.h"
 
 
@@ -89,7 +90,6 @@ void ei_frame_drawfunc(struct	ei_widget_t*	widget,
         ei_frame_t* frame=(ei_frame_t*)widget;
         hw_surface_lock(surface);
         ei_rect_t *rect_to_fill=malloc(sizeof(ei_rect_t));
-        ei_rect_t* new_clipper=malloc(sizeof(ei_rect_t));
         ei_rect_t* rect_tot = malloc(sizeof(ei_rect_t));
         //on prend les deux cas clipper nul et clipper non nul pour y associer un rectangle qu est concerné par les fonctions de dessins
         //dans le cas ou le clipper est NULL, on prend toute la surface comme délimitation (et on prend en compte la présence ou non d'une bordure)
@@ -100,10 +100,6 @@ void ei_frame_drawfunc(struct	ei_widget_t*	widget,
                 rect_to_fill->top_left.y = rect_surface->top_left.y + frame->border_width;
                 rect_to_fill->size.width = rect_surface->size.width - 2*(frame->border_width);
                 rect_to_fill->size.height = rect_surface->size.height - 2*(frame->border_width);
-                new_clipper->top_left.x = rect_surface->top_left.x +frame->border_width;
-                new_clipper->top_left.y = rect_surface->top_left.x + frame->border_width;
-                new_clipper->size.width = rect_surface->size.width - 2*(frame->border_width);
-                new_clipper->size.height = rect_surface->size.height - 2*(frame->border_width);
                 *rect_tot = *rect_surface;
                 free(rect_surface);
         }
@@ -155,30 +151,54 @@ void ei_frame_drawfunc(struct	ei_widget_t*	widget,
 
         //Création de relief
         int border= frame->border_width;
-        ei_surface_t surface_copy = surface;
-
         //on considère le rectangle total (bordure comprise) (rect_tot)
         if (border>0) {
 
+                //Trop laid mais ça marche
+                //ei_rect_t* demi_rect_right= malloc(sizeof(ei_rect_t));
+                //ei_rect_t* demi_rect_left=malloc(sizeof(ei_rect_t));
+                //demi_rect_right->top_left.x=(rect_tot->top_left.x+rect_tot->size.width)/2;
+                //demi_rect_right->top_left.y=rect_tot->top_left.y;
+                //demi_rect_right->size.width=rect_tot->size.width/2;
+                //demi_rect_right->size.height=rect_tot->size.height;
+                //demi_rect_left->top_left.x=rect_tot->top_left.x;
+                //demi_rect_left->top_left.y=rect_tot->top_left.y;
+                //demi_rect_left->size.width=rect_tot->size.width/2;
+                //demi_rect_left->size.height=rect_tot->size.height;
+
                 if (frame->relief == ei_relief_raised) {
-                        hw_surface_lock(surface_copy);
-                        draw_up_and_down_relief(rect_tot, surface_copy, frame->color, EI_TRUE);
-                        ei_copy_surface(surface, rect_tot, surface_copy, rect_tot,hw_surface_has_alpha(surface_copy));
-                        hw_surface_unlock(surface_copy);
+                        draw_up_and_down_relief(rect_tot, surface, frame->color, EI_TRUE);
+
+                        //trop laid mais ça marche
+                        //ei_color_t color_to_fill_right;
+                        //ei_color_t color_to_fill_left;
+                        //color_to_fill_right = dark_color(color_back);
+                        //color_to_fill_left = clear_color(color_back);
+                        //ei_fill(surface, &color_to_fill_left, demi_rect_left);
+                        //ei_fill(surface, &color_to_fill_right, demi_rect_right);
+
                 }
                 if (frame->relief == ei_relief_sunken) {
-                        hw_surface_lock(surface_copy);
-                        draw_up_and_down_relief(rect_tot, surface_copy, frame->color, EI_FALSE);
-                        ei_copy_surface(surface, rect_tot, surface_copy, rect_tot,hw_surface_has_alpha(surface_copy));
-                        hw_surface_unlock(surface_copy);
+                        draw_up_and_down_relief(rect_tot, surface, frame->color, EI_FALSE);
+
+                        //Trop laid mais ça marche
+                        //ei_color_t color_to_fill_right;
+                        //ei_color_t color_to_fill_left;
+                        //color_to_fill_right = clear_color(color_back);
+                        //color_to_fill_left = dark_color(color_back);
+                        //ei_fill(surface, &color_to_fill_left, demi_rect_left);
+                        //ei_fill(surface, &color_to_fill_right, demi_rect_right);
                 }
                 if (frame->relief == ei_relief_none){
                         ei_color_t color_to_fill;
                         color_to_fill = dark_color(color_back);
                         ei_fill(surface, &color_to_fill, rect_tot);
-                }
-        }
 
+                }
+                //Trop laid mais ça marche
+                //free(demi_rect_left);
+                //free(demi_rect_right);
+        }
 
         //remplissage de rect_to_fill
         ei_fill(surface, &color_back, rect_to_fill);
@@ -203,54 +223,33 @@ void ei_frame_drawfunc(struct	ei_widget_t*	widget,
 
         //mise en place de la liste contenant les rectangles à update (si NULL update toute la surface)
         //pour le texte et la couleur (si il y a du texte)
-        ei_linked_rect_t *liste_rect1=malloc(sizeof(ei_linked_rect_t));
-        ei_linked_rect_t *liste_rect2=malloc(sizeof(ei_linked_rect_t));
-        ei_linked_rect_t *liste_rect3 = malloc(sizeof(ei_linked_rect_t));
 
-        if (clipper == NULL){
-                liste_rect1 = NULL;
-        }
-        else {
-                if (frame->border_width == 0) {
-                        liste_rect1->rect = *rect_tot;
-                        liste_rect1->next = NULL;
+        if (border == 0) {
+                ei_app_invalidate_rect(rect_to_fill);
 
-                        //pour l'image (si il y a une image
-                        if (frame->img != NULL) {
-                                liste_rect2->rect = *rect_img;
-                                liste_rect2->next = NULL;
-                                liste_rect1->next = liste_rect2;
-                        }
+                //pour l'image (si il y a une image
+                if (frame->img != NULL) {
+                        ei_app_invalidate_rect(rect_img);
+
                 }
-                else{
-                        liste_rect1->rect = *rect_to_fill;
-                        liste_rect2->rect = *rect_tot;
-                        liste_rect1->next = liste_rect2;
-                        liste_rect2->next= NULL;
+        }
+        else{
+                ei_app_invalidate_rect(rect_tot);
+                ei_app_invalidate_rect(rect_to_fill);
 
-                        //pour l'image (si il y a une image
-                        if (frame->img != NULL) {
-                                liste_rect3->rect = *rect_img;
-                                liste_rect3->next = NULL;
-                                liste_rect2->next = liste_rect3;
-                        }
+                //pour l'image (si il y a une image
+                if (frame->img != NULL) {
+                        ei_app_invalidate_rect(rect_img);
                 }
         }
 
 
-
-
-        //on unlock et update les changements
+        //on unlock les changements
         hw_surface_unlock(surface);
-        hw_surface_update_rects(surface, liste_rect1);
 
         //on libère la mémoire
-        free(liste_rect2);
-        free(liste_rect1);
-        free(liste_rect3);
         free(rect_to_fill);
         free(rect_img);
-        free(new_clipper);
         free(rect_tot);
 }
 
