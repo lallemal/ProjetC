@@ -47,7 +47,7 @@ void ei_app_invalidate_rect(ei_rect_t* rect)
 			ei_linked_rect_t* newElement = malloc(sizeof(ei_linked_rect_t));
 			newElement->rect = *rect;
 			newElement->next = NULL;
-			if (list_rect_head == list_rect_tail) {
+			if (list_rect_head == NULL) {
 				list_rect_head = newElement;
 				list_rect_tail = newElement;
 			}
@@ -82,10 +82,12 @@ void ei_app_run(void)
 	ei_event_t event;
 	event.type = ei_ev_none;
 	while (running) {
-		rect_status = LIST_RECT_NORMAL;
-		free_linked_rect(list_rect_head);
 		draw_widgets(rootWidget, main_window, pick_surface);
 		hw_surface_update_rects(main_window, list_rect_head);
+		free_linked_rect(list_rect_head);
+		list_rect_head = NULL;
+		list_rect_tail = NULL;
+		rect_status = LIST_RECT_NORMAL;
 		if (event.type == ei_ev_keydown) {
 			ei_app_quit_request();
 		}
