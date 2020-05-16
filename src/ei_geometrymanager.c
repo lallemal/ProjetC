@@ -2,8 +2,10 @@
 // Created by devri on 13/05/2020.
 //
 #include "ei_placer.h"
+#include "ei_utils.h"
 #include "utils.h"
-
+#include "stdlib.h"
+#include "string.h"
 ei_geometrymanager_t *actual = NULL;
 
 void	                ei_geometrymanager_register	(ei_geometrymanager_t* geometrymanager){
@@ -15,21 +17,27 @@ void	                ei_geometrymanager_register	(ei_geometrymanager_t* geometry
 
 
 ei_geometrymanager_t*	ei_geometrymanager_from_name	(ei_geometrymanager_name_t name){
-        ei_geometrymanager_t *listof = actual;
+        ei_geometrymanager_t *choice = actual;
         while (actual != NULL){
-                if(is_name_equal(listof->name, name)){
-                        return listof;
+                if(is_name_equal(choice->name, name)){
+                        return choice;
                 }
-                listof = actual;
+                choice = actual;
         }
 }
 
 void			ei_geometrymanager_unmap	(ei_widget_t*		widget){
-        if(widget->geom_params == NULL)
-                return;
-        else{
-                return;
+        if (is_defined(widget->geom_params)){
+                widget->geom_params->manager->releasefunc(widget);
+                free(widget->geom_params);
+                widget->geom_params = NULL;
         }
+        ei_widget_t                     *child;
+        while (child){
+                ei_geometrymanager_unmap(child);
+                child = child->next_sibling;
+        }
+        widget->screen_location = ei_rect_zero();
 }
 
 void 			ei_register_placer_manager 	(void){
@@ -44,8 +52,6 @@ void 			ei_register_placer_manager 	(void){
         ei_geometrymanager_register(new_geomanager);
 }
 
-
-
 void			ei_place			(ei_widget_t*		widget,
                                                              ei_anchor_t*		anchor,
                                                              int*			x,
@@ -57,23 +63,33 @@ void			ei_place			(ei_widget_t*		widget,
                                                              float*			rel_width,
                                                              float*			rel_height){
 
+        ei_placer_t *to_configure;
 
-        if (!is_defined(widget->geom_params)){
-                widget->geom_params->manager = safe_malloc(sizeof(ei_placer_t));
-        } else{
-                do_nothing();
+        if (is_defined(widget->geom_params)){
+                if (widget->geom_params->manager->name == "placer"){
+                        to_configure = widget->geom_params;
+                } else {
+                        ei_geometrymanager_unmap(widget);
+                }
+
+
         }
 
-        ei_placer_t *customized =  ((ei_placer_t *)widget->geom_params);
+        if (!is_defined(widget->geom_params)){
+                to_configure = safe_malloc(sizeof(ei_placer_t));
+                to_configure->manager = ei_geometrymanager_from_name("placer");
+                widget->geom_params = to_configure;
+        }
 
-        is_defined(x)           ? customized->x = x                     : do_nothing();
-        is_defined(y)           ? customized->y = y                     : do_nothing();
-        is_defined(width)       ? customized->width = width             : do_nothing();
-        is_defined(height)      ? customized->height = height           : do_nothing();
-        is_defined(rel_x)       ? customized->rel_x = rel_x             : do_nothing();
-        is_defined(rel_y)       ? customized->rel_y = rel_y             : do_nothing();
-        is_defined(rel_width)   ? customized->rel_width = rel_width     : do_nothing();
-        is_defined(rel_height)  ? customized->rel_height = rel_height   : do_nothing();
+        to_configure->anchor            = is_defined(anchor)    ? *anchor       : ei_anc_northwest;
+        to_configure->x                 = is_defined(x)         ? *x            : 0;
+        to_configure->y                 = is_defined(y)         ? *y            : 0;
+        to_configure->height            = is_defined(height)    ? *height       : widget->requested_size.height;
+        to_configure->width             = is_defined(width)     ? *width        : widget->requested_size.width;
+        to_configure->rel_x             = is_defined(rel_x)     ? *rel_x        : 0.0;
+        to_configure->rel_y             = is_defined(rel_y)     ? *rel_y        : 0.0;
+        to_configure->rel_width         = is_defined(rel_width) ? *rel_width    : 0.0;
+        to_configure->rel_height        = is_defined(rel_height)? *rel_height   : 0.0;
 
         ei_run_func(widget);
 }

@@ -1,7 +1,9 @@
 //
 // Created by devri on 15/05/2020.
 //
-
+#include "string.h"
+#include "stdio.h"
+#include "stdlib.h"
 #include "utils.h"
 int                     is_name_equal(ei_geometrymanager_name_t actual_name, ei_geometrymanager_name_t name){
         return strcmp(actual_name, name);
