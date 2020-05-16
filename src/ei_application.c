@@ -82,6 +82,8 @@ void ei_app_run(void)
 	ei_event_t event;
 	event.type = ei_ev_none;
 	while (running) {
+		rect_status = LIST_RECT_NORMAL;
+		free_linked_rect(list_rect_head);
 		draw_widgets(rootWidget, main_window, pick_surface);
 		hw_surface_update_rects(main_window, list_rect_head);
 		if (event.type == ei_ev_keydown) {
