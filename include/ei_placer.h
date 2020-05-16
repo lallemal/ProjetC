@@ -21,5 +21,8 @@ typedef struct ei_placer_t{
 void                    ei_run_func                     (struct ei_widget_t*	widget);
 void                    ei_release_func                 (struct ei_widget_t*	widget);
 
-
+/**
+ * @brief	Tells if a relative attribute us set
+ */
+int                     is_set_relative                 (float rel);
 #endif //PROJETC_IG_EI_PLACER_H
