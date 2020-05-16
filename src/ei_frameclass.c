@@ -154,40 +154,18 @@ void ei_frame_drawfunc(struct	ei_widget_t*	widget,
         //on considère le rectangle total (bordure comprise) (rect_tot)
         if (border>0) {
 
-                //Trop laid mais ça marche
-                //ei_rect_t* demi_rect_right= malloc(sizeof(ei_rect_t));
-                //ei_rect_t* demi_rect_left=malloc(sizeof(ei_rect_t));
-                //demi_rect_right->top_left.x=(rect_tot->top_left.x+rect_tot->size.width)/2;
-                //demi_rect_right->top_left.y=rect_tot->top_left.y;
-                //demi_rect_right->size.width=rect_tot->size.width/2;
-                //demi_rect_right->size.height=rect_tot->size.height;
-                //demi_rect_left->top_left.x=rect_tot->top_left.x;
-                //demi_rect_left->top_left.y=rect_tot->top_left.y;
-                //demi_rect_left->size.width=rect_tot->size.width/2;
-                //demi_rect_left->size.height=rect_tot->size.height;
-
                 if (frame->relief == ei_relief_raised) {
-                        draw_up_and_down_relief(rect_tot, surface, frame->color, EI_TRUE);
+                        draw_down_relief(rect_tot, surface, frame->color, EI_TRUE);
 
-                        //trop laid mais ça marche
-                        //ei_color_t color_to_fill_right;
-                        //ei_color_t color_to_fill_left;
-                        //color_to_fill_right = dark_color(color_back);
-                        //color_to_fill_left = clear_color(color_back);
-                        //ei_fill(surface, &color_to_fill_left, demi_rect_left);
-                        //ei_fill(surface, &color_to_fill_right, demi_rect_right);
+                        draw_up_relief(rect_tot, surface, frame->color, EI_TRUE);
+
 
                 }
                 if (frame->relief == ei_relief_sunken) {
-                        draw_up_and_down_relief(rect_tot, surface, frame->color, EI_FALSE);
+                        draw_up_relief(rect_tot, surface, frame->color, EI_FALSE);
 
-                        //Trop laid mais ça marche
-                        //ei_color_t color_to_fill_right;
-                        //ei_color_t color_to_fill_left;
-                        //color_to_fill_right = clear_color(color_back);
-                        //color_to_fill_left = dark_color(color_back);
-                        //ei_fill(surface, &color_to_fill_left, demi_rect_left);
-                        //ei_fill(surface, &color_to_fill_right, demi_rect_right);
+                        draw_down_relief(rect_tot, surface, frame->color, EI_FALSE);
+
                 }
                 if (frame->relief == ei_relief_none){
                         ei_color_t color_to_fill;
@@ -195,9 +173,7 @@ void ei_frame_drawfunc(struct	ei_widget_t*	widget,
                         ei_fill(surface, &color_to_fill, rect_tot);
 
                 }
-                //Trop laid mais ça marche
-                //free(demi_rect_left);
-                //free(demi_rect_right);
+
         }
 
         //remplissage de rect_to_fill
@@ -221,7 +197,7 @@ void ei_frame_drawfunc(struct	ei_widget_t*	widget,
         }
         free(point_img);
 
-        //mise en place de la liste contenant les rectangles à update (si NULL update toute la surface)
+        //mise en place de la liste contenant les rectangles à update
         //pour le texte et la couleur (si il y a du texte)
 
         if (border == 0) {
@@ -251,6 +227,7 @@ void ei_frame_drawfunc(struct	ei_widget_t*	widget,
         free(rect_to_fill);
         free(rect_img);
         free(rect_tot);
+
 }
 
 

@@ -50,7 +50,7 @@ ei_color_t dark_color(ei_color_t color);
 
 
 /**
- * @brief	Fonction which draw up and down of the rect to make a relief.
+ * @brief	Fonction which draw up of the rect to make a relief.
  *
  * @param       rect_to_fill    rectangle in whiwh there is the separatition in two colors to make the relief
  * @param	surface		Global surface of the frame
@@ -59,7 +59,19 @@ ei_color_t dark_color(ei_color_t color);
  * @param	clear_up	booleen which means if we want the clearer color on the top (depends on the value of relief)
  *
  */
-void draw_up_and_down_relief(ei_rect_t* rect_to_fill, ei_surface_t surface, ei_color_t color, ei_bool_t clear_up);
+void draw_up_relief(ei_rect_t* rect_to_fill, ei_surface_t surface, ei_color_t color, ei_bool_t clear_up);
+
+/**
+ * @brief	Fonction which draw down of the rect to make a relief.
+ *
+ * @param       rect_to_fill    rectangle in whiwh there is the separatition in two colors to make the relief
+ * @param	surface		Global surface of the frame
+ * @param	frame		frame which has relief
+ * @param	clipper 	clipper of the rect_to_fill
+ * @param	clear_up	booleen which means if we want the clearer color on the top (depends on the value of relief)
+ *
+ */
+void draw_down_relief(ei_rect_t* rect_to_fill, ei_surface_t surface, ei_color_t color, ei_bool_t clear_up);
 
 
 #endif /* ifndef DRAW_H */

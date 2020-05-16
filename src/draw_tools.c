@@ -72,20 +72,20 @@ ei_point_t* anchor_point(ei_surface_t surface, ei_rect_t* rect, ei_anchor_t anch
 ei_color_t dark_color(ei_color_t color)
 {
         ei_color_t color_clearer;
-        if (color.blue>10) {
-                color_clearer.blue = color.blue - 10;
+        if (color.blue>20) {
+                color_clearer.blue = color.blue - 20;
         }
         else{
                 color_clearer.blue = color.blue;
         }
-        if (color.green>10) {
-                color_clearer.green = color.green - 10;
+        if (color.green>20) {
+                color_clearer.green = color.green - 20;
         }
         else{
                 color_clearer.green = color.green;
         }
-        if (color.red>10) {
-                color_clearer.red = color.red - 10;
+        if (color.red>20) {
+                color_clearer.red = color.red - 20;
         }
         else{
                 color_clearer.red = color.red;
@@ -98,20 +98,20 @@ ei_color_t dark_color(ei_color_t color)
 ei_color_t clear_color(ei_color_t color)
 {
         ei_color_t color_darker;
-        if (color.blue<254) {
-                color_darker.blue = color.blue + 10;
+        if (color.blue<235) {
+                color_darker.blue = color.blue + 20;
         }
         else{
                 color_darker.blue = color.blue;
         }
-        if (color.green<254) {
-                color_darker.green = color.green + 10;
+        if (color.green<235) {
+                color_darker.green = color.green + 20;
         }
         else{
                 color_darker.green = color.green;
         }
-        if (color.red<254) {
-                color_darker.red = color.red + 10;
+        if (color.red<235) {
+                color_darker.red = color.red + 20;
         }
         else{
                 color_darker.red = color.red;
@@ -121,57 +121,92 @@ ei_color_t clear_color(ei_color_t color)
 }
 
 
-void draw_up_and_down_relief(ei_rect_t* rect_to_fill, ei_surface_t surface, ei_color_t color, ei_bool_t clear_up)
+void draw_up_relief(ei_rect_t* rect_to_fill, ei_surface_t surface, ei_color_t color, ei_bool_t clear_up)
 {
 
         //up
         ei_linked_point_t *list_point_up1 = malloc(sizeof(ei_linked_point_t));
         ei_linked_point_t *list_point_up2 = malloc(sizeof(ei_linked_point_t));
         ei_linked_point_t *list_point_up3 = malloc(sizeof(ei_linked_point_t));
+        ei_linked_point_t *list_point_up4 = malloc(sizeof(ei_linked_point_t));
+        ei_linked_point_t *list_point_up5 = malloc(sizeof(ei_linked_point_t));
 
-        ei_point_t first_point_up = rect_to_fill->top_left;
-        ei_point_t second_point_up = *anchor_point(surface, rect_to_fill, ei_anc_southwest,
-                                                   rect_to_fill->size.width,
-                                                   rect_to_fill->size.height);
-        ei_point_t third_point_up = *anchor_point(surface, rect_to_fill, ei_anc_northeast,
-                                                  rect_to_fill->size.width,
-                                                  rect_to_fill->size.height);
+        ei_point_t first_point_up;
+        ei_point_t second_point_up;
+        ei_point_t third_point_up;
+        ei_point_t fourth_point_up;
+        ei_point_t fifth_point_up;
+        first_point_up.x = rect_to_fill->top_left.x;
+        first_point_up.y = rect_to_fill->top_left.y;
+        second_point_up.x = rect_to_fill->top_left.x + rect_to_fill->size.width;
+        second_point_up.y = rect_to_fill->top_left.y ;
+        third_point_up.x = rect_to_fill->size.width-rect_to_fill->size.height/2;
+        third_point_up.y = rect_to_fill->size.height/2;
+        fourth_point_up.x =rect_to_fill->size.height/2;
+        fourth_point_up.y = rect_to_fill->size.height/2;
+        fifth_point_up.x = rect_to_fill->top_left.x;
+        fifth_point_up.y = rect_to_fill->top_left.y + rect_to_fill->size.height;
+
         list_point_up1->point = first_point_up;
         list_point_up2->point = second_point_up;
         list_point_up3->point = third_point_up;
+        list_point_up4->point = fourth_point_up;
+        list_point_up5->point = fifth_point_up;
         list_point_up1->next = list_point_up2;
         list_point_up2->next = list_point_up3;
-        list_point_up3->next = NULL;
-        if (clear_up == EI_TRUE) {
+        list_point_up3->next = list_point_up4;
+        list_point_up4->next = list_point_up5;
+        list_point_up5->next = NULL;
+        if (clear_up==EI_TRUE) {
                 ei_draw_polygon(surface, list_point_up1, clear_color(color), rect_to_fill);
         }
-        if (clear_up== EI_FALSE){
+        if (clear_up==EI_FALSE){
                 ei_draw_polygon(surface, list_point_up1, dark_color(color), rect_to_fill);
         }
         free(list_point_up1);
         free(list_point_up2);
         free(list_point_up3);
+        free(list_point_up4);
+        free(list_point_up5);
 
+
+}
+
+void draw_down_relief(ei_rect_t* rect_to_fill, ei_surface_t surface, ei_color_t color, ei_bool_t clear_up)
+{
         //down
         ei_linked_point_t *list_point_down1 = malloc(sizeof(ei_linked_point_t));
         ei_linked_point_t *list_point_down2 = malloc(sizeof(ei_linked_point_t));
         ei_linked_point_t *list_point_down3 = malloc(sizeof(ei_linked_point_t));
+        ei_linked_point_t *list_point_down4 = malloc(sizeof(ei_linked_point_t));
+        ei_linked_point_t *list_point_down5 = malloc(sizeof(ei_linked_point_t));
 
-        ei_point_t first_point_down =  *anchor_point(surface, rect_to_fill, ei_anc_southeast,
-                                                     rect_to_fill->size.width,
-                                                     rect_to_fill->size.height);
-        ei_point_t second_point_down = *anchor_point(surface, rect_to_fill, ei_anc_southwest,
-                                                     rect_to_fill->size.width,
-                                                     rect_to_fill->size.height);
-        ei_point_t third_point_down = *anchor_point(surface, rect_to_fill, ei_anc_northeast,
-                                                    rect_to_fill->size.width,
-                                                    rect_to_fill->size.height);
+        ei_point_t first_point_down;
+        ei_point_t second_point_down;
+        ei_point_t third_point_down;
+        ei_point_t fourth_point_down;
+        ei_point_t fifth_point_down;
+        first_point_down.x = rect_to_fill->top_left.x + rect_to_fill->size.width;
+        first_point_down.y = rect_to_fill->top_left.y + rect_to_fill->size.height;
+        second_point_down.x = rect_to_fill->top_left.x + rect_to_fill->size.width;
+        second_point_down.y = rect_to_fill->top_left.y ;
+        third_point_down.x = rect_to_fill->size.width-rect_to_fill->size.height/2;
+        third_point_down.y = rect_to_fill->size.height/2;
+        fourth_point_down.x =rect_to_fill->size.height/2;
+        fourth_point_down.y = rect_to_fill->size.height/2;
+        fifth_point_down.x = rect_to_fill->top_left.x;
+        fifth_point_down.y = rect_to_fill->top_left.y + rect_to_fill->size.height;
+
         list_point_down1->point = first_point_down;
         list_point_down2->point = second_point_down;
         list_point_down3->point = third_point_down;
+        list_point_down4->point = fourth_point_down;
+        list_point_down5->point = fifth_point_down;
         list_point_down1->next = list_point_down2;
         list_point_down2->next = list_point_down3;
-        list_point_down3->next = NULL;
+        list_point_down3->next = list_point_down4;
+        list_point_down4->next = list_point_down5;
+        list_point_down5->next = NULL;
         if (clear_up==EI_TRUE) {
                 ei_draw_polygon(surface, list_point_down1, dark_color(color), rect_to_fill);
         }
@@ -181,7 +216,8 @@ void draw_up_and_down_relief(ei_rect_t* rect_to_fill, ei_surface_t surface, ei_c
         free(list_point_down1);
         free(list_point_down2);
         free(list_point_down3);
-
+        free(list_point_down4);
+        free(list_point_down5);
 
 
 }
