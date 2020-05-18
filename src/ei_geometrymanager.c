@@ -6,7 +6,7 @@
 #include "utils.h"
 #include "stdlib.h"
 #include "string.h"
-ei_geometrymanager_t sentinel_geo = {"sentinel", NULL, NULL, NULL, NULL};
+ei_geometrymanager_t sentinel_geo = {"sentinel", NULL, NULL, NULL};
 ei_geometrymanager_t *actual = NULL;
 
 void	                ei_geometrymanager_register	(ei_geometrymanager_t* geometrymanager){
@@ -19,13 +19,14 @@ void	                ei_geometrymanager_register	(ei_geometrymanager_t* geometry
 
 
 ei_geometrymanager_t*	ei_geometrymanager_from_name	(ei_geometrymanager_name_t name){
-        ei_geometrymanager_t *choice = actual;
+        ei_geometrymanager_t *choice = &sentinel_geo;
         while (actual != NULL){
                 if(is_name_equal(choice->name, name)){
                         return choice;
                 }
                 choice = actual;
         }
+        return choice;
 }
 
 void			ei_geometrymanager_unmap	(ei_widget_t*		widget){
