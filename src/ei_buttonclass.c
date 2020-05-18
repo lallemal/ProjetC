@@ -95,6 +95,7 @@ void ei_button_drawfunc(struct	ei_widget_t*	widget,
                        ei_surface_t	pick_surface,
                        ei_rect_t*	clipper)
 {
+
 }
 
 
