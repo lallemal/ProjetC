@@ -3,7 +3,6 @@
 //
 
 #include "ei_placer.h"
-#include "utils.h"
 #include "ei_utils.h"
 
 int  is_set_relative(float rel){
@@ -69,7 +68,7 @@ void run_func(struct ei_widget_t*	widget){
 
 
                 }
-
+                // to avoid computation of children if geometry is the same
                 if (are_old_and_new_diff(new_screen_loc, widget->screen_location)){
                         widget->wclass->geomnotifyfunc(widget);
                         ei_widget_t *child = widget->children_head;
