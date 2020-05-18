@@ -33,6 +33,8 @@ void ei_app_create(ei_size_t main_window_size, ei_bool_t fullscreen)
 	ei_button_register_class();
 	rootWidget = ei_widget_create("frame", NULL, NULL, NULL);
 	ei_frame_configure(rootWidget, &main_window_size, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+	rootWidget->screen_location.size.width = main_window_size.width;
+	rootWidget->screen_location.size.height = main_window_size.height;
 	ei_default_font = hw_text_font_create(ei_default_font_filename, ei_style_normal, ei_font_default_size);
 }
 
@@ -83,6 +85,7 @@ void ei_app_free(void)
 
 	hw_quit();
 }
+
 
 
 void ei_app_quit_request(void)
