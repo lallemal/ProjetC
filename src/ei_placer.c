@@ -42,28 +42,28 @@ void ei_run_func(struct ei_widget_t*	widget){
                         case ei_anc_northwest:
                                 break;
                         case ei_anc_west:
-                                ei_point_sub(new_screen_loc.top_left, ei_point(0, half_height));
+                                new_screen_loc.top_left = ei_point_sub(new_screen_loc.top_left, ei_point(0, half_height));
                                 break;
                         case ei_anc_center:
-                                ei_point_sub(new_screen_loc.top_left, ei_point(half_width, half_height));
+                                new_screen_loc.top_left = ei_point_sub(new_screen_loc.top_left, ei_point(half_width, half_height));
                                 break;
                         case ei_anc_north:
-                                ei_point_sub(new_screen_loc.top_left, ei_point(half_width, 0));
+                                new_screen_loc.top_left = ei_point_sub(new_screen_loc.top_left, ei_point(half_width, 0));
                                 break;
                         case ei_anc_south:
-                                ei_point_sub(new_screen_loc.top_left, ei_point(half_width, 2 * half_height));
+                                new_screen_loc.top_left = ei_point_sub(new_screen_loc.top_left, ei_point(half_width, 2 * half_height));
                                 break;
                         case ei_anc_east:
-                                ei_point_sub(new_screen_loc.top_left, ei_point(2 * half_width, half_height));
+                                new_screen_loc.top_left = ei_point_sub(new_screen_loc.top_left, ei_point(2 * half_width, half_height));
                                 break;
                         case ei_anc_northeast:
-                                ei_point_sub(new_screen_loc.top_left, ei_point(2 * half_width, 0));
+                                new_screen_loc.top_left = ei_point_sub(new_screen_loc.top_left, ei_point(2 * half_width, 0));
                                 break;
                         case ei_anc_southeast:
-                                ei_point_sub(new_screen_loc.top_left, ei_point(2 * half_width, 2 * half_height));
+                                new_screen_loc.top_left = ei_point_sub(new_screen_loc.top_left, ei_point(2 * half_width, 2 * half_height));
                                 break;
                         case ei_anc_southwest:
-                                ei_point_sub(new_screen_loc.top_left, ei_point(0, 2 * half_height));
+                                new_screen_loc.top_left = ei_point_sub(new_screen_loc.top_left, ei_point(0, 2 * half_height));
                                 break;
 
 

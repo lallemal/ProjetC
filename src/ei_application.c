@@ -6,6 +6,7 @@
 #include "ei_event.h"
 #include "ei_widgetclass.h"
 #include "ei_widget.h"
+#include "ei_geometrymanager.h"
 #include "traverse_tools.h"
 #include "ei_types.h"
 
@@ -66,10 +67,20 @@ void ei_app_free(void)
 	hw_surface_free(pick_surface);
 	hw_surface_free(main_window);
 	ei_widget_destroy(rootWidget);
+
 	ei_widgetclass_t* sentinel = ei_widgetclass_from_name("sentinel");
 	if (sentinel->next != NULL) {
 		destroy_widgetclass(sentinel->next);
 	}
+
+        ei_geometrymanager_t *current = ei_geometrymanager_from_name("sentinel");
+	ei_geometrymanager_t *next    = current->next;
+	while (next){
+                current = next;
+                next    = current->next;
+                free(current);
+	}
+
 	hw_quit();
 }
 

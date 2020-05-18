@@ -6,9 +6,11 @@
 #include "utils.h"
 #include "stdlib.h"
 #include "string.h"
+ei_geometrymanager_t sentinel = {"sentinel", NULL, NULL, NULL, NULL};
 ei_geometrymanager_t *actual = NULL;
 
 void	                ei_geometrymanager_register	(ei_geometrymanager_t* geometrymanager){
+        sentinel.next = geometrymanager;
         geometrymanager->next = actual;
         actual = geometrymanager;
 
@@ -84,7 +86,6 @@ void			ei_place			(ei_widget_t*		widget,
                 to_configure->manager = (ei_geometry_param_t *)ei_geometrymanager_from_name("placer");
                 widget->geom_params = (ei_geometry_param_t *)to_configure;
         }
-
         to_configure->anchor            = is_defined(anchor)    ? *anchor       : ei_anc_northwest;
         to_configure->x                 = is_defined(x)         ? *x            : 0;
         to_configure->y                 = is_defined(y)         ? *y            : 0;
