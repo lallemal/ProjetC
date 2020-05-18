@@ -11,6 +11,7 @@
 
 #include "ei_widgetclass.h"
 #include "ei_widget.h"
+#include "ei_types.h"
 #include "ei_draw.h"
 #include "ei_application.h"
 #include "draw_tools.h"
@@ -32,6 +33,8 @@ typedef struct ei_frame {
 	ei_surface_t	img;
 	ei_rect_t*	img_rect;
 	ei_anchor_t	img_anchor;
+	int             font_size;
+	ei_fontstyle_t  fontstyle;
 } ei_frame_t;
 
 
@@ -78,6 +81,8 @@ void ei_frame_setdefaultsfunc(ei_widget_t* widget)
         frame->img_anchor = ei_anc_center;
 	frame->widget.screen_location.top_left.x = 0;
 	frame->widget.screen_location.top_left.y = 0;
+	frame->fontstyle = ei_style_normal;
+	frame->font_size = ei_font_default_size;
 }
 
 
@@ -134,9 +139,10 @@ void ei_frame_drawfunc(struct	ei_widget_t*	widget,
         int* width_text = malloc(sizeof(int));
         if (frame->text != NULL){
                 hw_text_compute_size(frame->text, frame->text_font, width_text, height_text);
-                int64_t height_text_int= (int64_t)height_text;
-                int64_t width_text_int= (int64_t)width_text;
-                point_text=anchor_point(surface, rect_to_fill, frame->text_anchor, width_text_int, height_text_int);
+                int64_t height_text_int = (int64_t) height_text;
+                int64_t width_text_int = (int64_t) width_text;
+                point_text = anchor_point(surface, rect_to_fill, frame->text_anchor, width_text_int,height_text_int);
+
         }
         free(height_text);
         free(width_text);
@@ -163,7 +169,6 @@ void ei_frame_drawfunc(struct	ei_widget_t*	widget,
                 }
                 if (frame->relief == ei_relief_sunken) {
                         draw_up_relief(rect_tot, surface, frame->color, EI_FALSE);
-
                         draw_down_relief(rect_tot, surface, frame->color, EI_FALSE);
 
                 }
