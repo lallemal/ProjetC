@@ -52,7 +52,9 @@ void ei_frame_releasefunc(ei_widget_t*	widget)
 	//free(&(frame->text_font));
 	//free(&(frame->text_anchor));
 	//free(&(frame->text_color));
-	//free(&(frame->img));
+	if (frame->img != NULL) {
+		hw_surface_free(frame->img);
+	}
 	if (frame->img_rect != NULL) {
 		free(frame->img_rect);
 	}
@@ -78,6 +80,8 @@ void ei_frame_setdefaultsfunc(ei_widget_t* widget)
         frame->img_anchor = ei_anc_center;
 	frame->widget.screen_location.top_left.x = 0;
 	frame->widget.screen_location.top_left.y = 0;
+	widget->requested_size.width = 0;
+	widget->requested_size.height = 0;
 }
 
 
@@ -268,12 +272,11 @@ void ei_frame_configure(ei_widget_t*		widget,
 	}
 	if (border_width != NULL) {
 		frame->border_width = *border_width;
+		widget->requested_size.width = max(widget->requested_size.width, 2*frame->border_width);
+		widget->requested_size.height = max(widget->requested_size.height, 2*frame->border_width);
 	}
 	if (relief != NULL) {
 		frame->relief = *relief;
-	}
-	if (text != NULL) {
-		frame->text = *text;
 	}
 	if (text_font != NULL) {
 		frame->text_font = *text_font;
@@ -281,11 +284,33 @@ void ei_frame_configure(ei_widget_t*		widget,
 	if (text_color != NULL) {
 		frame->text_color = *text_color;
 	}
-	if (img != NULL) {
-		frame->img = *img;
+	if (text != NULL) {
+		frame->text = *text;
+		if (frame->text_font != NULL) {
+			int height, width;
+			hw_text_compute_size(frame->text, frame->text_font, &width, &height);
+			widget->requested_size.width = max(widget->requested_size.width, width);
+			widget->requested_size.height = max(widget->requested_size.height, height);
+		}
 	}
 	if (img_rect != NULL) {
 		frame->img_rect = *img_rect;
+	}
+	if (img != NULL) {
+		frame->img = *img;
+		int height = 0;
+		int width = 0;
+		if (frame->img_rect != NULL) {
+			height = frame->img_rect->size.height;
+			width = frame->img_rect->size.width;
+		}
+		else {
+			ei_size_t img_size = hw_surface_get_size(frame->img);
+			height = img_size.height;
+			width = img_size.width;
+		}
+		widget->requested_size.height = height;
+		widget->requested_size.width = width;
 	}
 	if (img_anchor != NULL) {
 		frame->img_anchor = *img_anchor;
