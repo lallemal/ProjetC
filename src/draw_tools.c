@@ -12,6 +12,7 @@
 #include "ei_widgetclass.h"
 #include "ei_widget.h"
 #include "ei_draw.h"
+#include "math.h"
 #include "draw_tools.h"
 
 
@@ -222,3 +223,48 @@ void draw_down_relief(ei_rect_t* rect_to_fill, ei_surface_t surface, ei_color_t 
 
 }
 
+ei_linked_point_t* arc_point(ei_point_t center, int radius, int corner_begin, int corner_end)
+{
+        int x_center = center.x;
+        int y_center = center.y;
+        ei_linked_point_t* list_point[10];
+        for (int i=0; i<10; i++){
+                if (i<9){
+                        list_point[i]->point.x = x_center + radius*cos(corner_begin + i*(1/10)*(corner_end - corner_begin));
+                        list_point[i]->point.y = y_center + radius*sin(corner_begin + i*(1/10)*(corner_end - corner_begin));
+                        list_point[i]->next = list_point[i+1];
+                }
+                else{
+                        list_point[i]->point.x = x_center + radius*cos(corner_begin + i*(1/10)*(corner_end - corner_begin));
+                        list_point[i]->point.y = y_center + radius*sin(corner_begin + i*(1/10)*(corner_end - corner_begin));
+                        list_point[i]->next = NULL;
+                }
+        }
+        return list_point[10];
+
+}
+
+ei_linked_point_t* rounded_frame(ei_rect_t* rect, int radius)
+{
+        ei_point_t center_top_left;
+        center_top_left.x = rect->top_left.x + radius;
+        center_top_left.y = rect->top_left.y + radius;
+        ei_point_t center_top_right;
+        center_top_right.x = rect->top_left.x + rect->size.width - radius;
+        center_top_right.y = rect->top_left.y + radius;
+        ei_point_t center_bottom_left;
+        center_bottom_left.x = rect->top_left.x + radius;
+        center_bottom_left.y = rect->top_left.y + rect->size.height - radius;
+        ei_point_t center_bottom_right;
+        center_bottom_right.x = rect->top_left.x + rect->size.width - radius;
+        center_bottom_right.y = rect->top_left.y + rect->size.height - radius;
+        ei_linked_point_t* rounded_top_left = arc_point(center_top_left, radius, (M_PI)/2, M_PI);
+        ei_linked_point_t* rounded_top_right = arc_point(center_top_right, radius,0,  (M_PI)/2 );
+        ei_linked_point_t* rounded_bottom_left = arc_point(center_bottom_left, radius, M_PI, (3*M_PI)/2);
+        ei_linked_point_t* rounded_bottom_right = arc_point(center_bottom_right, radius, (3*M_PI)/2, 2*M_PI);
+        rounded_top_left[10].next = &rounded_top_right[0];
+        rounded_top_right[10].next = &rounded_bottom_right[0];
+        rounded_bottom_right[10].next = &rounded_bottom_left[0];
+        return rounded_top_left;
+
+}

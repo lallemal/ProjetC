@@ -118,12 +118,12 @@ void ei_frame_drawfunc(struct	ei_widget_t*	widget,
                 int width_frame = widget->screen_location.size.width;
 
                 rect_to_fill->top_left.x=max(x_frame, x_clipper) + frame->border_width;
-                rect_to_fill->top_left.y=max(y_clipper, y_frame) +frame->border_width;
+                rect_to_fill->top_left.y=max(y_clipper, y_frame) + frame->border_width;
                 rect_to_fill->size.width=abs(min(x_clipper+width_clipper, x_frame+width_frame)-max(x_clipper, x_frame))-2*(frame->border_width);
                 rect_to_fill->size.height=abs(max(y_frame, y_clipper)-min(y_frame+height_frame, y_clipper+height_clipper))-2*(frame->border_width);
 
                 rect_tot->top_left.x=max(x_frame, x_clipper);
-                rect_tot->top_left.y=max(y_clipper, x_clipper);
+                rect_tot->top_left.y=max(y_clipper, y_frame);
                 rect_tot->size.width=abs(min(x_clipper+width_clipper, x_frame+width_frame)-max(x_clipper, x_frame));
                 rect_tot->size.height=abs(max(y_frame, y_clipper)-min(y_frame+height_frame, y_clipper+height_clipper));
         }
@@ -133,23 +133,20 @@ void ei_frame_drawfunc(struct	ei_widget_t*	widget,
         //On récupère le point qui rattache le texte
         //Si clipper==NULL =>  rect_to_fill== surface - bordure
         //si text=!NULL
-        ei_point_t* point_text=malloc(sizeof(ei_point_t));
-        int* height_text=malloc(sizeof(int));
-        int* width_text = malloc(sizeof(int));
+        ei_point_t* point_text;
+        int height_text;
+        int width_text;
         if (frame->text != NULL){
-                hw_text_compute_size(frame->text, frame->text_font, width_text, height_text);
-                int64_t height_text_int = (int64_t) height_text;
-                int64_t width_text_int = (int64_t) width_text;
-                point_text = anchor_point(surface, rect_to_fill, frame->text_anchor, width_text_int,height_text_int);
+                hw_text_compute_size(frame->text, frame->text_font, &width_text, &height_text);
+                point_text = anchor_point(surface, rect_to_fill, frame->text_anchor, width_text,height_text);
 
         }
-        free(height_text);
-        free(width_text);
+
 
         //On récupère le point qui rattache l'image
         //Si clipper==NULL =>  rect__to_fill== surface - bordure
         //si img=!NULL
-        ei_point_t* point_img=malloc(sizeof(ei_point_t));
+        ei_point_t* point_img;
         if (frame->img != NULL){
                 point_img = anchor_point(surface, rect_to_fill, frame->img_anchor, frame->img_rect->size.width, frame->img_rect->size.height);
         }
@@ -186,8 +183,8 @@ void ei_frame_drawfunc(struct	ei_widget_t*	widget,
         //mise en place du texte
         if (frame->text != NULL){
                 ei_draw_text(surface, point_text, frame->text, frame->text_font, frame->text_color, rect_to_fill);
+                free(point_text);
         }
-        free(point_text);
 
         //mise en place de l'image
         ei_rect_t* rect_img=malloc(sizeof(ei_rect_t));
@@ -198,8 +195,9 @@ void ei_frame_drawfunc(struct	ei_widget_t*	widget,
                 rect_img->size.height=min(rect_to_fill->size.height, frame->img_rect->size.height);
                 ei_copy_surface(surface, rect_img, frame->img, frame->img_rect, hw_surface_has_alpha(frame->img));
                 hw_surface_unlock(frame->img);
+                free(point_img);
         }
-        free(point_img);
+
 
         //mise en place de la liste contenant les rectangles à update
         //pour le texte et la couleur (si il y a du texte)

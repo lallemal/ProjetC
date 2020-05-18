@@ -73,5 +73,29 @@ void draw_up_relief(ei_rect_t* rect_to_fill, ei_surface_t surface, ei_color_t co
  */
 void draw_down_relief(ei_rect_t* rect_to_fill, ei_surface_t surface, ei_color_t color, ei_bool_t clear_up);
 
+/**
+ * @brief	Fonction which create an arc of circle.
+ *
+ * @param       center         point which is the center of the circle
+ * @param       radius         int which is the radius of the circle
+ * @param       corner_begin   corner of the beginning of the arc
+ * @param       corner_end     corner of the end of the arc
+ *
+ * @return		       a linked point list which represents the arc
+ */
+
+ei_linked_point_t* arc(ei_point_t* center, int radius, int corner_begin, int corner_end);
+
+/**
+ * @brief	Fonction which draw a rectangle with rounded corner
+ *
+ * @param       rect           rectangle at the beggining which will have rounded corner
+ * @param       radius         int which is the radius of the arc of the rounded corners
+ *
+ * @return		       a linked point list which represents the rectangle with rounded corners
+ */
+
+ei_linked_point_t* rounded_frame(ei_rect_t* rect, int radius);
+
 
 #endif /* ifndef DRAW_H */
