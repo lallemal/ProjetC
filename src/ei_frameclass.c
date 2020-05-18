@@ -33,8 +33,6 @@ typedef struct ei_frame {
 	ei_surface_t	img;
 	ei_rect_t*	img_rect;
 	ei_anchor_t	img_anchor;
-	int             font_size;
-	ei_fontstyle_t  fontstyle;
 } ei_frame_t;
 
 
@@ -83,8 +81,6 @@ void ei_frame_setdefaultsfunc(ei_widget_t* widget)
         frame->img_anchor = ei_anc_center;
 	frame->widget.screen_location.top_left.x = 0;
 	frame->widget.screen_location.top_left.y = 0;
-<<<<<<< HEAD
-	frame->fontstyle = ei_style_normal;
 }
 
 
@@ -268,7 +264,7 @@ void ei_frame_configure(ei_widget_t*		widget,
 {
 	ei_frame_t* frame = (ei_frame_t *) widget;
 	if (requested_size != NULL) {
-		widget->requested_size = *requested_size;
+		widget->screen_location.size = *requested_size;
 	}
 	if (color != NULL) {
 		frame->color = *color;
@@ -289,12 +285,6 @@ void ei_frame_configure(ei_widget_t*		widget,
 	}
 	if (text != NULL) {
 		frame->text = *text;
-		if (frame->text_font != NULL) {
-			int height, width;
-			hw_text_compute_size(frame->text, frame->text_font, &width, &height);
-			widget->requested_size.width = max(widget->requested_size.width, width);
-			widget->requested_size.height = max(widget->requested_size.height, height);
-		}
 	}
 	if (img_rect != NULL) {
 		frame->img_rect = *img_rect;
