@@ -102,8 +102,7 @@ void ei_app_run(void)
 		list_rect_head = NULL;
 		list_rect_tail = NULL;
 		rect_status = LIST_RECT_NORMAL;
-                ei_app_quit_request();
-		if (event.type == ei_ev_keydown) {
+		if (event.type == ei_ev_keydown && event.param.key.key_code == 27) {
 			ei_app_quit_request();
 		}
 		hw_event_wait_next(&event);
