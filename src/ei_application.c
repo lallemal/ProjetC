@@ -62,7 +62,7 @@ void ei_app_invalidate_rect(ei_rect_t* rect)
 
 void ei_app_free(void)
 {
-	hw_text_font_free(ei_default_font);
+	//hw_text_font_free(ei_default_font);
 	hw_surface_free(pick_surface);
 	hw_surface_free(main_window);
 	ei_widget_destroy(rootWidget);
