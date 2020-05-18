@@ -1,2 +1,7 @@
+.gitignore
 **/.ccls-cache
 **/sujet
+**/cmake-build-release
+**/cmake-build-debug
+**/.idea
+.ccls

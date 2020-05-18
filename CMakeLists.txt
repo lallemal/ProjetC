@@ -43,6 +43,7 @@ elseif(${UNIX})
 	set(EIBASE			${PLATFORM_DIR}/libeibase${WORDS_BIT_SIZE}.a)
 	set(PLATFORM_LIB_FLAGS		${EIBASE}
 					-L${PLATFORM_DIR} ${LIB_FLAGS} -lm)
+	add_definitions(-g)
 
 	message(STATUS "Building for Linux with eibase: ${EI_BASE}")
 
@@ -70,12 +71,21 @@ endif(${APPLE})
 include_directories(${HEADER_PATHS})
 
 
-# target ei (libei)
+#target ei (libei)
 
 set(LIB_EI_SOURCES
-     		${SRC}/ei_geometrymanager.c
-		${SRC}/ei_placer.c
-		${SRC}/utils.c
+     	${SRC}/ei_application.c
+    	 ${SRC}/ei_widget.c
+     	${SRC}/ei_event.c
+     	${SRC}/ei_geometrymanager.c
+     	${SRC}/ei_widgetclass.c
+     	${SRC}/ei_frameclass.c
+     	${SRC}/ei_buttonclass.c
+     	${SRC}/ei_draw.c
+     	${SRC}/ei_placer.c
+     	${SRC}/ei_utils.c
+     	${SRC}/traverse_tools.c
+	${SRC}/draw_tools.c
 )
 
 add_library(ei STATIC			${LIB_EI_SOURCES})
