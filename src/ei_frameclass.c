@@ -265,7 +265,8 @@ void ei_frame_configure(ei_widget_t*		widget,
 {
 	ei_frame_t* frame = (ei_frame_t *) widget;
 	if (requested_size != NULL) {
-		widget->requested_size = *requested_size;
+		widget->requested_size.height = requested_size->height;
+		widget->requested_size.width = requested_size->width;
 	}
 	if (color != NULL) {
 		frame->color = *color;
