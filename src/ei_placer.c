@@ -15,10 +15,10 @@ int  are_old_and_new_diff (ei_rect_t r1, ei_rect_t r2){
                 r1.top_left.y != r2.top_left.y;
 
 }
-void run_func(struct ei_widget_t*	widget){
-        ei_placer_t     *datas          = widget->geom_params;
+void ei_run_func(struct ei_widget_t*	widget){
+        ei_placer_t     *datas          = (ei_placer_t  *)widget->geom_params;
         ei_rect_t       *container      = widget->parent->content_rect;
-        ei_rect_t       new_screen_loc;
+        ei_rect_t       new_screen_loc  = ei_rect_zero();
         if (widget->parent != NULL){
                 if (is_set_relative(datas->rel_width)){
                         new_screen_loc.size.width = datas->rel_width * container->size.width;
@@ -70,10 +70,10 @@ void run_func(struct ei_widget_t*	widget){
                 }
                 // to avoid computation of children if geometry is the same
                 if (are_old_and_new_diff(new_screen_loc, widget->screen_location)){
-                        widget->wclass->geomnotifyfunc(widget);
+                        //widget->wclass->geomnotifyfunc(widget);
                         ei_widget_t *child = widget->children_head;
                         while(child){
-                                run_func(child);
+                                ei_run_func(child);
                                 child = child->next_sibling;
                         }
                 }
@@ -82,6 +82,6 @@ void run_func(struct ei_widget_t*	widget){
 
 }
 
-void release_func(struct ei_widget_t*	widget){
+void ei_release_func(struct ei_widget_t*	widget){
 
 }

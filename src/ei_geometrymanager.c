@@ -70,7 +70,7 @@ void			ei_place			(ei_widget_t*		widget,
 
         if (is_defined(widget->geom_params)){
                 if (widget->geom_params->manager->name == "placer"){
-                        to_configure = widget->geom_params;
+                        to_configure = (ei_placer_t *)(widget->geom_params);
                 } else {
                         ei_geometrymanager_unmap(widget);
                 }
@@ -80,8 +80,8 @@ void			ei_place			(ei_widget_t*		widget,
 
         if (!is_defined(widget->geom_params)){
                 to_configure = safe_malloc(sizeof(ei_placer_t));
-                to_configure->manager = ei_geometrymanager_from_name("placer");
-                widget->geom_params = to_configure;
+                to_configure->manager = (ei_geometry_param_t *)ei_geometrymanager_from_name("placer");
+                widget->geom_params = (ei_geometry_param_t *)to_configure;
         }
 
         to_configure->anchor            = is_defined(anchor)    ? *anchor       : ei_anc_northwest;

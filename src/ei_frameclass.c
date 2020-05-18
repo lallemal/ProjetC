@@ -81,6 +81,7 @@ void ei_frame_setdefaultsfunc(ei_widget_t* widget)
         frame->img_anchor = ei_anc_center;
 	frame->widget.screen_location.top_left.x = 0;
 	frame->widget.screen_location.top_left.y = 0;
+	frame->widget.content_rect = &(frame->widget.screen_location);
 }
 
 
