@@ -3,7 +3,7 @@
 *
 * Author:           Robin BERTIN (Nunwan)
 * Created:          05/12/20
-* Description:      
+* Description: 
 *****************************************************************************/
 #include <stdlib.h>
 #include <string.h>
@@ -56,12 +56,12 @@ void ei_frame_releasefunc(ei_widget_t*	widget)
 	if (frame->img != NULL) {
 		hw_surface_free(frame->img);
 	}
-	if (frame->img_rect != NULL) {
-		free(frame->img_rect);
-	}
-	if (frame->text != NULL) {
-		free(frame->text);
-	}
+	//if (frame->img_rect != NULL) {
+	//	free(frame->img_rect);
+	//}
+	//if (frame->text != NULL) {
+	//	free(frame->text);
+	//}
 	// free(&(frame->img_anchor));
 }
 

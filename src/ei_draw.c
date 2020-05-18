@@ -103,6 +103,12 @@ void update_pixel	(ei_surface_t destination,
  */
 ei_rect_t inter_rect(const ei_rect_t* rect1, const ei_rect_t* rect2)
 {
+	if (rect1 == NULL) {
+		return *rect2;
+	}
+	if (rect2 == NULL) {
+		return *rect1;
+	}
 	int x1_min = rect1->top_left.x;
 	int x1_max = x1_min + rect1->size.width;
 	int x2_min = rect2->top_left.x;
@@ -147,19 +153,38 @@ int ei_copy_surface    (ei_surface_t		destination,
 			const ei_rect_t*	src_rect,
 			const ei_bool_t		alpha)
 {
-	// Coordinates of each top left rectangle.
-	int dest_x = dst_rect->top_left.x;
-	int dest_y = dst_rect->top_left.y;
-	int src_x = src_rect->top_left.x;
-	int src_y = src_rect->top_left.y;
-	for (int i=0; i < dst_rect->size.height; i++) {
+	int dest_x = 0;
+	int dest_y = 0;
+	if (dst_rect == NULL) {
+		dest_x = dst_rect->top_left.x;
+		dest_y = dst_rect->top_left.y;
+	}
+	// Default coord if src_rect = NULL
+	int src_x = 0;
+	int src_y = 0;
+	if (src_rect != NULL) {
+		int src_x = src_rect->top_left.x;
+		int src_y = src_rect->top_left.y;
+	}
+	int height_dest;
+	int width_dest;
+	if (dst_rect != NULL) {
+		height_dest = dst_rect->size.height;
+		width_dest = dst_rect->size.width;
+	}
+	else {
+		ei_size_t destSurface_size = hw_surface_get_size(destination);
+		height_dest = destSurface_size.height;
+		width_dest = destSurface_size.width;
+	}
+	for (int i=0; i < height_dest; i++) {
 		// point the origin of surfaces on begin of line.
 		hw_surface_set_origin(destination, ei_point(dest_x, dest_y+i));
 		hw_surface_set_origin(source, ei_point(src_x, src_y+i));
 		// Call the pointer to the origin of buffer.
 		uint32_t* dest_pt = (uint32_t *) hw_surface_get_buffer(destination);
 		uint32_t* src_pt  = (uint32_t *) hw_surface_get_buffer(source);
-		for (int j = 0; j < dst_rect->size.width; j++) {
+		for (int j = 0; j < width_dest; j++) {
 			update_pixel(destination, dest_pt, source, src_pt, alpha);
 			dest_pt++;
 			src_pt++;
