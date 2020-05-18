@@ -80,6 +80,7 @@ void			ei_place			(ei_widget_t*		widget,
 
         if (!is_defined(widget->geom_params)){
                 to_configure = safe_malloc(sizeof(ei_placer_t));
+
                 to_configure->manager = (ei_geometry_param_t *)ei_geometrymanager_from_name("placer");
                 widget->geom_params = (ei_geometry_param_t *)to_configure;
         }

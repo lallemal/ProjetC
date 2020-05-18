@@ -32,8 +32,8 @@ void ei_run_func(struct ei_widget_t*	widget){
                         new_screen_loc.size.height = datas->height;
                 }
 
-                new_screen_loc.top_left.x     =       container->size.width   +       datas->x;
-                new_screen_loc.top_left.y     =       container->size.height  +       datas->y;
+                new_screen_loc.top_left.x     =       container->size.width  * datas->rel_x  +       datas->x;
+                new_screen_loc.top_left.y     =       container->size.height * datas->height +       datas->y;
 
                 int half_height                   =       new_screen_loc.size.height/2;
                 int half_width                    =       new_screen_loc.size.width/2;
@@ -72,6 +72,7 @@ void ei_run_func(struct ei_widget_t*	widget){
                 if (are_old_and_new_diff(new_screen_loc, widget->screen_location)){
                         //widget->wclass->geomnotifyfunc(widget);
                         ei_widget_t *child = widget->children_head;
+                        widget->screen_location = new_screen_loc;
                         while(child){
                                 ei_run_func(child);
                                 child = child->next_sibling;
