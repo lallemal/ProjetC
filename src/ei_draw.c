@@ -142,7 +142,9 @@ void ei_draw_text       (ei_surface_t		surface,
 	ei_size_t text_size = hw_surface_get_size(text_surface);
 	ei_rect_t text_rect = {*where, text_size};
 	ei_rect_t destRect = inter_rect(clipper, &text_rect);
+	hw_surface_lock(text_surface);
 	ei_copy_surface(surface, &destRect, text_surface, NULL, EI_FALSE);
+	hw_surface_unlock(text_surface);
 	hw_surface_free(text_surface);
 }
 
