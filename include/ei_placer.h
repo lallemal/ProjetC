@@ -18,11 +18,14 @@ typedef struct ei_placer_t{
         float			rel_width;
         float			rel_height;
 } ei_placer_t;
-void                    ei_run_func                     (struct ei_widget_t*	widget);
-void                    ei_release_func                 (struct ei_widget_t*	widget);
 
 /**
  * @brief	Tells if a relative attribute us set
  */
 int                     is_set_relative                 (float rel);
+
+int                     are_old_and_new_diff            (ei_rect_t r1, ei_rect_t r2);
+
+void                    ei_run_func                     (struct ei_widget_t*	widget);
+void                    ei_release_func                 (struct ei_widget_t*	widget);
 #endif //PROJETC_IG_EI_PLACER_H

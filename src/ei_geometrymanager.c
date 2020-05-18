@@ -31,12 +31,15 @@ void			ei_geometrymanager_unmap	(ei_widget_t*		widget){
                 widget->geom_params->manager->releasefunc(widget);
                 free(widget->geom_params);
                 widget->geom_params = NULL;
+                widget->screen_location = ei_rect_zero();
         }
         ei_widget_t                     *child;
+
         while (child){
                 ei_geometrymanager_unmap(child);
                 child = child->next_sibling;
         }
+
         widget->screen_location = ei_rect_zero();
 }
 
