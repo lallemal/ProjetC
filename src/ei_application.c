@@ -7,6 +7,7 @@
 #include "ei_widgetclass.h"
 #include "ei_widget.h"
 #include "traverse_tools.h"
+#include "ei_types.h"
 
 // Variables & definitions for linked list of rects
 #define LIST_RECT_NORMAL 0
@@ -31,6 +32,7 @@ void ei_app_create(ei_size_t main_window_size, ei_bool_t fullscreen)
 	ei_button_register_class();
 	rootWidget = ei_widget_create("frame", NULL, NULL, NULL);
 	ei_frame_configure(rootWidget, &main_window_size, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+	ei_default_font = hw_text_font_create(ei_default_font_filename, ei_style_normal, ei_font_default_size);
 }
 
 
@@ -60,6 +62,7 @@ void ei_app_invalidate_rect(ei_rect_t* rect)
 
 void ei_app_free(void)
 {
+	hw_text_font_free(ei_default_font);
 	hw_surface_free(pick_surface);
 	hw_surface_free(main_window);
 	ei_widget_destroy(rootWidget);
