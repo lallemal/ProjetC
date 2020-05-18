@@ -29,6 +29,7 @@ void ei_app_create(ei_size_t main_window_size, ei_bool_t fullscreen)
 	hw_init();
 	main_window = hw_create_window(main_window_size, fullscreen);
 	pick_surface = hw_surface_create(main_window, main_window_size, false);
+	ei_register_placer_manager();
 	ei_frame_register_class();
 	ei_button_register_class();
 	rootWidget = ei_widget_create("frame", NULL, NULL, NULL);
@@ -105,9 +106,10 @@ void ei_app_run(void)
 		list_rect_head = NULL;
 		list_rect_tail = NULL;
 		rect_status = LIST_RECT_NORMAL;
-		if (event.type == ei_ev_keydown && event.param.key.key_code == 27) {
-			ei_app_quit_request();
-		}
+                ei_app_quit_request();
+//		if (event.type == ei_ev_keydown && event.param.key.key_code == 27) {
+//			ei_app_quit_request();
+//		}
 		hw_event_wait_next(&event);
 	}
 }
