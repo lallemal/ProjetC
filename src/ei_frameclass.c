@@ -280,6 +280,9 @@ void ei_frame_configure(ei_widget_t*		widget,
 	if (text_font != NULL) {
 		frame->text_font = *text_font;
 	}
+	if (text_anchor != NULL) {
+		frame->text_anchor = *text_anchor;
+	}
 	if (text_color != NULL) {
 		frame->text_color = *text_color;
 	}
