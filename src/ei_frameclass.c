@@ -274,7 +274,7 @@ void ei_frame_configure(ei_widget_t*		widget,
 	if (border_width != NULL) {
 		frame->border_width = *border_width;
 		widget->requested_size.width = max(widget->requested_size.width, 2*frame->border_width);
-		widget->requested_size.height = max(widget->requested_size.height, 2*frame->border_width);
+		widget->requested_size.height = max(widget->requested_size.height, 2*frame->border_height);
 	}
 	if (relief != NULL) {
 		frame->relief = *relief;
