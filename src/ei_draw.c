@@ -143,7 +143,7 @@ void ei_draw_text       (ei_surface_t		surface,
 	ei_rect_t text_rect = {*where, text_size};
 	ei_rect_t destRect = inter_rect(clipper, &text_rect);
 	hw_surface_lock(text_surface);
-	ei_copy_surface(surface, &destRect, text_surface, NULL, EI_FALSE);
+	ei_copy_surface(surface, &destRect, text_surface, NULL, EI_TRUE);
 	hw_surface_unlock(text_surface);
 	hw_surface_free(text_surface);
 }
@@ -155,46 +155,59 @@ int ei_copy_surface    (ei_surface_t		destination,
 			const ei_rect_t*	src_rect,
 			const ei_bool_t		alpha)
 {
+	// Calcul of the destination rect NULL or not
 	int dest_x = 0;
 	int dest_y = 0;
-	if (dst_rect == NULL) {
+	if (dst_rect != NULL) {
 		dest_x = dst_rect->top_left.x;
 		dest_y = dst_rect->top_left.y;
 	}
-	// Default coord if src_rect = NULL
+	int height_dest;
+	int width_dest;
+	ei_size_t destSurface_size = hw_surface_get_size(destination);
+	if (dst_rect != NULL) {
+		height_dest = dst_rect->size.height;
+		width_dest = dst_rect->size.width;
+	}
+	else {
+		height_dest = destSurface_size.height;
+		width_dest = destSurface_size.width;
+	}
+	// Calcul of the source rect NULL or not
 	int src_x = 0;
 	int src_y = 0;
 	if (src_rect != NULL) {
 		int src_x = src_rect->top_left.x;
 		int src_y = src_rect->top_left.y;
 	}
-	int height_dest;
-	int width_dest;
-	if (dst_rect != NULL) {
-		height_dest = dst_rect->size.height;
-		width_dest = dst_rect->size.width;
+	int height_src;
+	int width_src;
+	ei_size_t srcSurface_size = hw_surface_get_size(source);
+	if (src_rect != NULL) {
+		height_src = src_rect->size.height;
+		width_src = src_rect->size.width;
 	}
 	else {
-		ei_size_t destSurface_size = hw_surface_get_size(destination);
-		height_dest = destSurface_size.height;
-		width_dest = destSurface_size.width;
+		height_src = srcSurface_size.height;
+		width_src = srcSurface_size.width;
 	}
+	// Take the both pointers for the copy of each pixels
+	uint32_t* dest_pt = (uint32_t *) hw_surface_get_buffer(destination);
+	uint32_t* src_pt  = (uint32_t *) hw_surface_get_buffer(source);
+	// point the origin of surfaces on the first line
+	dest_pt += dest_x + dest_y * destSurface_size.width;
+	src_pt += src_x + src_y * srcSurface_size.width;
 	for (int i=0; i < height_dest; i++) {
-		// point the origin of surfaces on begin of line.
-		hw_surface_set_origin(destination, ei_point(dest_x, dest_y+i));
-		hw_surface_set_origin(source, ei_point(src_x, src_y+i));
-		// Call the pointer to the origin of buffer.
-		uint32_t* dest_pt = (uint32_t *) hw_surface_get_buffer(destination);
-		uint32_t* src_pt  = (uint32_t *) hw_surface_get_buffer(source);
 		for (int j = 0; j < width_dest; j++) {
 			update_pixel(destination, dest_pt, source, src_pt, alpha);
+			// Increment the pointer to continue the line
 			dest_pt++;
 			src_pt++;
 		}
+		// Put both pointers to the next beginning line
+		dest_pt += destSurface_size.width - (dest_x + width_dest) + dest_x;
+		src_pt += srcSurface_size.width - (src_x + width_dest) + src_x;
 	}
-	//  Reset the origin of surface to 0,0
-	hw_surface_set_origin(destination, ei_point_zero());
-	hw_surface_set_origin(source, ei_point_zero());
 }
 
 
