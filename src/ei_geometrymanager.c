@@ -6,11 +6,11 @@
 #include "utils.h"
 #include "stdlib.h"
 #include "string.h"
-ei_geometrymanager_t sentinel = {"sentinel", NULL, NULL, NULL, NULL};
+ei_geometrymanager_t sentinel_geo = {"sentinel", NULL, NULL, NULL, NULL};
 ei_geometrymanager_t *actual = NULL;
 
 void	                ei_geometrymanager_register	(ei_geometrymanager_t* geometrymanager){
-        sentinel.next = geometrymanager;
+        sentinel_geo.next = geometrymanager;
         geometrymanager->next = actual;
         actual = geometrymanager;
 
