@@ -189,13 +189,15 @@ void ei_frame_drawfunc(struct	ei_widget_t*	widget,
         //mise en place de l'image
         ei_rect_t* rect_img=malloc(sizeof(ei_rect_t));
         if (frame->img != NULL){
-                hw_surface_lock(frame->img);
-                rect_img->top_left = *point_img;
-                rect_img->size.width= min(rect_to_fill->size.width, frame->img_rect->size.width);
-                rect_img->size.height=min(rect_to_fill->size.height, frame->img_rect->size.height);
-                ei_copy_surface(surface, rect_img, frame->img, frame->img_rect, hw_surface_has_alpha(frame->img));
-                hw_surface_unlock(frame->img);
-                free(point_img);
+                if (rect_to_fill->size.width >= frame->img_rect->size.width && rect_to_fill->size.height >= frame->img_rect->size.height) {
+                        hw_surface_lock(frame->img);
+                        rect_img->top_left = *point_img;
+                        rect_img->size.width = frame->img_rect->size.width;
+                        rect_img->size.height = frame->img_rect->size.height;
+                        ei_copy_surface(surface, rect_img, frame->img, frame->img_rect, hw_surface_has_alpha(frame->img));
+                        hw_surface_unlock(frame->img);
+                        free(point_img);
+                }
         }
 
 
