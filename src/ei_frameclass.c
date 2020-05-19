@@ -86,6 +86,11 @@ void ei_frame_setdefaultsfunc(ei_widget_t* widget)
 
 
 
+void ei_frame_geomnotifyfunc(struct ei_widget_t* widget)
+{
+}
+
+
 void ei_frame_drawfunc(struct	ei_widget_t*	widget,
                        ei_surface_t	surface,
                        ei_surface_t	pick_surface,
@@ -242,6 +247,7 @@ void ei_frame_register_class(void)
 	frame->releasefunc = &ei_frame_releasefunc;
 	frame->drawfunc = &ei_frame_drawfunc;
 	frame->setdefaultsfunc = &ei_frame_setdefaultsfunc;
+	frame->geomnotifyfunc = &ei_frame_geomnotifyfunc;
 	frame->next = NULL;
 	ei_widgetclass_register(frame);
 }

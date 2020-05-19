@@ -12,8 +12,9 @@
 #include "ei_types.h"
 
 // Variables & definitions for linked list of rects
-#define LIST_RECT_NORMAL 0
-#define LIST_RECT_NULL 1
+#define LIST_RECT_PENDING 0
+#define LIST_RECT_CHANGED 1
+#define LIST_RECT_NULL 2
 int rect_status;
 ei_linked_rect_t* list_rect_head;
 ei_linked_rect_t* list_rect_tail;
@@ -51,6 +52,7 @@ void ei_app_invalidate_rect(ei_rect_t* rect)
 			list_rect_tail = NULL;
 		}
 		else {
+			rect_status = LIST_RECT_CHANGED;
 			ei_linked_rect_t* newElement = malloc(sizeof(ei_linked_rect_t));
 			if (newElement == NULL) {
 				fprintf(stderr, "Out of Memory, Malloc failed \n");
@@ -105,16 +107,17 @@ void ei_app_run(void)
 	ei_event_t event;
 	event.type = ei_ev_none;
 	while (running) {
-		draw_widgets(rootWidget, main_window, pick_surface);
-		hw_surface_update_rects(main_window, list_rect_head);
+		// draw_widgets(rootWidget, main_window, pick_surface);
+		if (rect_status == LIST_RECT_CHANGED || rect_status == LIST_RECT_NULL) {
+			hw_surface_update_rects(main_window, list_rect_head);
+		}
 		free_linked_rect(list_rect_head);
 		list_rect_head = NULL;
 		list_rect_tail = NULL;
-		rect_status = LIST_RECT_NORMAL;
-                ei_app_quit_request();
-//		if (event.type == ei_ev_keydown && event.param.key.key_code == 27) {
-//			ei_app_quit_request();
-//		}
+		rect_status = LIST_RECT_PENDING;
+		if (event.type == ei_ev_keydown && event.param.key.key_code == 27) {
+			ei_app_quit_request();
+		}
 		hw_event_wait_next(&event);
 	}
 }
