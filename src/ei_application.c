@@ -66,6 +66,9 @@ void ei_app_invalidate_rect(ei_rect_t* rect)
 		else {
 			ei_rect_t* copy = copy_rect(rect);
 			newElement->rect = *copy;
+			// truncate the rect to the positive values.
+			newElement->rect.top_left.x = max(0, newElement->rect.top_left.x);
+			newElement->rect.top_left.y = max(0, newElement->rect.top_left.y);
 			free(copy);
 			newElement->next = NULL;
 			if (newElement->rect.size.height == 0 && newElement->rect.size.width == 0) {
