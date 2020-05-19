@@ -37,7 +37,7 @@ void			ei_geometrymanager_unmap	(ei_widget_t*		widget){
                 widget->screen_location = ei_rect_zero();
         }
         ei_widget_t                     *child;
-
+        child = widget->children_head;
         while (child){
                 ei_geometrymanager_unmap(child);
                 child = child->next_sibling;
