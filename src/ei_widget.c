@@ -10,6 +10,7 @@
 #include "ei_widget.h"
 #include "ei_widgetclass.h"
 #include "traverse_tools.h"
+#include "ei_application.h"
 
 
 
@@ -54,6 +55,7 @@ void ei_widget_destroy(ei_widget_t* widget)
 	if (widget->destructor != NULL) {
 		widget->destructor(widget);
 	}
+	ei_app_invalidate_rect(&(widget->screen_location));
 	widget->wclass->releasefunc(widget);
 	free(widget);
 }

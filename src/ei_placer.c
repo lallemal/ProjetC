@@ -1,6 +1,7 @@
 //
 // Created by devri on 13/05/2020.
 //
+#include <stdlib.h>
 
 #include "ei_placer.h"
 #include "ei_utils.h"
@@ -70,7 +71,7 @@ void ei_run_func(struct ei_widget_t*	widget){
                 }
                 // to avoid computation of children if geometry is the same
                 if (are_old_and_new_diff(new_screen_loc, widget->screen_location)){
-                        //widget->wclass->geomnotifyfunc(widget);
+                        widget->wclass->geomnotifyfunc(widget);
                         ei_widget_t *child = widget->children_head;
                         widget->screen_location = new_screen_loc;
                         while(child){

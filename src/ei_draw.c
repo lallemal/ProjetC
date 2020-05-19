@@ -10,8 +10,7 @@
 #include "ei_draw.h"
 #include "hw_interface.h"
 #include "ei_utils.h"
-
-
+#include "utils.h"
 
 
 uint32_t ei_map_rgba(ei_surface_t surface, const ei_color_t* color)

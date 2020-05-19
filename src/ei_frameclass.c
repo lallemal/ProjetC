@@ -88,6 +88,7 @@ void ei_frame_setdefaultsfunc(ei_widget_t* widget)
 
 void ei_frame_geomnotifyfunc(struct ei_widget_t* widget)
 {
+	ei_app_invalidate_rect(&(widget->screen_location));
 }
 
 
@@ -204,29 +205,6 @@ void ei_frame_drawfunc(struct	ei_widget_t*	widget,
         }
 
 
-        //mise en place de la liste contenant les rectangles à update
-        //pour le texte et la couleur (si il y a du texte)
-
-        if (border == 0) {
-                ei_app_invalidate_rect(rect_to_fill);
-
-                //pour l'image (si il y a une image
-                if (frame->img != NULL) {
-                        ei_app_invalidate_rect(rect_img);
-
-                }
-        }
-        else{
-                ei_app_invalidate_rect(rect_tot);
-                ei_app_invalidate_rect(rect_to_fill);
-
-                //pour l'image (si il y a une image
-                if (frame->img != NULL) {
-                        ei_app_invalidate_rect(rect_img);
-                }
-        }
-
-
         //on unlock les changements
         hw_surface_unlock(surface);
 
@@ -317,4 +295,5 @@ void ei_frame_configure(ei_widget_t*		widget,
 	if (img_anchor != NULL) {
 		frame->img_anchor = *img_anchor;
 	}
+	ei_app_invalidate_rect(&(widget->screen_location));
 }

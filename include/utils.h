@@ -40,4 +40,14 @@ int                     max(int a, int b);
  * @return		rectangle which is the intersection of the two others
  */
 ei_rect_t inter_rect(const ei_rect_t* rect1, const ei_rect_t* rect2);
+
+
+/**
+ * @brief i		Make the copy of a rectangle and return a pointer to it
+ *
+ * @param rect		The rectangle which will be copied.
+ *
+ * @return		Copy of rect.
+ */
+ei_rect_t* copy_rect(ei_rect_t* rect);
 #endif //PROJETC_IG_UTILS_H

@@ -1,12 +1,13 @@
 //
 // Created by devri on 15/05/2020.
 //
+#include <stdbool.h>
+
 #include "string.h"
 #include "stdio.h"
 #include "stdlib.h"
 #include "utils.h"
 
-#define max(a,b) (a>=b?a:b)
 #define min(a,b) (a<=b?a:b)
 
 
@@ -61,7 +62,7 @@ ei_rect_t inter_rect(const ei_rect_t* rect1, const ei_rect_t* rect2)
 	int y2_max = y2_min + rect2->size.height;
 
 	bool intersection = x2_min > x1_max || y2_min > y1_max || y2_max < y1_min || x2_max < x1_min;
-	if (intersection) {
+	if (!intersection) {
 		int xinter_min = max(x1_min, x2_min);
 		int xinter_max = min(x1_max, x2_max);
 		int yinter_min = max(y1_min, y2_min);
@@ -78,4 +79,15 @@ ei_rect_t inter_rect(const ei_rect_t* rect1, const ei_rect_t* rect2)
 	ei_rect_t newRect = {newPoint, newSize};
 	return newRect;
 
+}
+
+
+ei_rect_t* copy_rect(ei_rect_t* rect)
+{
+	ei_rect_t* newRect = malloc(sizeof(ei_rect_t));
+	newRect->size.height = rect->size.height;
+	newRect->size.width = rect->size.width;
+	newRect->top_left.x = rect->top_left.x;
+	newRect->top_left.y = rect->top_left.y;
+	return newRect;
 }
