@@ -81,12 +81,15 @@ void update_pixel	(ei_surface_t destination,
 		*dest_pt = *src_pt;
 	}
 	else {
+		// retrieve the R G B A colors channels
 		ei_color_t color_dest = ei_map_color(destination, *dest_pt);
 		ei_color_t color_src = ei_map_color(source, *src_pt);
+		// Create the new color with alpha formula
 		ei_color_t color_alpha;
 		color_alpha.red = (color_src.alpha * color_src.red + (255 - color_src.alpha) * color_dest.red)/255;
 		color_alpha.blue = (color_src.alpha * color_src.blue + (255 - color_src.alpha) * color_dest.blue)/255;
 		color_alpha.green = (color_src.alpha * color_src.green + (255 - color_src.alpha) * color_dest.green)/255;
+		// Change the destination pixel.
 		*dest_pt = ei_map_rgba(destination, &color_alpha);
 	}
 }
@@ -139,11 +142,14 @@ void ei_draw_text       (ei_surface_t		surface,
 			const ei_rect_t*	clipper)
 {
 	ei_surface_t text_surface = hw_text_create_surface(text, font, color);
+	// Create the destination rectangle to fit with clipper & text
 	ei_size_t text_size = hw_surface_get_size(text_surface);
 	ei_rect_t text_rect = {*where, text_size};
 	ei_rect_t destRect = inter_rect(clipper, &text_rect);
+	// Lock the surface and copy it on the destination surface
 	hw_surface_lock(text_surface);
 	ei_copy_surface(surface, &destRect, text_surface, NULL, EI_TRUE);
+	// Release the text_surface no longer needed
 	hw_surface_unlock(text_surface);
 	hw_surface_free(text_surface);
 }
@@ -191,6 +197,10 @@ int ei_copy_surface    (ei_surface_t		destination,
 		height_src = srcSurface_size.height;
 		width_src = srcSurface_size.width;
 	}
+	// Verify the dimension.
+	if (height_src > height_dest || width_src > width_dest) {
+		return EXIT_FAILURE;
+	}
 	// Take the both pointers for the copy of each pixels
 	uint32_t* dest_pt = (uint32_t *) hw_surface_get_buffer(destination);
 	uint32_t* src_pt  = (uint32_t *) hw_surface_get_buffer(source);
@@ -208,6 +218,7 @@ int ei_copy_surface    (ei_surface_t		destination,
 		dest_pt += destSurface_size.width - (dest_x + width_dest) + dest_x;
 		src_pt += srcSurface_size.width - (src_x + width_dest) + src_x;
 	}
+	return EXIT_SUCCESS;
 }
 
 
