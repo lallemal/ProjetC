@@ -131,7 +131,7 @@ void ei_frame_drawfunc(struct	ei_widget_t*	widget,
         int width_text;
         if (frame->text != NULL){
                 hw_text_compute_size(frame->text, frame->text_font, &width_text, &height_text);
-                point_text = anchor_point(surface, rect_to_fill, frame->text_anchor, width_text,height_text);
+                point_text = anchor_point(rect_to_fill, frame->text_anchor, width_text,height_text);
 
         }
 
@@ -141,7 +141,7 @@ void ei_frame_drawfunc(struct	ei_widget_t*	widget,
         //si img=!NULL
         ei_point_t* point_img;
         if (frame->img != NULL){
-                point_img = anchor_point(surface, rect_to_fill, frame->img_anchor, frame->img_rect->size.width, frame->img_rect->size.height);
+                point_img = anchor_point(rect_to_fill, frame->img_anchor, frame->img_rect->size.width, frame->img_rect->size.height);
         }
 
         //Création de relief
@@ -182,9 +182,10 @@ void ei_frame_drawfunc(struct	ei_widget_t*	widget,
         ei_rect_t* rect_img=malloc(sizeof(ei_rect_t));
         if (frame->img != NULL){
                 hw_surface_lock(frame->img);
-                rect_img->top_left = *point_img;
-                rect_img->size.width= min(rect_to_fill->size.width, frame->img_rect->size.width);
-                rect_img->size.height=min(rect_to_fill->size.height, frame->img_rect->size.height);
+                rect_img->top_left.x = point_img->x;
+                rect_img->top_left.y = point_img->y;
+                rect_img->size.width = frame->img_rect->size.width;
+                rect_img->size.height = frame->img_rect->size.height;
                 ei_copy_surface(surface, rect_img, frame->img, frame->img_rect, hw_surface_has_alpha(frame->img));
                 hw_surface_unlock(frame->img);
                 free(point_img);
