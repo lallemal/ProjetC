@@ -26,6 +26,11 @@ int main(int argc, char** argv)
 	int		frame_x			= 200;
 	int		frame_y			= 300;
 	ei_anchor_t     anchor                  = ei_anc_center;
+	char*           text_frame              = "Salut";
+	ei_anchor_t	text_anchor		= ei_anc_west;
+	int		frame_x			= 150;
+	int		frame_y			= 200;
+	ei_anchor_t     anchor                  = ei_anc_northwest;
 	ei_color_t	frame_color		= {0x88, 0x88, 0x88, 0xff};
 	ei_relief_t	frame_relief		= ei_relief_raised;
 	int		frame_border_width	= 6;

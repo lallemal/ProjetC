@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include <stdbool.h>
 
 
@@ -9,9 +10,10 @@
 #include "ei_geometrymanager.h"
 #include "traverse_tools.h"
 #include "ei_types.h"
+#include "utils.h"
 
 // Variables & definitions for linked list of rects
-#define LIST_RECT_NORMAL 0
+#define LIST_RECT_PENDING 0
 #define LIST_RECT_NULL 1
 int rect_status;
 ei_linked_rect_t* list_rect_head;
@@ -34,9 +36,9 @@ void ei_app_create(ei_size_t main_window_size, ei_bool_t fullscreen)
 	ei_button_register_class();
 	ei_register_placer_manager();
 	rootWidget = ei_widget_create("frame", NULL, NULL, NULL);
-	ei_frame_configure(rootWidget, &main_window_size, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 	rootWidget->screen_location.size.width = main_window_size.width;
 	rootWidget->screen_location.size.height = main_window_size.height;
+	ei_frame_configure(rootWidget, &main_window_size, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 	ei_default_font = hw_text_font_create(ei_default_font_filename, ei_style_normal, ei_font_default_size);
 }
 
@@ -44,22 +46,37 @@ void ei_app_create(ei_size_t main_window_size, ei_bool_t fullscreen)
 void ei_app_invalidate_rect(ei_rect_t* rect)
 {
 	if (rect_status != LIST_RECT_NULL) {
+		ei_linked_rect_t* newElement = malloc(sizeof(ei_linked_rect_t));
+		if (newElement == NULL) {
+			fprintf(stderr, "Out of Memory, Malloc failed \n");
+			return;
+		}
 		if (rect == NULL) {
+			ei_rect_t surface_rect = hw_surface_get_rect(main_window);
+			newElement->rect = *copy_rect(&surface_rect);
+			newElement->next = NULL;
 			free_linked_rect(list_rect_head);
 			rect_status = LIST_RECT_NULL;
-			list_rect_head = NULL;
-			list_rect_tail = NULL;
+			list_rect_head = newElement;
+			list_rect_tail = newElement;
 		}
 		else {
-			ei_linked_rect_t* newElement = malloc(sizeof(ei_linked_rect_t));
-			newElement->rect = *rect;
+			ei_rect_t* copy = copy_rect(rect);
+			newElement->rect = *copy;
+			free(copy);
 			newElement->next = NULL;
+			if (newElement->rect.size.height == 0 && newElement->rect.size.width == 0) {
+				free(newElement);
+				return;
+			}
 			if (list_rect_head == NULL) {
 				list_rect_head = newElement;
 				list_rect_tail = newElement;
 			}
-			list_rect_tail->next = newElement;
-			list_rect_tail = newElement;
+			else {
+				list_rect_tail->next = newElement;
+				list_rect_tail = newElement;
+			}
 		}
 	}
 }
@@ -95,20 +112,28 @@ void ei_app_quit_request(void)
 	running = false;
 }
 
+void draw(void)
+{
+	ei_linked_rect_t* rectList = list_rect_head;
+	while (rectList != NULL) {
+		draw_widgets(rootWidget, main_window, pick_surface, rectList->rect);
+		rectList = rectList->next;
+	}
+}
+
 
 void ei_app_run(void)
 {
 	ei_event_t event;
 	event.type = ei_ev_none;
 	while (running) {
-		draw_widgets(rootWidget, main_window, pick_surface);
+		draw();
 		hw_surface_update_rects(main_window, list_rect_head);
 		free_linked_rect(list_rect_head);
 		list_rect_head = NULL;
 		list_rect_tail = NULL;
-		rect_status = LIST_RECT_NORMAL;
-//                ei_app_quit_request();
-		if (event.type == ei_ev_keydown && event.param.key.key_code == 27) {
+		rect_status = LIST_RECT_PENDING;
+		if (event.type == ei_ev_keydown && event.param.key.key_code == SDLK_ESCAPE) {
 			ei_app_quit_request();
 		}
 		hw_event_wait_next(&event);

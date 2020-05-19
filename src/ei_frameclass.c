@@ -15,6 +15,7 @@
 #include "ei_draw.h"
 #include "ei_application.h"
 #include "draw_tools.h"
+#include "utils.h"
 
 
 #define max(a,b) (a>=b?a:b)
@@ -86,6 +87,12 @@ void ei_frame_setdefaultsfunc(ei_widget_t* widget)
 
 
 
+void ei_frame_geomnotifyfunc(struct ei_widget_t* widget)
+{
+	ei_app_invalidate_rect(&(widget->screen_location));
+}
+
+
 void ei_frame_drawfunc(struct	ei_widget_t*	widget,
                        ei_surface_t	surface,
                        ei_surface_t	pick_surface,
@@ -108,27 +115,13 @@ void ei_frame_drawfunc(struct	ei_widget_t*	widget,
                 free(rect_surface);
         }
         else{
-                int x_clipper= clipper->top_left.x;
-                int y_clipper= clipper->top_left.y;
-                int height_clipper = clipper->size.height;
-                int width_clipper = clipper->size.width;
-                int x_frame= widget->screen_location.top_left.x;
-                int y_frame = widget->screen_location.top_left.y;
-                int height_frame = widget->screen_location.size.height;
-                int width_frame = widget->screen_location.size.width;
+                *rect_tot = inter_rect(clipper, &widget->screen_location);
+                rect_to_fill->top_left.x = rect_tot->top_left.x + frame->border_width;
+                rect_to_fill->top_left.y = rect_tot->top_left.y + frame->border_width;
+                rect_to_fill->size.width = rect_tot->size.width - 2*frame->border_width;
+                rect_to_fill->size.height = rect_tot->size.height - 2*frame->border_width;
 
-                rect_to_fill->top_left.x=max(x_frame, x_clipper) + frame->border_width;
-                rect_to_fill->top_left.y=max(y_clipper, y_frame) + frame->border_width;
-                rect_to_fill->size.width=abs(min(x_clipper+width_clipper, x_frame+width_frame)-max(x_clipper, x_frame))-2*(frame->border_width);
-                rect_to_fill->size.height=abs(max(y_frame, y_clipper)-min(y_frame+height_frame, y_clipper+height_clipper))-2*(frame->border_width);
-
-                rect_tot->top_left.x=max(x_frame, x_clipper);
-                rect_tot->top_left.y=max(y_clipper, y_frame);
-                rect_tot->size.width=abs(min(x_clipper+width_clipper, x_frame+width_frame)-max(x_clipper, x_frame));
-                rect_tot->size.height=abs(max(y_frame, y_clipper)-min(y_frame+height_frame, y_clipper+height_clipper));
         }
-        //On récupère la couleur du fond
-        ei_color_t color_back = frame->color;
 
         //On récupère le point qui rattache le texte
         //Si clipper==NULL =>  rect_to_fill== surface - bordure
@@ -152,9 +145,8 @@ void ei_frame_drawfunc(struct	ei_widget_t*	widget,
         }
 
         //Création de relief
-        int border= frame->border_width;
         //on considère le rectangle total (bordure comprise) (rect_tot)
-        if (border>0) {
+        if (frame->border_width>0) {
 
                 if (frame->relief == ei_relief_raised) {
                         draw_down_relief(rect_tot, surface, frame->color, EI_TRUE);
@@ -170,7 +162,7 @@ void ei_frame_drawfunc(struct	ei_widget_t*	widget,
                 }
                 if (frame->relief == ei_relief_none){
                         ei_color_t color_to_fill;
-                        color_to_fill = dark_color(color_back);
+                        color_to_fill = dark_color(frame->color);
                         ei_fill(surface, &color_to_fill, rect_tot);
 
                 }
@@ -178,7 +170,7 @@ void ei_frame_drawfunc(struct	ei_widget_t*	widget,
         }
 
         //remplissage de rect_to_fill
-        ei_fill(surface, &color_back, rect_to_fill);
+        ei_fill(surface, &frame->color, rect_to_fill);
 
         //mise en place du texte
         if (frame->text != NULL){
@@ -197,29 +189,6 @@ void ei_frame_drawfunc(struct	ei_widget_t*	widget,
                         ei_copy_surface(surface, rect_img, frame->img, frame->img_rect, hw_surface_has_alpha(frame->img));
                         hw_surface_unlock(frame->img);
                         free(point_img);
-                }
-        }
-
-
-        //mise en place de la liste contenant les rectangles à update
-        //pour le texte et la couleur (si il y a du texte)
-
-        if (border == 0) {
-                ei_app_invalidate_rect(rect_to_fill);
-
-                //pour l'image (si il y a une image
-                if (frame->img != NULL) {
-                        ei_app_invalidate_rect(rect_img);
-
-                }
-        }
-        else{
-                ei_app_invalidate_rect(rect_tot);
-                ei_app_invalidate_rect(rect_to_fill);
-
-                //pour l'image (si il y a une image
-                if (frame->img != NULL) {
-                        ei_app_invalidate_rect(rect_img);
                 }
         }
 
@@ -244,6 +213,7 @@ void ei_frame_register_class(void)
 	frame->releasefunc = &ei_frame_releasefunc;
 	frame->drawfunc = &ei_frame_drawfunc;
 	frame->setdefaultsfunc = &ei_frame_setdefaultsfunc;
+	frame->geomnotifyfunc = &ei_frame_geomnotifyfunc;
 	frame->next = NULL;
 	ei_widgetclass_register(frame);
 }
@@ -313,4 +283,5 @@ void ei_frame_configure(ei_widget_t*		widget,
 	if (img_anchor != NULL) {
 		frame->img_anchor = *img_anchor;
 	}
+	ei_app_invalidate_rect(&(widget->screen_location));
 }

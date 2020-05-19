@@ -11,7 +11,9 @@
 
 #include "ei_widgetclass.h"
 #include "ei_widget.h"
+#include "draw_tools.h"
 #include "ei_draw.h"
+#include "utils.h"
 
 
 #define max(a,b) (a>=b?a:b)
@@ -95,6 +97,31 @@ void ei_button_drawfunc(struct	ei_widget_t*	widget,
                        ei_surface_t	pick_surface,
                        ei_rect_t*	clipper)
 {
+        ei_button_t* button=(ei_button_t*)widget;
+        hw_surface_lock(surface);
+        ei_rect_t *rect_to_fill=malloc(sizeof(ei_rect_t));
+        ei_rect_t* rect_tot = malloc(sizeof(ei_rect_t));
+
+        if (clipper == NULL){
+                ei_rect_t* rect_surface= malloc(sizeof(ei_rect_t));
+                *rect_surface = hw_surface_get_rect(surface);
+                rect_to_fill->top_left.x = rect_surface->top_left.x + button->border_width;
+                rect_to_fill->top_left.y = rect_surface->top_left.y + button->border_width;
+                rect_to_fill->size.width = rect_surface->size.width - 2*(button->border_width);
+                rect_to_fill->size.height = rect_surface->size.height - 2*(button->border_width);
+                *rect_tot = *rect_surface;
+                free(rect_surface);
+        }
+        else{
+                *rect_tot = inter_rect(clipper, &widget->screen_location);
+                rect_to_fill->top_left.x = rect_tot->top_left.x + button->border_width;
+                rect_to_fill->top_left.y = rect_tot->top_left.y + button->border_width;
+                rect_to_fill->size.width = rect_tot->size.width - 2*button->border_width;
+                rect_to_fill->size.height = rect_tot->size.height - 2*button->border_width;
+
+        }
+
+        //on trace le bouton
 
 }
 
