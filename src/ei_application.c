@@ -32,6 +32,7 @@ void ei_app_create(ei_size_t main_window_size, ei_bool_t fullscreen)
 	ei_register_placer_manager();
 	ei_frame_register_class();
 	ei_button_register_class();
+	ei_register_placer_manager();
 	rootWidget = ei_widget_create("frame", NULL, NULL, NULL);
 	ei_frame_configure(rootWidget, &main_window_size, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 	rootWidget->screen_location.size.width = main_window_size.width;
@@ -106,10 +107,10 @@ void ei_app_run(void)
 		list_rect_head = NULL;
 		list_rect_tail = NULL;
 		rect_status = LIST_RECT_NORMAL;
-                ei_app_quit_request();
-//		if (event.type == ei_ev_keydown && event.param.key.key_code == 27) {
-//			ei_app_quit_request();
-//		}
+//                ei_app_quit_request();
+		if (event.type == ei_ev_keydown && event.param.key.key_code == 27) {
+			ei_app_quit_request();
+		}
 		hw_event_wait_next(&event);
 	}
 }
