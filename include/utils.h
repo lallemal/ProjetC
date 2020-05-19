@@ -29,4 +29,15 @@ void                    *safe_malloc(size_t size);
 * @brief	Return the maximum between two int
 */
 int                     max(int a, int b);
+
+
+/**
+ * @brief Make the intersection of 2 rectangle
+ *
+ * @param rect1		first rectangle
+ * @param rect2		second rectangle
+ *
+ * @return		rectangle which is the intersection of the two others
+ */
+ei_rect_t inter_rect(const ei_rect_t* rect1, const ei_rect_t* rect2);
 #endif //PROJETC_IG_UTILS_H
