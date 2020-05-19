@@ -50,4 +50,9 @@ ei_rect_t inter_rect(const ei_rect_t* rect1, const ei_rect_t* rect2);
  * @return		Copy of rect.
  */
 ei_rect_t* copy_rect(ei_rect_t* rect);
+
+
+int is_equal(ei_rect_t* rect1, ei_rect_t* rect2);
+
+
 #endif //PROJETC_IG_UTILS_H

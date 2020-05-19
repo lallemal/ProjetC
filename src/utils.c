@@ -91,3 +91,13 @@ ei_rect_t* copy_rect(ei_rect_t* rect)
 	newRect->top_left.y = rect->top_left.y;
 	return newRect;
 }
+
+
+int is_equal(ei_rect_t* rect1, ei_rect_t* rect2)
+{
+	int x_idem = rect1->top_left.x == rect2->top_left.x;
+	int y_idem = rect1->top_left.y == rect2->top_left.y;
+	int height_idem = rect1->size.height == rect2->size.height;
+	int width_idem = rect1->size.width == rect2->size.width;
+	return x_idem && y_idem && height_idem && width_idem;
+}
