@@ -21,10 +21,13 @@ int main(int argc, char** argv)
 	ei_widget_t*	frame;
 	ei_size_t	frame_size		= {300,200};
 	char*           text_frame              = "Salut";
-	ei_anchor_t	text_anchor		= ei_anc_southwest;
+	ei_anchor_t	text_anchor		= ei_anc_west;
+	int		frame_x			= 150;
+	int		frame_y			= 200;
+//	ei_anchor_t	text_anchor		= ei_anc_southwest;
 	ei_color_t      text_color              = {0x45, 0x34, 0xf3, 0xff};
-	int		frame_x			= 200;
-	int		frame_y			= 300;
+//	int		frame_x			= 200;
+//	int		frame_y			= 300;
 	ei_anchor_t     anchor                  = ei_anc_center;
 	ei_color_t	frame_color		= {0x88, 0x88, 0x88, 0xff};
 	ei_relief_t	frame_relief		= ei_relief_raised
