@@ -83,6 +83,7 @@ void ei_frame_setdefaultsfunc(ei_widget_t* widget)
 	frame->widget.screen_location.top_left.x = 0;
 	frame->widget.screen_location.top_left.y = 0;
 	frame->widget.content_rect = &(frame->widget.screen_location);
+
 }
 
 
