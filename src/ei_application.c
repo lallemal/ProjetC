@@ -34,6 +34,7 @@ void ei_app_create(ei_size_t main_window_size, ei_bool_t fullscreen)
 	ei_register_placer_manager();
 	ei_frame_register_class();
 	ei_button_register_class();
+	ei_register_placer_manager();
 	rootWidget = ei_widget_create("frame", NULL, NULL, NULL);
 	ei_frame_configure(rootWidget, &main_window_size, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 	rootWidget->screen_location.size.width = main_window_size.width;

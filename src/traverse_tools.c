@@ -7,6 +7,7 @@
 *****************************************************************************/
 #include <stdlib.h>
 #include "traverse_tools.h"
+#include "ei_geometrymanager.h"
 #include "ei_widget.h"
 
 
@@ -35,6 +36,7 @@ void destroy_widgetclass(ei_widgetclass_t* begin)
 	ei_widgetclass_t* next = begin->next;
 	free(begin);
 	if (next != NULL) {
+
 		destroy_widgetclass(next);
 	}
 }

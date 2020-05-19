@@ -55,6 +55,7 @@ void ei_widget_destroy(ei_widget_t* widget)
 		widget->destructor(widget);
 	}
 	widget->wclass->releasefunc(widget);
+	free(widget->geom_params);
 	free(widget);
 }
 
