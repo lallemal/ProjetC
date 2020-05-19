@@ -10,34 +10,38 @@ ei_geometrymanager_t sentinel_geo = {"sentinel", NULL, NULL, NULL};
 ei_geometrymanager_t *actual = NULL;
 
 void	                ei_geometrymanager_register	(ei_geometrymanager_t* geometrymanager){
-        sentinel_geo.next = geometrymanager;
-        geometrymanager->next = actual;
-        actual = geometrymanager;
+        if (!is_defined(ei_geometrymanager_from_name(geometrymanager->name))){
+                sentinel_geo.next = geometrymanager;
+                geometrymanager->next = actual;
+                actual = geometrymanager;
+        } else{
+                free(geometrymanager);
+        }
 
 }
 
 
 
 ei_geometrymanager_t*	ei_geometrymanager_from_name	(ei_geometrymanager_name_t name){
-        ei_geometrymanager_t *choice = &sentinel_geo;
-        while (actual != NULL){
+        ei_geometrymanager_t *choice = actual;
+        while (choice != NULL){
                 if(is_name_equal(choice->name, name)){
                         return choice;
                 }
-                choice = actual;
+                choice = choice->next;
         }
         return choice;
 }
 
 void			ei_geometrymanager_unmap	(ei_widget_t*		widget){
         if (is_defined(widget->geom_params)){
-                widget->geom_params->manager->releasefunc(widget);
+//                widget->geom_params->manager->releasefunc(widget);
                 free(widget->geom_params);
                 widget->geom_params = NULL;
                 widget->screen_location = ei_rect_zero();
         }
         ei_widget_t                     *child;
-
+        child = widget->children_head;
         while (child){
                 ei_geometrymanager_unmap(child);
                 child = child->next_sibling;
