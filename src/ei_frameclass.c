@@ -122,8 +122,6 @@ void ei_frame_drawfunc(struct	ei_widget_t*	widget,
                 rect_to_fill->size.height = rect_tot->size.height - 2*frame->border_width;
 
         }
-        //On récupère la couleur du fond
-        ei_color_t color_back = frame->color;
 
         //On récupère le point qui rattache le texte
         //Si clipper==NULL =>  rect_to_fill== surface - bordure
@@ -147,9 +145,8 @@ void ei_frame_drawfunc(struct	ei_widget_t*	widget,
         }
 
         //Création de relief
-        int border= frame->border_width;
         //on considère le rectangle total (bordure comprise) (rect_tot)
-        if (border>0) {
+        if (frame->border_width>0) {
 
                 if (frame->relief == ei_relief_raised) {
                         draw_down_relief(rect_tot, surface, frame->color, EI_TRUE);
@@ -165,7 +162,7 @@ void ei_frame_drawfunc(struct	ei_widget_t*	widget,
                 }
                 if (frame->relief == ei_relief_none){
                         ei_color_t color_to_fill;
-                        color_to_fill = dark_color(color_back);
+                        color_to_fill = dark_color(frame->color);
                         ei_fill(surface, &color_to_fill, rect_tot);
 
                 }
@@ -173,7 +170,7 @@ void ei_frame_drawfunc(struct	ei_widget_t*	widget,
         }
 
         //remplissage de rect_to_fill
-        ei_fill(surface, &color_back, rect_to_fill);
+        ei_fill(surface, &frame->color, rect_to_fill);
 
         //mise en place du texte
         if (frame->text != NULL){
