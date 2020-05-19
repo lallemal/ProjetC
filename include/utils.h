@@ -52,7 +52,37 @@ ei_rect_t inter_rect(const ei_rect_t* rect1, const ei_rect_t* rect2);
 ei_rect_t* copy_rect(ei_rect_t* rect);
 
 
+/**
+ * @brief		Return if two rectangle are egal
+ *
+ * @param rect1		First rectanle.
+ * @param rect2		Second rectanle
+ *
+ * @return		return 0 or 1 if rectangles are equal.
+ */
 int is_equal(ei_rect_t* rect1, ei_rect_t* rect2);
 
+
+/**
+ * @brief		Make the fusion of two rectangle in a bigger one if
+ *			it's needed
+ *
+ * @param rect1		First rectangle
+ * @param rect2		Second rectangle
+ *
+ * @return		Pointer to the fusioned rectangle or NULL if a fusion
+ *			is not appreciated.
+ */
+ei_rect_t* fusion_if(ei_rect_t* rect1, ei_rect_t* rect2);
+
+
+
+/**
+ * @brief 		Try to fusion the list at its maximum to not over displayed
+ *			new  things on screen
+ *
+ * @param begin_pt	Pointer to the head of the rectangle linked list.
+ */
+void simplify_list(ei_linked_rect_t**  begin_pt);
 
 #endif //PROJETC_IG_UTILS_H

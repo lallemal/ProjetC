@@ -7,6 +7,7 @@
 #include "stdio.h"
 #include "stdlib.h"
 #include "utils.h"
+#include "ei_utils.h"
 
 #define min(a,b) (a<=b?a:b)
 
@@ -100,4 +101,82 @@ int is_equal(ei_rect_t* rect1, ei_rect_t* rect2)
 	int height_idem = rect1->size.height == rect2->size.height;
 	int width_idem = rect1->size.width == rect2->size.width;
 	return x_idem && y_idem && height_idem && width_idem;
+}
+
+
+ei_rect_t* fusion_if(ei_rect_t* rect1, ei_rect_t* rect2)
+{
+	ei_rect_t inter = inter_rect(rect1, rect2);
+	int h1 = rect1->size.height;
+	int h2 = rect2->size.height;
+	int h3 = inter.size.height;
+	int w1 = rect1->size.width;
+	int w2 = rect2->size.width;
+	int w3 = inter.size.width;
+	if ((h1*w1) + (h2*w2) > (h1 + h2 - h3) * (w1 + w2 - w3)) {
+		return NULL;
+	}
+	else {
+		int x1 = rect1->top_left.x;
+		int x2 = rect2->top_left.x;
+		int y1 = rect1->top_left.y;
+		int y2 = rect2->top_left.y;
+		ei_rect_t newRect = ei_rect(ei_point(min(x1, x2), min(y1, y2)), ei_size(w1 + w2 - w3, h1 + h2 - h3));
+		return copy_rect(&newRect);
+	}
+}
+
+
+void destroy_linked_rect(ei_linked_rect_t* to_destroy, ei_linked_rect_t**  head_pt)
+{
+	ei_linked_rect_t* element = *head_pt;
+	if (element == to_destroy) {
+		*head_pt = element->next;
+		free(to_destroy);
+		return;
+	}
+	while (element != NULL && element->next != to_destroy) {
+		element = element->next;
+	}
+	if (to_destroy->next == NULL) {
+		element->next = NULL;
+		free(to_destroy);
+		return;
+	}
+	element->next = to_destroy->next;
+	free(to_destroy);
+}
+
+
+void simplify_list(ei_linked_rect_t**  begin_pt)
+{
+	ei_linked_rect_t* element = *begin_pt;
+	int b = 0;
+	while (element != NULL) {
+		ei_linked_rect_t* to_try = element->next;
+		while (to_try != NULL) {
+			ei_rect_t* fusionned = fusion_if(&(element->rect), &(to_try->rect));
+			if (fusionned == NULL) {
+				to_try = to_try->next;
+			}
+			else {
+				ei_rect_t* old = &(element->rect);
+				element->rect = *fusionned;
+				free(old);
+				destroy_linked_rect(to_try, begin_pt);
+				b = 1;
+				break;
+
+			}
+		}
+		if (b == 1) {
+			break;
+		}
+		else {
+			element = element->next;
+		}
+	}
+	if (b == 1) {
+		simplify_list(begin_pt);
+	}
 }

@@ -15,6 +15,7 @@
 // Variables & definitions for linked list of rects
 #define LIST_RECT_PENDING 0
 #define LIST_RECT_NULL 1
+#define LIST_RECT_QUITTING 2
 int rect_status;
 ei_linked_rect_t* list_rect_head;
 ei_linked_rect_t* list_rect_tail;
@@ -45,15 +46,17 @@ void ei_app_create(ei_size_t main_window_size, ei_bool_t fullscreen)
 
 void ei_app_invalidate_rect(ei_rect_t* rect)
 {
-	if (rect_status != LIST_RECT_NULL) {
+	if (rect_status != LIST_RECT_NULL && rect_status != LIST_RECT_QUITTING) {
 		ei_linked_rect_t* newElement = malloc(sizeof(ei_linked_rect_t));
+		ei_rect_t surface_rect = hw_surface_get_rect(main_window);
 		if (newElement == NULL) {
 			fprintf(stderr, "Out of Memory, Malloc failed \n");
 			return;
 		}
-		if (rect == NULL) {
-			ei_rect_t surface_rect = hw_surface_get_rect(main_window);
-			newElement->rect = *copy_rect(&surface_rect);
+		if (rect == NULL || is_equal(rect, &surface_rect)) {
+			ei_rect_t* copy = copy_rect(&surface_rect);
+			newElement->rect = *copy;
+			free(copy);
 			newElement->next = NULL;
 			free_linked_rect(list_rect_head);
 			rect_status = LIST_RECT_NULL;
@@ -77,6 +80,7 @@ void ei_app_invalidate_rect(ei_rect_t* rect)
 				list_rect_tail->next = newElement;
 				list_rect_tail = newElement;
 			}
+			simplify_list(&list_rect_head);
 		}
 	}
 }
@@ -110,6 +114,7 @@ void ei_app_free(void)
 void ei_app_quit_request(void)
 {
 	running = false;
+	rect_status = LIST_RECT_QUITTING;
 }
 
 void draw(void)
