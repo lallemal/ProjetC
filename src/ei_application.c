@@ -119,3 +119,9 @@ ei_widget_t* ei_app_root_widget(void)
 {
 	return  rootWidget;
 }
+
+
+ei_surface_t ei_app_root_surface(void)
+{
+	return main_window;
+}
