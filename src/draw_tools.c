@@ -227,7 +227,7 @@ ei_linked_point_t* arc_point(ei_point_t center, int radius, int corner_begin, in
 {
         int x_center = center.x;
         int y_center = center.y;
-        ei_linked_point_t* list_point[10];
+        ei_linked_point_t* list_point[9];
         for (int i=0; i<10; i++){
                 if (i<9){
                         list_point[i]->point.x = x_center + radius*cos(corner_begin + i*(1/10)*(corner_end - corner_begin));
@@ -240,11 +240,11 @@ ei_linked_point_t* arc_point(ei_point_t center, int radius, int corner_begin, in
                         list_point[i]->next = NULL;
                 }
         }
-        return list_point[10];
+        return list_point[9];
 
 }
 
-ei_linked_point_t* rounded_frame(ei_rect_t* rect, int radius)
+ei_linked_point_t* rounded_frame(ei_rect_t* rect, int radius, int part)
 {
         ei_point_t center_top_left;
         center_top_left.x = rect->top_left.x + radius;
@@ -258,13 +258,62 @@ ei_linked_point_t* rounded_frame(ei_rect_t* rect, int radius)
         ei_point_t center_bottom_right;
         center_bottom_right.x = rect->top_left.x + rect->size.width - radius;
         center_bottom_right.y = rect->top_left.y + rect->size.height - radius;
-        ei_linked_point_t* rounded_top_left = arc_point(center_top_left, radius, (M_PI)/2, M_PI);
-        ei_linked_point_t* rounded_top_right = arc_point(center_top_right, radius,0,  (M_PI)/2 );
-        ei_linked_point_t* rounded_bottom_left = arc_point(center_bottom_left, radius, M_PI, (3*M_PI)/2);
-        ei_linked_point_t* rounded_bottom_right = arc_point(center_bottom_right, radius, (3*M_PI)/2, 2*M_PI);
-        rounded_top_left[10].next = &rounded_top_right[0];
-        rounded_top_right[10].next = &rounded_bottom_right[0];
-        rounded_bottom_right[10].next = &rounded_bottom_left[0];
-        return rounded_top_left;
 
+        ei_linked_point_t *rounded_top_left = arc_point(center_top_left, radius, (M_PI) / 2, M_PI);
+        ei_linked_point_t *rounded_top_right = arc_point(center_top_right, radius, 0, (M_PI) / 2);
+        ei_linked_point_t *rounded_bottom_left = arc_point(center_bottom_left, radius, M_PI, (3 * M_PI) / 2);
+        ei_linked_point_t *rounded_bottom_right = arc_point(center_bottom_right, radius, (3 * M_PI) / 2,
+                                                            2 * M_PI);
+        if (part == 0) {
+                rounded_top_left[9].next = &rounded_top_right[0];
+                rounded_top_right[9].next = &rounded_bottom_right[0];
+                rounded_bottom_right[9].next = &rounded_bottom_left[0];
+                return rounded_top_left;
+        }
+        else{
+                if (part == 1){
+                        ei_linked_point_t* rounded_up;
+                        *rounded_up = rounded_top_right[5];
+                        rounded_top_right[9].next = &rounded_top_left[0];
+                        rounded_top_left[9].next = &rounded_bottom_left[0];
+                        rounded_bottom_left[4].next = NULL;
+                        return rounded_up;
+                }
+                else{
+                        ei_linked_point_t* rounded_down;
+                        *rounded_down = rounded_bottom_left[5];
+                        rounded_bottom_left[9].next = &rounded_bottom_right[0];
+                        rounded_bottom_right[9].next = &rounded_top_right[0];
+                        rounded_top_right[4].next = NULL;
+                        return rounded_down;
+                }
+        }
+}
+
+void draw_button(ei_surface_t surface,ei_rect_t* rect_button, int border_width, int corner_radius, ei_relief_t relief, ei_color_t color, ei_rect_t* clipper)
+{
+        if (border_width == 0){
+                ei_draw_polygon(surface, rounded_frame(rect_button, corner_radius, 0 ), color, clipper);
+        }
+        else{
+                ei_rect_t *rect_surface_with_border = malloc(sizeof(ei_rect_t));
+                rect_surface_with_border->size.height = rect_button->size.height - 2 * border_width;
+                rect_surface_with_border->size.width = rect_button->size.width - 2 * border_width;
+                rect_surface_with_border->top_left.x = rect_button->top_left.x + border_width;
+                rect_surface_with_border->top_left.y = rect_button->top_left.y + border_width;
+                if (relief == ei_relief_none){
+                        ei_draw_polygon(surface, rounded_frame(rect_button, corner_radius, 0), dark_color(color),
+                                        clipper);
+                }
+                if (relief == ei_relief_raised){
+                        ei_draw_polygon(surface, rounded_frame(rect_button, corner_radius, 1), clear_color(color), clipper);
+                        ei_draw_polygon(surface, rounded_frame(rect_button, corner_radius, 2), dark_color(color), clipper);
+                }
+                if (relief == ei_relief_sunken){
+                        ei_draw_polygon(surface, rounded_frame(rect_button, corner_radius, 1), dark_color(color), clipper);
+                        ei_draw_polygon(surface, rounded_frame(rect_button, corner_radius, 2), clear_color(color), clipper);
+                }
+                ei_draw_polygon(surface, rounded_frame(rect_surface_with_border, corner_radius, 0), color,
+                                clipper);
+        }
 }
