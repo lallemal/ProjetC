@@ -15,6 +15,7 @@
 #include "ei_draw.h"
 #include "ei_application.h"
 #include "draw_tools.h"
+#include "utils.h"
 
 
 #define max(a,b) (a>=b?a:b)
@@ -114,24 +115,12 @@ void ei_frame_drawfunc(struct	ei_widget_t*	widget,
                 free(rect_surface);
         }
         else{
-                int x_clipper= clipper->top_left.x;
-                int y_clipper= clipper->top_left.y;
-                int height_clipper = clipper->size.height;
-                int width_clipper = clipper->size.width;
-                int x_frame= widget->screen_location.top_left.x;
-                int y_frame = widget->screen_location.top_left.y;
-                int height_frame = widget->screen_location.size.height;
-                int width_frame = widget->screen_location.size.width;
+                *rect_tot = inter_rect(clipper, &widget->screen_location);
+                rect_to_fill->top_left.x = rect_tot->top_left.x + frame->border_width;
+                rect_to_fill->top_left.y = rect_tot->top_left.y + frame->border_width;
+                rect_to_fill->size.width = rect_tot->size.width - 2*frame->border_width;
+                rect_to_fill->size.height = rect_tot->size.height - 2*frame->border_width;
 
-                rect_to_fill->top_left.x=max(x_frame, x_clipper) + frame->border_width;
-                rect_to_fill->top_left.y=max(y_clipper, y_frame) + frame->border_width;
-                rect_to_fill->size.width=abs(min(x_clipper+width_clipper, x_frame+width_frame)-max(x_clipper, x_frame))-2*(frame->border_width);
-                rect_to_fill->size.height=abs(max(y_frame, y_clipper)-min(y_frame+height_frame, y_clipper+height_clipper))-2*(frame->border_width);
-
-                rect_tot->top_left.x=max(x_frame, x_clipper);
-                rect_tot->top_left.y=max(y_clipper, y_frame);
-                rect_tot->size.width=abs(min(x_clipper+width_clipper, x_frame+width_frame)-max(x_clipper, x_frame));
-                rect_tot->size.height=abs(max(y_frame, y_clipper)-min(y_frame+height_frame, y_clipper+height_clipper));
         }
         //On récupère la couleur du fond
         ei_color_t color_back = frame->color;
