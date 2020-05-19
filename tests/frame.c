@@ -20,9 +20,9 @@ int main(int argc, char** argv)
 
 	ei_widget_t*	frame;
 	ei_size_t	frame_size		= {300,200};
-	char*           text_frame              = "Salut";
-	ei_anchor_t	text_anchor		= ei_anc_southwest;
-	ei_color_t      text_color              = {0x45, 0x34, 0xf3, 0xff};
+	//char*           text_frame              = "Salut";
+	//ei_anchor_t	text_anchor		= ei_anc_southwest;
+	//ei_color_t      text_color              = {0x45, 0x34, 0xf3, 0xff};
 	int		frame_x			= 200;
 	int		frame_y			= 300;
 	ei_anchor_t     anchor                  = ei_anc_center;
@@ -30,19 +30,22 @@ int main(int argc, char** argv)
 	ei_relief_t	frame_relief		= ei_relief_raised;
 	int		frame_border_width	= 6;
 
-	ei_surface_t    image;
-	ei_rect_t       
+	ei_surface_t    image                   =hw_image_load("misc/klimt.jpg", ei_app_root_surface());
+	ei_rect_t*      rect_img;
+	ei_anchor_t     img_anchor              = ei_anc_center;
 
-	image = hw_image_load("/home/louise/Images/arctic.jpg", ei_app_root_surface());
+
+
+        *rect_img = hw_surface_get_rect(image);
 	/* Create the application and change the color of the background. */
 	ei_app_create(screen_size, EI_FALSE);
-	ei_frame_configure(ei_app_root_widget(), NULL, &root_bgcol, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+	ei_frame_configure(ei_app_root_widget(), NULL, &root_bgcol, NULL, NULL, NULL, NULL, NULL, NULL, &image, &rect_img, &img_anchor);
 
 	/* Create, configure and place the frame on screen. */
 	frame = ei_widget_create("frame", ei_app_root_widget(), NULL, NULL);
 	ei_frame_configure(frame, &frame_size, &frame_color,
-			    &frame_border_width, &frame_relief, &text_frame, NULL, &text_color, &text_anchor,
-			    &image, NULL, NULL);
+			    &frame_border_width, &frame_relief, NULL, NULL, NULL, NULL,
+			    NULL, NULL, NULL);
 	ei_place(frame, &anchor, &frame_x, &frame_y, NULL, NULL, NULL, NULL, NULL, NULL );
 
 	/* Run the application's main loop. */
