@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include <stdbool.h>
 
 
@@ -50,6 +51,10 @@ void ei_app_invalidate_rect(ei_rect_t* rect)
 		}
 		else {
 			ei_linked_rect_t* newElement = malloc(sizeof(ei_linked_rect_t));
+			if (newElement == NULL) {
+				fprintf(stderr, "Out of Memory, Malloc failed \n");
+				return;
+			}
 			newElement->rect = *rect;
 			newElement->next = NULL;
 			if (list_rect_head == NULL) {
