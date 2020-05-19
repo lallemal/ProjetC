@@ -16,7 +16,6 @@
 /**
  * @brief	Fonction to know where is the point at the top right corner in the rectangle
  *
- * @param       surface         Global surface of the frame (in the case where clipper is NULL => rect_to_fill is NULL)
  * @param	rect		Global rectangle which will contain the text or the image
  * @param	anchor		The anchor link to the text or the image.
  * @param	width_text	width of the text or the image
@@ -24,7 +23,7 @@
  *
  * @return			The point at the top right of the text or the image
  */
-ei_point_t* anchor_point(ei_surface_t surface, ei_rect_t* rect, ei_anchor_t anchor, int width_text, int height_text);
+ei_point_t* anchor_point( ei_rect_t* rect, ei_anchor_t anchor, int width_text, int height_text);
 
 
 /**
