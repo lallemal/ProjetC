@@ -24,9 +24,13 @@ int main(int argc, char** argv)
 	ei_anchor_t	text_anchor		= ei_anc_west;
 	int		frame_x			= 150;
 	int		frame_y			= 200;
+//	ei_anchor_t	text_anchor		= ei_anc_southwest;
+	ei_color_t      text_color              = {0x45, 0x34, 0xf3, 0xff};
+//	int		frame_x			= 200;
+//	int		frame_y			= 300;
 	ei_anchor_t     anchor                  = ei_anc_center;
 	ei_color_t	frame_color		= {0x88, 0x88, 0x88, 0xff};
-	ei_relief_t	frame_relief		= ei_relief_raised;
+	ei_relief_t	frame_relief		= ei_relief_raised
 	        ;
 	int		frame_border_width	= 6;
 
@@ -37,7 +41,7 @@ int main(int argc, char** argv)
 	/* Create, configure and place the frame on screen. */
 	frame = ei_widget_create("frame", ei_app_root_widget(), NULL, NULL);
 	ei_frame_configure(frame, &frame_size, &frame_color,
-			    &frame_border_width, &frame_relief, &text_frame, NULL, NULL, &text_anchor,
+			    &frame_border_width, &frame_relief, &text_frame, NULL, &text_color, &text_anchor,
 			    NULL, NULL, NULL);
 	ei_place(frame, &anchor, &frame_x, &frame_y, NULL, NULL, NULL, NULL, NULL, NULL );
 
