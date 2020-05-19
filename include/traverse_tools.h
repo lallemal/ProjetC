@@ -48,7 +48,8 @@ void destroy_widgetclass(ei_widgetclass_t* begin);
  */
 void draw_widgets      (ei_widget_t* begin,
 			ei_surface_t surface,
-			ei_surface_t pick_surface);
+			ei_surface_t pick_surface,
+			ei_rect_t clipper);
 
 
 
