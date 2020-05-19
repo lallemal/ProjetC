@@ -35,7 +35,7 @@ void ei_widget_destroy(ei_widget_t* widget)
 	if (widget->parent != NULL) {
 		ei_widget_t* parent_child = widget->parent->children_head;
 		if (parent_child == widget) {
-			widget->parent->children_head = widget->next_sibling;
+                widget->parent->children_head = widget->next_sibling;
 			if (widget->parent->children_tail == widget) {
 				widget->parent->children_tail = NULL;
 			}

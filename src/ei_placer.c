@@ -2,7 +2,7 @@
 // Created by devri on 13/05/2020.
 //
 #include <stdlib.h>
-
+#include "ei_application.h"
 #include "ei_placer.h"
 #include "ei_utils.h"
 
@@ -11,9 +11,9 @@ int  is_set_relative(float rel){
 }
 int  are_old_and_new_diff (ei_rect_t r1, ei_rect_t r2){
         return r1.size.height != r2.size.height ||
-                r1.size.width != r2.size.width ||
-                r1.top_left.x != r2.top_left.x ||
-                r1.top_left.y != r2.top_left.y;
+               r1.size.width != r2.size.width ||
+               r1.top_left.x != r2.top_left.x ||
+               r1.top_left.y != r2.top_left.y;
 
 }
 void ei_run_func(struct ei_widget_t*	widget){
@@ -71,6 +71,7 @@ void ei_run_func(struct ei_widget_t*	widget){
                 }
                 // to avoid computation of children if geometry is the same
                 if (are_old_and_new_diff(new_screen_loc, widget->screen_location)){
+                        ei_app_invalidate_rect(&(widget->screen_location));
                         widget->wclass->geomnotifyfunc(widget);
                         ei_widget_t *child = widget->children_head;
                         widget->screen_location = new_screen_loc;

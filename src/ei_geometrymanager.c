@@ -35,7 +35,7 @@ ei_geometrymanager_t*	ei_geometrymanager_from_name	(ei_geometrymanager_name_t na
 
 void			ei_geometrymanager_unmap	(ei_widget_t*		widget){
         if (is_defined(widget->geom_params)){
-//                widget->geom_params->manager->releasefunc(widget);
+                widget->geom_params->manager->releasefunc(widget);
                 free(widget->geom_params);
                 widget->geom_params = NULL;
                 widget->screen_location = ei_rect_zero();
