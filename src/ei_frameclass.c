@@ -192,7 +192,7 @@ void ei_frame_drawfunc(struct	ei_widget_t*	widget,
                         source_rectangle->size.height = rect_to_fill_on_screen->size.height;
                 }
 
-                ei_copy_surface(surface, rect_to_fill, frame->img, source_rectangle, hw_surface_has_alpha(frame->img));
+
 
                 if (point_img->x >= 0 && point_img->y >= 0) {
                         source_rectangle = NULL;
@@ -203,8 +203,7 @@ void ei_frame_drawfunc(struct	ei_widget_t*	widget,
                 //rect_img->size.width = widget->screen_location.size.width;
                 //rect_img->size.height = widget->screen_location.size.height;
 
-                //idem
-                ei_copy_surface(surface, rect_to_fill, frame->img, NULL, hw_surface_has_alpha(frame->img));
+                ei_copy_surface(surface, rect_to_fill_on_screen, frame->img, source_rectangle, hw_surface_has_alpha(frame->img));
 
                 hw_surface_unlock(frame->img);
                 free(point_img);
