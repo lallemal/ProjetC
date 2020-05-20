@@ -25,7 +25,7 @@ int main(int argc, char** argv)
 	ei_color_t      text_color              = {0x45, 0x34, 0xf3, 0xff};
 	int		frame_x			= 0;
 	int		frame_y			= 0;
-	ei_anchor_t     anchor                  = ei_anc_center;
+	ei_anchor_t     anchor                  = ei_anc_northwest;
 	ei_color_t	frame_color		= {0x88, 0x88, 0x88, 0xff};
 	ei_relief_t	frame_relief		= ei_relief_raised;
 	int		frame_border_width	= 6;
