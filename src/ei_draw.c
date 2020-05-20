@@ -109,6 +109,17 @@ void ei_draw_text       (ei_surface_t		surface,
 	ei_rect_t destRect = inter_rect(clipper, &text_rect);
 	// Lock the surface and copy it on the destination surface
 	hw_surface_lock(text_surface);
+	ei_rect_t* srcRect = copy_rect(&destRect);
+	srcRect->top_left.x = 0;
+	srcRect->top_left.y = 0;
+	if (where->x < 0) {
+		srcRect->top_left.x = -where->x;
+		srcRect->size.width += where->x;
+	}
+	if (where->y < 0) {
+		srcRect->top_left.y = -where->y;
+		srcRect->size.height += where->y;
+	}
 	ei_copy_surface(surface, &destRect, text_surface, NULL, EI_TRUE);
 	// Release the text_surface no longer needed
 	hw_surface_unlock(text_surface);
