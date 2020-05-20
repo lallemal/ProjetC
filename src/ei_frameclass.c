@@ -105,14 +105,13 @@ void ei_frame_drawfunc(struct	ei_widget_t*	widget,
         ei_rect_t *rect_to_fill=malloc(sizeof(ei_rect_t));
         ei_rect_t* rect_tot = malloc(sizeof(ei_rect_t));
 
-        //surface de picking
-        ei_color_t* color_picking = malloc(sizeof(ei_color_t));
-        color_picking = widget->pick_color;
-        ei_rect_t* rect_to_pick = malloc(sizeof(ei_rect_t));
-        *rect_to_pick = inter_rect(clipper, rect_tot);
-        ei_fill(pick_surface, &color_picking, rect_to_pick);
-        free(color_picking);
-        free(rect_to_pick);
+        //surface de picking --> GROS PORBLEME
+        //ei_rect_t* rect_to_pick = malloc(sizeof(ei_rect_t));
+        //*rect_to_pick = inter_rect(clipper, rect_tot);
+        //ei_fill(pick_surface, widget->pick_color, rect_to_pick);
+        //free(rect_to_pick);
+
+
 
 
         //on prend les deux cas clipper nul et clipper non nul pour y associer un rectangle qu est concerné par les fonctions de dessins
