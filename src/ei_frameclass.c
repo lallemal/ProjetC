@@ -101,28 +101,29 @@ void ei_frame_drawfunc(struct	ei_widget_t*	widget,
 {
         ei_frame_t* frame=(ei_frame_t*)widget;
         hw_surface_lock(surface);
+        hw_surface_lock(pick_surface);
         ei_rect_t *rect_to_fill=malloc(sizeof(ei_rect_t));
         ei_rect_t* rect_tot = malloc(sizeof(ei_rect_t));
+
+        //surface de picking
+        ei_color_t* color_picking = malloc(sizeof(ei_color_t));
+        color_picking = widget->pick_color;
+        ei_rect_t* rect_to_pick = malloc(sizeof(ei_rect_t));
+        *rect_to_pick = inter_rect(clipper, rect_tot);
+        ei_fill(pick_surface, &color_picking, rect_to_pick);
+        free(color_picking);
+        free(rect_to_pick);
+
+
         //on prend les deux cas clipper nul et clipper non nul pour y associer un rectangle qu est concerné par les fonctions de dessins
         //dans le cas ou le clipper est NULL, on prend toute la surface comme délimitation (et on prend en compte la présence ou non d'une bordure)
 
+        *rect_tot = widget->screen_location;
+        rect_to_fill->top_left.x = rect_tot->top_left.x + frame->border_width;
+        rect_to_fill->top_left.y = rect_tot->top_left.y + frame->border_width;
+        rect_to_fill->size.width = rect_tot->size.width - 2*frame->border_width;
+        rect_to_fill->size.height = rect_tot->size.height - 2*frame->border_width;
 
-        if (clipper == NULL){
-                rect_to_fill->top_left.x = widget->screen_location.top_left.x + frame->border_width;
-                rect_to_fill->top_left.y = widget->screen_location.top_left.y + frame->border_width;
-                rect_to_fill->size.width = widget->screen_location.size.width - 2*(frame->border_width);
-                rect_to_fill->size.height = widget->screen_location.size.height - 2*(frame->border_width);
-                *rect_tot = widget->screen_location;
-
-        }
-        else{
-                *rect_tot = widget->screen_location;
-                rect_to_fill->top_left.x = rect_tot->top_left.x + frame->border_width;
-                rect_to_fill->top_left.y = rect_tot->top_left.y + frame->border_width;
-                rect_to_fill->size.width = rect_tot->size.width - 2*frame->border_width;
-                rect_to_fill->size.height = rect_tot->size.height - 2*frame->border_width;
-
-        }
 
         //On récupère le point qui rattache le texte
         //Si clipper==NULL =>  rect_to_fill== surface - bordure
@@ -225,6 +226,7 @@ void ei_frame_drawfunc(struct	ei_widget_t*	widget,
 
         //on unlock les changements
         hw_surface_unlock(surface);
+        hw_surface_unlock(pick_surface);
 
         //on libère la mémoire
         free(rect_to_fill);

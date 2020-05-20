@@ -15,6 +15,7 @@
 #include "math.h"
 #include "draw_tools.h"
 #include "utils.h"
+#include "ei_types.h"
 
 
 #define max(a,b) (a>=b?a:b)
@@ -290,9 +291,10 @@ ei_linked_point_t* rounded_frame(ei_rect_t* rect, int radius, int part)
         }
 }
 
-void draw_button(ei_surface_t surface,ei_rect_t* rect_button, int border_width, int corner_radius, ei_relief_t relief, ei_color_t color)
+void draw_button(ei_surface_t surface, ei_surface_t pick_surface,ei_rect_t* rect_button, ei_color_t pick_color, ei_color_t color, int border_width, int corner_radius, ei_relief_t relief)
 {
-        if (border_width == 0){
+
+        if ( border_width== 0){
                 ei_draw_polygon(surface, rounded_frame(rect_button, corner_radius, 0 ), color, rect_button);
         }
         else{
@@ -316,4 +318,7 @@ void draw_button(ei_surface_t surface,ei_rect_t* rect_button, int border_width, 
                 ei_draw_polygon(surface, rounded_frame(rect_surface_with_border, corner_radius, 0), color,
                                 rect_button);
         }
+
+        //Surface de picking
+        ei_draw_polygon(pick_surface, rounded_frame(rect_button, corner_radius, 0), pick_color, rect_button);
 }

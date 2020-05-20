@@ -101,15 +101,10 @@ void ei_button_drawfunc(struct	ei_widget_t*	widget,
         hw_surface_lock(surface);
         ei_rect_t* rect_tot = malloc(sizeof(ei_rect_t));
 
-        if (clipper == NULL){
-                *rect_tot = widget->screen_location;
-        }
-        else{
-                *rect_tot = widget->screen_location;
-        }
+        *rect_tot = widget->screen_location;
 
         //on trace le bouton
-        draw_button(surface, rect_tot, button->border_width, button->corner_radius, button->relief, button->color);
+        draw_button(surface, pick_surface, rect_tot, *widget->pick_color,  button->color, button->border_width, button->corner_radius, button->relief);
 
         //On créé le rectangle 'intérieur' qui contiendra l'image ou le texte
         if (button->img != NULL || button->text != NULL){

@@ -12,6 +12,7 @@
 #include "ei_widgetclass.h"
 #include "ei_widget.h"
 #include "ei_draw.h"
+#include "ei_types.h"
 
 /**
  * @brief	Fonction to know where is the point at the top right corner in the rectangle
@@ -107,7 +108,7 @@ ei_linked_point_t* rounded_frame(ei_rect_t* rect, int radius, int part);
  * @return		       a linked point list which represents the rectangle with rounded corners
  */
 
-void draw_button(ei_surface_t surface,ei_rect_t* rect_button, int border_width, int corner_radius, ei_relief_t relief, ei_color_t color);
+void draw_button(ei_surface_t surface, ei_surface_t pick_surface,ei_rect_t* rect_button, ei_color_t pick_color, ei_color_t color, int border_width, int corner_radius, ei_relief_t relief);
 
 
 #endif /* ifndef DRAW_H */
