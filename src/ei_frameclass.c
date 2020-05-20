@@ -234,17 +234,9 @@ void ei_frame_configure(ei_widget_t*		widget,
 
 {
 	ei_frame_t* frame = (ei_frame_t *) widget;
-	if (requested_size != NULL) {
-		widget->requested_size.height = requested_size->height;
-		widget->requested_size.width = requested_size->width;
-	}
+	int ancient_border_width = frame->border_width;
 	if (color != NULL) {
 		frame->color = *color;
-	}
-	if (border_width != NULL) {
-		frame->border_width = *border_width;
-		widget->requested_size.width = max(widget->requested_size.width, 2*frame->border_width);
-		widget->requested_size.height = max(widget->requested_size.height, 2*frame->border_width);
 	}
 	if (relief != NULL) {
 		frame->relief = *relief;
@@ -258,11 +250,11 @@ void ei_frame_configure(ei_widget_t*		widget,
 	if (text_color != NULL) {
 		frame->text_color = *text_color;
 	}
-	if (text != NULL) {
-		frame->text = *text;
-	}
 	if (img_rect != NULL) {
 		frame->img_rect = *img_rect;
+	}
+	if (img_anchor != NULL) {
+		frame->img_anchor = *img_anchor;
 	}
 	if (img != NULL) {
 		frame->img = *img;
@@ -277,11 +269,32 @@ void ei_frame_configure(ei_widget_t*		widget,
 			height = img_size.height;
 			width = img_size.width;
 		}
-		widget->requested_size.height = height;
-		widget->requested_size.width = width;
+		height += 2* ancient_border_width;
+		width += 2 * ancient_border_width;
+		widget->requested_size.height = max(height, widget->requested_size.height);
+		widget->requested_size.width = max(width, widget->requested_size.width);
 	}
-	if (img_anchor != NULL) {
-		frame->img_anchor = *img_anchor;
+	if (text != NULL) {
+		frame->text = *text;
+		int height_text;
+		int width_text;
+		hw_text_compute_size(frame->text, frame->text_font, &width_text, &height_text);
+		height_text += 2 * ancient_border_width;
+		width_text += 2 * ancient_border_width;
+		widget->requested_size.height = max(height_text, widget->requested_size.height);
+		widget->requested_size.width = max(width_text, widget->requested_size.size.width);
+
+	}
+	if (border_width != NULL) {
+		frame->border_width = *border_width;
+		widget->requested_size.height -= 2 * ancient_border_width;
+		widget->requested_size.height += 2 * frame->border_width;
+		widget->requested_size.width -= 2 * ancient_border_width;
+		widget->requested_size.width += 2 * frame->border_width;
+	}
+	if (requested_size != NULL) {
+		widget->requested_size.height = requested_size->height;
+		widget->requested_size.width = requested_size->width;
 	}
 	ei_app_invalidate_rect(&(widget->screen_location));
 }
