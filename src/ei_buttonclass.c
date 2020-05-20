@@ -100,12 +100,13 @@ void ei_button_drawfunc(struct	ei_widget_t*	widget,
 {
         ei_button_t* button=(ei_button_t*)widget;
         hw_surface_lock(surface);
+        hw_surface_lock(pick_surface);
         ei_rect_t* rect_tot = malloc(sizeof(ei_rect_t));
 
         *rect_tot = widget->screen_location;
 
         //on trace le bouton
-        draw_button(surface, pick_surface, rect_tot, *widget->pick_color,  button->color, button->border_width, button->corner_radius, button->relief);
+        draw_button(surface, rect_tot,  button->color, button->border_width, button->corner_radius, button->relief);
 
         //On créé le rectangle 'intérieur' qui contiendra l'image ou le texte
         if (button->img != NULL || button->text != NULL){
@@ -175,6 +176,7 @@ void ei_button_drawfunc(struct	ei_widget_t*	widget,
         }
 
         hw_surface_unlock(surface);
+        hw_surface_unlock(pick_surface);
         free(rect_tot);
 }
 
@@ -217,7 +219,8 @@ void ei_button_configure	(ei_widget_t*		widget,
 {
 	ei_button_t* button = (ei_button_t *) widget;
 	if (requested_size != NULL) {
-		widget->screen_location.size = *requested_size;
+                widget->requested_size.height = requested_size->height;
+                widget->requested_size.width = requested_size->width;
 	}
 	if (color != NULL) {
 		button->color = *color;

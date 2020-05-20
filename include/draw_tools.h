@@ -84,7 +84,9 @@ void draw_down_relief(ei_rect_t* rect_to_fill, ei_surface_t surface, ei_color_t 
  * @return		       a linked point list which represents the arc
  */
 
-ei_linked_point_t* arc(ei_point_t* center, int radius, int corner_begin, int corner_end);
+ei_linked_point_t* arc_point1(ei_point_t center, int radius, int corner_begin, int corner_end);
+
+ei_linked_point_t* arc_point2(ei_point_t center, int radius, int corner_begin, int corner_end);
 
 /**
  * @brief	Fonction which draw a rectangle with rounded corner
@@ -99,16 +101,18 @@ ei_linked_point_t* arc(ei_point_t* center, int radius, int corner_begin, int cor
 ei_linked_point_t* rounded_frame(ei_rect_t* rect, int radius, int part);
 
 /**
- * @brief	Fonction which draw a rectangle with rounded corner
+ * @brief	Fonction which draw the button
  *
- * @param       rect           rectangle at the beggining which will have rounded corner
- * @param       radius         int which is the radius of the arc of the rounded corners
- * @param       part           char which means if we want up, down or the totality of the rectangle with rounded corners
+ * @param       surface        surface where we will draw the button
+ * @param       rect_button    the rectangle in which we must to draw the button
+ * @param       color          color of the button
+ * @param       border_width   border of the button
+ * @param       corner_radius  radius for the rounded corners
+ * @param       relief         relief of the button
  *
- * @return		       a linked point list which represents the rectangle with rounded corners
  */
 
-void draw_button(ei_surface_t surface, ei_surface_t pick_surface,ei_rect_t* rect_button, ei_color_t pick_color, ei_color_t color, int border_width, int corner_radius, ei_relief_t relief);
+void draw_button(ei_surface_t surface, ei_rect_t* rect_button, ei_color_t color, int border_width, int corner_radius, ei_relief_t relief);
 
 
 #endif /* ifndef DRAW_H */
