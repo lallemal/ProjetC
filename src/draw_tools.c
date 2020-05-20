@@ -290,10 +290,10 @@ ei_linked_point_t* rounded_frame(ei_rect_t* rect, int radius, int part)
         }
 }
 
-void draw_button(ei_surface_t surface,ei_rect_t* rect_button, int border_width, int corner_radius, ei_relief_t relief, ei_color_t color, ei_rect_t* clipper)
+void draw_button(ei_surface_t surface,ei_rect_t* rect_button, int border_width, int corner_radius, ei_relief_t relief, ei_color_t color)
 {
         if (border_width == 0){
-                ei_draw_polygon(surface, rounded_frame(rect_button, corner_radius, 0 ), color, clipper);
+                ei_draw_polygon(surface, rounded_frame(rect_button, corner_radius, 0 ), color, rect_button);
         }
         else{
                 ei_rect_t *rect_surface_with_border = malloc(sizeof(ei_rect_t));
@@ -303,17 +303,17 @@ void draw_button(ei_surface_t surface,ei_rect_t* rect_button, int border_width, 
                 rect_surface_with_border->top_left.y = rect_button->top_left.y + border_width;
                 if (relief == ei_relief_none){
                         ei_draw_polygon(surface, rounded_frame(rect_button, corner_radius, 0), dark_color(color),
-                                        clipper);
+                                        rect_button);
                 }
                 if (relief == ei_relief_raised){
-                        ei_draw_polygon(surface, rounded_frame(rect_button, corner_radius, 1), clear_color(color), clipper);
-                        ei_draw_polygon(surface, rounded_frame(rect_button, corner_radius, 2), dark_color(color), clipper);
+                        ei_draw_polygon(surface, rounded_frame(rect_button, corner_radius, 1), clear_color(color), rect_button);
+                        ei_draw_polygon(surface, rounded_frame(rect_button, corner_radius, 2), dark_color(color), rect_button);
                 }
                 if (relief == ei_relief_sunken){
-                        ei_draw_polygon(surface, rounded_frame(rect_button, corner_radius, 1), dark_color(color), clipper);
-                        ei_draw_polygon(surface, rounded_frame(rect_button, corner_radius, 2), clear_color(color), clipper);
+                        ei_draw_polygon(surface, rounded_frame(rect_button, corner_radius, 1), dark_color(color), rect_button);
+                        ei_draw_polygon(surface, rounded_frame(rect_button, corner_radius, 2), clear_color(color), rect_button);
                 }
                 ei_draw_polygon(surface, rounded_frame(rect_surface_with_border, corner_radius, 0), color,
-                                clipper);
+                                rect_button);
         }
 }

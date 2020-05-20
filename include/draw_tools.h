@@ -107,7 +107,7 @@ ei_linked_point_t* rounded_frame(ei_rect_t* rect, int radius, int part);
  * @return		       a linked point list which represents the rectangle with rounded corners
  */
 
-void draw_button(ei_surface_t surface,ei_rect_t* rect_button, int border_width, int corner_radius, ei_relief_t relief, ei_color_t color, ei_rect_t* clipper);
+void draw_button(ei_surface_t surface,ei_rect_t* rect_button, int border_width, int corner_radius, ei_relief_t relief, ei_color_t color);
 
 
 #endif /* ifndef DRAW_H */
