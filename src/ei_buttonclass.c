@@ -15,6 +15,7 @@
 #include "ei_draw.h"
 #include "utils.h"
 #include "math.h"
+#include "ei_application.h"
 
 
 #define max(a,b) (a>=b?a:b)
@@ -177,6 +178,10 @@ void ei_button_drawfunc(struct	ei_widget_t*	widget,
         free(rect_tot);
 }
 
+void ei_button_geomnotifyfunc(struct ei_widget_t* widget)
+{
+	ei_app_invalidate_rect(&(widget->screen_location));
+}
 
 
 void ei_button_register_class(void)
@@ -187,6 +192,7 @@ void ei_button_register_class(void)
 	button->releasefunc = &ei_button_releasefunc;
 	button->drawfunc = &ei_button_drawfunc;
 	button->setdefaultsfunc = &ei_button_setdefaultsfunc;
+	button->geomnotifyfunc = &ei_button_geomnotifyfunc;
 	button->next = NULL;
 	ei_widgetclass_register(button);
 }
