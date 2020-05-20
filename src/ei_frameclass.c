@@ -181,16 +181,32 @@ void ei_frame_drawfunc(struct	ei_widget_t*	widget,
         //mise en place de l'image
         ei_rect_t* rect_img=malloc(sizeof(ei_rect_t));
         if (frame->img != NULL){
+                hw_surface_lock(frame->img);
                 if (point_img->x <0 || point_img->y <0){
+                        ei_rect_t* source_rectangle = frame->img_rect;
+                        if (point_img->x <0){
+                                source_rectangle->top_left.x = frame->img_rect->top_left.x + abs(point_img->x);
+                                source_rectangle->size.width = frame->img_rect->size.width - abs(point_img->x);
+                        }
+                        if (point_img->y <0){
+                                source_rectangle->top_left.y = frame->img_rect->top_left.y + abs(point_img->y);
+                                source_rectangle->size.height = frame->img_rect->size.height - abs(point_img->y);
+                        }
+                        //Changer rect tot en rect to fill quand il n'y aura plus de probleme avec configure
+                        ei_copy_surface(surface, rect_tot, frame->img, source_rectangle, hw_surface_has_alpha(frame->img));
+                        free(source_rectangle);
+                }
+                else {
+
+                        //rect_img->top_left.x = point_img->x;
+                        //rect_img->top_left.y = point_img->y;
+                        //rect_img->size.width = widget->screen_location.size.width;
+                        //rect_img->size.height = widget->screen_location.size.height;
+
+                        //idem
+                        ei_copy_surface(surface, rect_to_fill, frame->img, NULL, hw_surface_has_alpha(frame->img));
 
                 }
-                else{}
-                hw_surface_lock(frame->img);
-                //rect_img->top_left.x = point_img->x;
-                //rect_img->top_left.y = point_img->y;
-                //rect_img->size.width = widget->screen_location.size.width;
-                //rect_img->size.height = widget->screen_location.size.height;
-                ei_copy_surface(surface, rect_to_fill, frame->img, NULL, hw_surface_has_alpha(frame->img));
                 hw_surface_unlock(frame->img);
                 free(point_img);
         }
