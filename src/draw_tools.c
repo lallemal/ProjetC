@@ -12,14 +12,15 @@
 #include "ei_widgetclass.h"
 #include "ei_widget.h"
 #include "ei_draw.h"
+#include "math.h"
 #include "draw_tools.h"
-
+#include "utils.h"
 
 
 #define max(a,b) (a>=b?a:b)
 #define min(a,b) (a<=b?a:b)
 
-ei_point_t* anchor_point(ei_surface_t surface, ei_rect_t* rect, ei_anchor_t anchor, int width_text, int height_text)
+ei_point_t* anchor_point( ei_rect_t* rect, ei_anchor_t anchor, int width_text, int height_text)
 {
         ei_point_t* point=malloc(sizeof(ei_point_t));
         int x_rect;
@@ -31,11 +32,11 @@ ei_point_t* anchor_point(ei_surface_t surface, ei_rect_t* rect, ei_anchor_t anch
         width=rect->size.width;
         height=rect->size.height;
         if (anchor == ei_anc_center){
-                point->x=min((x_rect+x_rect+width)/2, x_rect+width-width_text);
-                point->y=min((y_rect+y_rect+height)/2, y_rect+height-height_text);
+                point->x=(x_rect+x_rect+width)/2 - width_text/2;
+                point->y=(y_rect+y_rect+height)/2 - height_text/2;
         }
         if(anchor == ei_anc_north){
-                point->x=min((x_rect+x_rect+width)/2, x_rect+width-width_text);
+                point->x=(x_rect+x_rect+width)/2 - width_text/2;
                 point->y=y_rect;
         }
         if(anchor == ei_anc_northeast){
@@ -44,14 +45,14 @@ ei_point_t* anchor_point(ei_surface_t surface, ei_rect_t* rect, ei_anchor_t anch
         }
         if(anchor == ei_anc_east){
                 point->x=x_rect+width-width_text;
-                point->y=min((y_rect+y_rect+height)/2, y_rect+height-height_text);
+                point->y=(y_rect+y_rect+height)/2 - height_text/2;
         }
         if(anchor == ei_anc_southeast){
                 point->x=x_rect+width-width_text;
                 point->y=y_rect+height-height_text;
         }
         if(anchor == ei_anc_south){
-                point->x=min((x_rect+x_rect+width)/2, x_rect+width-width_text);
+                point->x=(x_rect+x_rect+width)/2 - width_text/2;
                 point->y=y_rect+height-height_text;
         }
         if(anchor == ei_anc_southwest){
@@ -60,7 +61,7 @@ ei_point_t* anchor_point(ei_surface_t surface, ei_rect_t* rect, ei_anchor_t anch
         }
         if(anchor == ei_anc_west){
                 point->x=x_rect;
-                point->y=min((y_rect+y_rect+height)/2, y_rect+height-height_text);
+                point->y=(y_rect+y_rect+height)/2 - height_text/2;
         }
         if(anchor == ei_anc_northwest){
                 point->x=x_rect;
@@ -140,10 +141,10 @@ void draw_up_relief(ei_rect_t* rect_to_fill, ei_surface_t surface, ei_color_t co
         first_point_up.y = rect_to_fill->top_left.y;
         second_point_up.x = rect_to_fill->top_left.x + rect_to_fill->size.width;
         second_point_up.y = rect_to_fill->top_left.y ;
-        third_point_up.x = rect_to_fill->size.width-rect_to_fill->size.height/2;
-        third_point_up.y = rect_to_fill->size.height/2;
-        fourth_point_up.x =rect_to_fill->size.height/2;
-        fourth_point_up.y = rect_to_fill->size.height/2;
+        third_point_up.x = rect_to_fill->top_left.x + rect_to_fill->size.width-min(rect_to_fill->size.height/2, rect_to_fill->size.width/2);
+        third_point_up.y = rect_to_fill->top_left.y + min(rect_to_fill->size.height/2, rect_to_fill->size.width/2);
+        fourth_point_up.x =rect_to_fill->top_left.x + min(rect_to_fill->size.height/2, rect_to_fill->size.width/2);
+        fourth_point_up.y = rect_to_fill->top_left.y + rect_to_fill->size.height - min(rect_to_fill->size.height/2, rect_to_fill->size.width/2);
         fifth_point_up.x = rect_to_fill->top_left.x;
         fifth_point_up.y = rect_to_fill->top_left.y + rect_to_fill->size.height;
 
@@ -190,10 +191,10 @@ void draw_down_relief(ei_rect_t* rect_to_fill, ei_surface_t surface, ei_color_t 
         first_point_down.y = rect_to_fill->top_left.y + rect_to_fill->size.height;
         second_point_down.x = rect_to_fill->top_left.x + rect_to_fill->size.width;
         second_point_down.y = rect_to_fill->top_left.y ;
-        third_point_down.x = rect_to_fill->size.width-rect_to_fill->size.height/2;
-        third_point_down.y = rect_to_fill->size.height/2;
-        fourth_point_down.x =rect_to_fill->size.height/2;
-        fourth_point_down.y = rect_to_fill->size.height/2;
+        third_point_down.x = rect_to_fill->top_left.x + rect_to_fill->size.width-min(rect_to_fill->size.height/2, rect_to_fill->size.width/2);
+        third_point_down.y = rect_to_fill->top_left.y + min(rect_to_fill->size.height/2, rect_to_fill->size.width/2);
+        fourth_point_down.x =rect_to_fill->top_left.x+ min(rect_to_fill->size.height/2, rect_to_fill->size.width/2);
+        fourth_point_down.y = rect_to_fill->top_left.y + rect_to_fill->size.height - min(rect_to_fill->size.height/2, rect_to_fill->size.width/2);
         fifth_point_down.x = rect_to_fill->top_left.x;
         fifth_point_down.y = rect_to_fill->top_left.y + rect_to_fill->size.height;
 
@@ -222,3 +223,97 @@ void draw_down_relief(ei_rect_t* rect_to_fill, ei_surface_t surface, ei_color_t 
 
 }
 
+ei_linked_point_t* arc_point(ei_point_t center, int radius, int corner_begin, int corner_end)
+{
+        int x_center = center.x;
+        int y_center = center.y;
+        ei_linked_point_t* list_point[9];
+        for (int i=0; i<10; i++){
+                if (i<9){
+                        list_point[i]->point.x = x_center + radius*cos(corner_begin + i*(1/10)*(corner_end - corner_begin));
+                        list_point[i]->point.y = y_center + radius*sin(corner_begin + i*(1/10)*(corner_end - corner_begin));
+                        list_point[i]->next = list_point[i+1];
+                }
+                else{
+                        list_point[i]->point.x = x_center + radius*cos(corner_begin + i*(1/10)*(corner_end - corner_begin));
+                        list_point[i]->point.y = y_center + radius*sin(corner_begin + i*(1/10)*(corner_end - corner_begin));
+                        list_point[i]->next = NULL;
+                }
+        }
+        return list_point[9];
+
+}
+
+ei_linked_point_t* rounded_frame(ei_rect_t* rect, int radius, int part)
+{
+        ei_point_t center_top_left;
+        center_top_left.x = rect->top_left.x + radius;
+        center_top_left.y = rect->top_left.y + radius;
+        ei_point_t center_top_right;
+        center_top_right.x = rect->top_left.x + rect->size.width - radius;
+        center_top_right.y = rect->top_left.y + radius;
+        ei_point_t center_bottom_left;
+        center_bottom_left.x = rect->top_left.x + radius;
+        center_bottom_left.y = rect->top_left.y + rect->size.height - radius;
+        ei_point_t center_bottom_right;
+        center_bottom_right.x = rect->top_left.x + rect->size.width - radius;
+        center_bottom_right.y = rect->top_left.y + rect->size.height - radius;
+
+        ei_linked_point_t *rounded_top_left = arc_point(center_top_left, radius, (M_PI) / 2, M_PI);
+        ei_linked_point_t *rounded_top_right = arc_point(center_top_right, radius, 0, (M_PI) / 2);
+        ei_linked_point_t *rounded_bottom_left = arc_point(center_bottom_left, radius, M_PI, (3 * M_PI) / 2);
+        ei_linked_point_t *rounded_bottom_right = arc_point(center_bottom_right, radius, (3 * M_PI) / 2,
+                                                            2 * M_PI);
+        if (part == 0) {
+                rounded_top_left[9].next = &rounded_top_right[0];
+                rounded_top_right[9].next = &rounded_bottom_right[0];
+                rounded_bottom_right[9].next = &rounded_bottom_left[0];
+                return rounded_top_left;
+        }
+        else{
+                if (part == 1){
+                        ei_linked_point_t* rounded_up;
+                        *rounded_up = rounded_top_right[5];
+                        rounded_top_right[9].next = &rounded_top_left[0];
+                        rounded_top_left[9].next = &rounded_bottom_left[0];
+                        rounded_bottom_left[4].next = NULL;
+                        return rounded_up;
+                }
+                else{
+                        ei_linked_point_t* rounded_down;
+                        *rounded_down = rounded_bottom_left[5];
+                        rounded_bottom_left[9].next = &rounded_bottom_right[0];
+                        rounded_bottom_right[9].next = &rounded_top_right[0];
+                        rounded_top_right[4].next = NULL;
+                        return rounded_down;
+                }
+        }
+}
+
+void draw_button(ei_surface_t surface,ei_rect_t* rect_button, int border_width, int corner_radius, ei_relief_t relief, ei_color_t color)
+{
+        if (border_width == 0){
+                ei_draw_polygon(surface, rounded_frame(rect_button, corner_radius, 0 ), color, rect_button);
+        }
+        else{
+                ei_rect_t *rect_surface_with_border = malloc(sizeof(ei_rect_t));
+                rect_surface_with_border->size.height = rect_button->size.height - 2 * border_width;
+                rect_surface_with_border->size.width = rect_button->size.width - 2 * border_width;
+                rect_surface_with_border->top_left.x = rect_button->top_left.x + border_width;
+                rect_surface_with_border->top_left.y = rect_button->top_left.y + border_width;
+                if (relief == ei_relief_none){
+                        ei_draw_polygon(surface, rounded_frame(rect_button, corner_radius, 0), dark_color(color),
+                                        rect_button);
+                }
+                if (relief == ei_relief_raised){
+                        ei_draw_polygon(surface, rounded_frame(rect_button, corner_radius, 1), clear_color(color), rect_button);
+                        ei_draw_polygon(surface, rounded_frame(rect_button, corner_radius, 2), dark_color(color), rect_button);
+                }
+                if (relief == ei_relief_sunken){
+                        ei_draw_polygon(surface, rounded_frame(rect_button, corner_radius, 1), dark_color(color), rect_button);
+                        ei_draw_polygon(surface, rounded_frame(rect_button, corner_radius, 2), clear_color(color), rect_button);
+                }
+                ei_draw_polygon(surface, rounded_frame(rect_surface_with_border, corner_radius, 0), color,
+                                rect_button);
+        }
+}

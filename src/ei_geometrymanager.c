@@ -6,11 +6,17 @@
 #include "utils.h"
 #include "stdlib.h"
 #include "string.h"
+ei_geometrymanager_t sentinel_geo = {"sentinel", NULL, NULL, NULL};
 ei_geometrymanager_t *actual = NULL;
 
 void	                ei_geometrymanager_register	(ei_geometrymanager_t* geometrymanager){
-        geometrymanager->next = actual;
-        actual = geometrymanager;
+        if (!is_defined(ei_geometrymanager_from_name(geometrymanager->name))){
+                sentinel_geo.next = geometrymanager;
+                geometrymanager->next = actual;
+                actual = geometrymanager;
+        } else{
+                free(geometrymanager);
+        }
 
 }
 
@@ -18,12 +24,13 @@ void	                ei_geometrymanager_register	(ei_geometrymanager_t* geometry
 
 ei_geometrymanager_t*	ei_geometrymanager_from_name	(ei_geometrymanager_name_t name){
         ei_geometrymanager_t *choice = actual;
-        while (actual != NULL){
+        while (choice != NULL){
                 if(is_name_equal(choice->name, name)){
                         return choice;
                 }
-                choice = actual;
+                choice = choice->next;
         }
+        return choice;
 }
 
 void			ei_geometrymanager_unmap	(ei_widget_t*		widget){
@@ -34,7 +41,7 @@ void			ei_geometrymanager_unmap	(ei_widget_t*		widget){
                 widget->screen_location = ei_rect_zero();
         }
         ei_widget_t                     *child;
-
+        child = widget->children_head;
         while (child){
                 ei_geometrymanager_unmap(child);
                 child = child->next_sibling;
@@ -84,7 +91,6 @@ void			ei_place			(ei_widget_t*		widget,
                 to_configure->manager = (ei_geometry_param_t *)ei_geometrymanager_from_name("placer");
                 widget->geom_params = (ei_geometry_param_t *)to_configure;
         }
-
         to_configure->anchor            = is_defined(anchor)    ? *anchor       : ei_anc_northwest;
         to_configure->x                 = is_defined(x)         ? *x            : 0;
         to_configure->y                 = is_defined(y)         ? *y            : 0;

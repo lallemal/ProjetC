@@ -10,10 +10,7 @@
 #include "ei_draw.h"
 #include "hw_interface.h"
 #include "ei_utils.h"
-
-
-#define max(a,b) (a>=b?a:b)
-#define min(a,b) (a<=b?a:b)
+#include "utils.h"
 
 
 uint32_t ei_map_rgba(ei_surface_t surface, const ei_color_t* color)
@@ -81,54 +78,21 @@ void update_pixel	(ei_surface_t destination,
 		*dest_pt = *src_pt;
 	}
 	else {
+		// retrieve the R G B A colors channels
 		ei_color_t color_dest = ei_map_color(destination, *dest_pt);
 		ei_color_t color_src = ei_map_color(source, *src_pt);
+		// Create the new color with alpha formula
 		ei_color_t color_alpha;
 		color_alpha.red = (color_src.alpha * color_src.red + (255 - color_src.alpha) * color_dest.red)/255;
 		color_alpha.blue = (color_src.alpha * color_src.blue + (255 - color_src.alpha) * color_dest.blue)/255;
 		color_alpha.green = (color_src.alpha * color_src.green + (255 - color_src.alpha) * color_dest.green)/255;
+		// Change the destination pixel.
 		*dest_pt = ei_map_rgba(destination, &color_alpha);
 	}
 }
 
 
 
-/**
- * @brief Make the intersection of 2 rectangle
- *
- * @param rect1		first rectangle
- * @param rect2		second rectangle
- *
- * @return		rectangle which is the intersection of the two others
- */
-ei_rect_t inter_rect(const ei_rect_t* rect1, const ei_rect_t* rect2)
-{
-	if (rect1 == NULL) {
-		return *rect2;
-	}
-	if (rect2 == NULL) {
-		return *rect1;
-	}
-	int x1_min = rect1->top_left.x;
-	int x1_max = x1_min + rect1->size.width;
-	int x2_min = rect2->top_left.x;
-	int x2_max = x2_min + rect2->size.width;
-	int y1_min = rect1->top_left.y;
-	int y1_max = y1_min + rect1->size.height;
-	int y2_min = rect2->top_left.y;
-	int y2_max = y2_min + rect2->size.height;
-
-	int xinter_min = max(x1_min, x2_min);
-	int xinter_max = min(x1_max, x2_max);
-	int yinter_min = max(y1_min, y2_min);
-	int yinter_max = min(y1_max, y2_max);
-
-
-	ei_point_t newPoint = {xinter_min, yinter_min};
-	ei_size_t newSize = {xinter_max - xinter_min, yinter_max - yinter_min};
-	ei_rect_t newRect = {newPoint, newSize};
-	return newRect;
-}
 
 
 void ei_draw_text       (ei_surface_t		surface,
@@ -139,10 +103,24 @@ void ei_draw_text       (ei_surface_t		surface,
 			const ei_rect_t*	clipper)
 {
 	ei_surface_t text_surface = hw_text_create_surface(text, font, color);
+	// Create the destination rectangle to fit with clipper & text
 	ei_size_t text_size = hw_surface_get_size(text_surface);
 	ei_rect_t text_rect = {*where, text_size};
 	ei_rect_t destRect = inter_rect(clipper, &text_rect);
-	ei_copy_surface(surface, &destRect, text_surface, NULL, EI_FALSE);
+	// Lock the surface and copy it on the destination surface
+	hw_surface_lock(text_surface);
+	ei_rect_t* srcRect = copy_rect(&destRect);
+	srcRect->top_left.x = 0;
+	srcRect->top_left.y = 0;
+	if (where->x < 0) {
+		srcRect->top_left.x = -where->x;
+	}
+	if (where->y < 0) {
+		srcRect->top_left.y = -where->y;
+	}
+	ei_copy_surface(surface, &destRect, text_surface, srcRect, EI_TRUE);
+	// Release the text_surface no longer needed
+	hw_surface_unlock(text_surface);
 	hw_surface_free(text_surface);
 }
 
@@ -153,46 +131,64 @@ int ei_copy_surface    (ei_surface_t		destination,
 			const ei_rect_t*	src_rect,
 			const ei_bool_t		alpha)
 {
+	// Calcul of the destination rect NULL or not
 	int dest_x = 0;
 	int dest_y = 0;
-	if (dst_rect == NULL) {
+	if (dst_rect != NULL) {
 		dest_x = dst_rect->top_left.x;
 		dest_y = dst_rect->top_left.y;
 	}
-	// Default coord if src_rect = NULL
-	int src_x = 0;
-	int src_y = 0;
-	if (src_rect != NULL) {
-		int src_x = src_rect->top_left.x;
-		int src_y = src_rect->top_left.y;
-	}
 	int height_dest;
 	int width_dest;
+	ei_size_t destSurface_size = hw_surface_get_size(destination);
 	if (dst_rect != NULL) {
 		height_dest = dst_rect->size.height;
 		width_dest = dst_rect->size.width;
 	}
 	else {
-		ei_size_t destSurface_size = hw_surface_get_size(destination);
 		height_dest = destSurface_size.height;
 		width_dest = destSurface_size.width;
 	}
+	// Calcul of the source rect NULL or not
+	int src_x = 0;
+	int src_y = 0;
+	if (src_rect != NULL) {
+		src_x = src_rect->top_left.x;
+		src_y = src_rect->top_left.y;
+	}
+	int height_src;
+	int width_src;
+	ei_size_t srcSurface_size = hw_surface_get_size(source);
+	if (src_rect != NULL) {
+		height_src = src_rect->size.height;
+		width_src = src_rect->size.width;
+	}
+	else {
+		height_src = srcSurface_size.height;
+		width_src = srcSurface_size.width;
+	}
+	// Verify the dimension.
+	if (height_src > height_dest || width_src > width_dest) {
+		return EXIT_FAILURE;
+	}
+	// Take the both pointers for the copy of each pixels
+	uint32_t* dest_pt = (uint32_t *) hw_surface_get_buffer(destination);
+	uint32_t* src_pt  = (uint32_t *) hw_surface_get_buffer(source);
+	// point the origin of surfaces on the first line
+	dest_pt += dest_x + dest_y * destSurface_size.width;
+	src_pt += src_x + src_y * srcSurface_size.width;
 	for (int i=0; i < height_dest; i++) {
-		// point the origin of surfaces on begin of line.
-		hw_surface_set_origin(destination, ei_point(dest_x, dest_y+i));
-		hw_surface_set_origin(source, ei_point(src_x, src_y+i));
-		// Call the pointer to the origin of buffer.
-		uint32_t* dest_pt = (uint32_t *) hw_surface_get_buffer(destination);
-		uint32_t* src_pt  = (uint32_t *) hw_surface_get_buffer(source);
 		for (int j = 0; j < width_dest; j++) {
 			update_pixel(destination, dest_pt, source, src_pt, alpha);
+			// Increment the pointer to continue the line
 			dest_pt++;
 			src_pt++;
 		}
+		// Put both pointers to the next beginning line
+		dest_pt += destSurface_size.width - width_dest;
+		src_pt += srcSurface_size.width - width_dest;
 	}
-	//  Reset the origin of surface to 0,0
-	hw_surface_set_origin(destination, ei_point_zero());
-	hw_surface_set_origin(source, ei_point_zero());
+	return EXIT_SUCCESS;
 }
 
 

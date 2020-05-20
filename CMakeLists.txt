@@ -75,7 +75,7 @@ include_directories(${HEADER_PATHS})
 
 set(LIB_EI_SOURCES
      		${SRC}/ei_application.c
-		${SRC}/ei_widget.c
+                ${SRC}/ei_widget.c
      		${SRC}/ei_event.c
      		${SRC}/ei_geometrymanager.c
      		${SRC}/ei_widgetclass.c
@@ -85,6 +85,7 @@ set(LIB_EI_SOURCES
      		${SRC}/ei_placer.c
      		${SRC}/utils.c
      		${SRC}/traverse_tools.c
+     		${SRC}/ei_toplevel.c
 		${SRC}/draw_tools.c
 )
 

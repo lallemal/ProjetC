@@ -7,6 +7,7 @@
 *****************************************************************************/
 #include <stdlib.h>
 #include "traverse_tools.h"
+#include "ei_geometrymanager.h"
 #include "ei_widget.h"
 
 
@@ -35,27 +36,24 @@ void destroy_widgetclass(ei_widgetclass_t* begin)
 	ei_widgetclass_t* next = begin->next;
 	free(begin);
 	if (next != NULL) {
+
 		destroy_widgetclass(next);
 	}
 }
 
 
 
-void draw_widgets      (ei_widget_t* begin,
-			ei_surface_t surface,
-			ei_surface_t pick_surface)
+void draw_widgets      (ei_widget_t*	begin,
+			ei_surface_t	surface,
+			ei_surface_t	pick_surface,
+			ei_rect_t	clipper)
 {
 	ei_widget_t* child = begin->children_head;
 
-	if (begin->parent != NULL) {
-		begin->wclass->drawfunc(begin, surface, pick_surface, &(begin->parent->screen_location));
-	}
-	else {
-		begin->wclass->drawfunc(begin, surface, pick_surface, NULL);
-	}
+	begin->wclass->drawfunc(begin, surface, pick_surface, &clipper);
 	// draw all the child and their child recursively
 	for (child; child != NULL; next_sibling_widget(&child)) {
-		draw_widgets(child, surface, pick_surface);
+		draw_widgets(child, surface, pick_surface, clipper);
 	}
 }
 
