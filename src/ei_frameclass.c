@@ -106,17 +106,15 @@ void ei_frame_drawfunc(struct	ei_widget_t*	widget,
         //on prend les deux cas clipper nul et clipper non nul pour y associer un rectangle qu est concerné par les fonctions de dessins
         //dans le cas ou le clipper est NULL, on prend toute la surface comme délimitation (et on prend en compte la présence ou non d'une bordure)
         if (clipper == NULL){
-                ei_rect_t* rect_surface= malloc(sizeof(ei_rect_t));
-                *rect_surface = hw_surface_get_rect(surface);
-                rect_to_fill->top_left.x = rect_surface->top_left.x + frame->border_width;
-                rect_to_fill->top_left.y = rect_surface->top_left.y + frame->border_width;
-                rect_to_fill->size.width = rect_surface->size.width - 2*(frame->border_width);
-                rect_to_fill->size.height = rect_surface->size.height - 2*(frame->border_width);
-                *rect_tot = *rect_surface;
-                free(rect_surface);
+                rect_to_fill->top_left.x = widget->screen_location.top_left.x + frame->border_width;
+                rect_to_fill->top_left.y = widget->screen_location.top_left.y + frame->border_width;
+                rect_to_fill->size.width = widget->screen_location.size.width - 2*(frame->border_width);
+                rect_to_fill->size.height = widget->screen_location.size.height - 2*(frame->border_width);
+                *rect_tot = widget->screen_location;
+
         }
         else{
-                *rect_tot = inter_rect(clipper, &widget->screen_location);
+                *rect_tot = widget->screen_location;
                 rect_to_fill->top_left.x = rect_tot->top_left.x + frame->border_width;
                 rect_to_fill->top_left.y = rect_tot->top_left.y + frame->border_width;
                 rect_to_fill->size.width = rect_tot->size.width - 2*frame->border_width;
@@ -136,7 +134,8 @@ void ei_frame_drawfunc(struct	ei_widget_t*	widget,
 
         }
 
-
+        ei_rect_t* rect_to_fill_on_screen = malloc(sizeof(ei_rect_t));
+        *rect_to_fill_on_screen= inter_rect(clipper, rect_to_fill);
         //On récupère le point qui rattache l'image
         //Si clipper==NULL =>  rect__to_fill== surface - bordure
         //si img=!NULL
@@ -171,23 +170,27 @@ void ei_frame_drawfunc(struct	ei_widget_t*	widget,
         }
 
         //remplissage de rect_to_fill
-        ei_fill(surface, &frame->color, rect_to_fill);
+        ei_fill(surface, &frame->color, rect_to_fill_on_screen);
 
         //mise en place du texte
         if (frame->text != NULL){
-                ei_draw_text(surface, point_text, frame->text, frame->text_font, frame->text_color, rect_to_fill);
+                ei_draw_text(surface, point_text, frame->text, frame->text_font, frame->text_color, rect_to_fill_on_screen);
                 free(point_text);
         }
 
         //mise en place de l'image
         ei_rect_t* rect_img=malloc(sizeof(ei_rect_t));
         if (frame->img != NULL){
+                if (point_img->x <0 || point_img->y <0){
+
+                }
+                else{}
                 hw_surface_lock(frame->img);
-                rect_img->top_left.x = point_img->x;
-                rect_img->top_left.y = point_img->y;
-                rect_img->size.width = frame->img_rect->size.width;
-                rect_img->size.height = frame->img_rect->size.height;
-                ei_copy_surface(surface, rect_img, frame->img, frame->img_rect, hw_surface_has_alpha(frame->img));
+                //rect_img->top_left.x = point_img->x;
+                //rect_img->top_left.y = point_img->y;
+                //rect_img->size.width = widget->screen_location.size.width;
+                //rect_img->size.height = widget->screen_location.size.height;
+                ei_copy_surface(surface, rect_to_fill, frame->img, NULL, hw_surface_has_alpha(frame->img));
                 hw_surface_unlock(frame->img);
                 free(point_img);
         }
@@ -200,7 +203,7 @@ void ei_frame_drawfunc(struct	ei_widget_t*	widget,
         free(rect_to_fill);
         free(rect_img);
         free(rect_tot);
-
+        free(rect_to_fill_on_screen);
 }
 
 
