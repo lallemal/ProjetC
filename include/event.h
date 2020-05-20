@@ -26,8 +26,8 @@ typedef struct ei_linked_widgetcall {
 
 typedef struct ei_linked_event {
 	ei_eventtype_t	eventtype;
-	ei_linked_tagcall_t tagcall_list;
-	ei_linked_widgetcall_t widgetcall_list;
+	ei_linked_tagcall_t* tagcall_list;
+	ei_linked_widgetcall_t* widgetcall_list;
 	struct ei_linked_event *next;
 } ei_linked_event_t;
 
@@ -46,20 +46,23 @@ ei_linked_event_t*	retrieve_eventtype(ei_eventtype_t eventtype);
  *
  * @param list_todo	List of tag and callback and widget concerned
  */
-void			call(ei_linked_event_t list_todo, ei_surface_t pick_surface);
+void			call(ei_event_t event, ei_linked_event_t list_todo, ei_surface_t pick_surface);
 
 /**
- * @brief		Return if the widget is under the cursor
+ * @brief		Return the widget under the cursor or NULL if it is not
+ *			one if the correct name class
  *
  *
  * @param event		event considered
+ * @param pick_surface  pick_surface to find the pick_color
+ * @param tag		tag to match the widget under cursor and the name class
  *
- * @return		0 if the widget or tag is not under the cursor, 1 if it is.
+ * @return		NULL if widget under cursor has not the class name tag
+ *			the widget under cursor if it has the correct name class
  */
-int			on_widget	(ei_event_t		event,
+ei_widget_t*		on_widget	(ei_event_t		event,
 					ei_surface_t		pick_surface,
-					ei_tag_t		tag,
-					ei_widget_t*		widget);
+					ei_tag_t		tag);
 
 
 void			add_to_tagcall	(ei_linked_event_t	list,
@@ -75,7 +78,7 @@ void			del_to_tagcall	(ei_linked_event_t	list,
 
 void			add_to_widgetcall	(ei_linked_event_t	list,
 						ei_tag_t		tag,
-						ei_callback_t		callback, 
+						ei_callback_t		callback,
 						void*			user_param);
 
 void			del_to_widgetcall	(ei_linked_event_t	list,

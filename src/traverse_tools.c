@@ -66,3 +66,18 @@ void free_linked_rect(ei_linked_rect_t* begin)
 		free_linked_rect(next);
 	}
 }
+
+
+ei_widget_t* find_with_color(ei_widget_t* begin, uint32_t pick_color, ei_surface_t pick_surface)
+{
+	ei_widget_t *child = begin->children_head;
+	if (ei_map_rgba(pick_surface, begin->pick_color) == pick_color) {
+		return begin;
+	}
+	for (child; child != NULL; next_sibling_widget(&child)) {
+		if (find_with_color(child, pick_color, pick_surface) != NULL) {
+			return child;
+		}
+	}
+	return NULL;
+}
