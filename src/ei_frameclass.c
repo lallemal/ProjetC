@@ -181,7 +181,6 @@ void ei_frame_drawfunc(struct	ei_widget_t*	widget,
         }
 
         //mise en place de l'image
-        ei_rect_t* rect_img=malloc(sizeof(ei_rect_t));
         if (frame->img != NULL) {
                 hw_surface_lock(frame->img);
                 ei_rect_t *source_rectangle = frame->img_rect;
@@ -204,12 +203,27 @@ void ei_frame_drawfunc(struct	ei_widget_t*	widget,
                 //rect_img->top_left.y = point_img->y;
                 //rect_img->size.width = widget->screen_location.size.width;
                 //rect_img->size.height = widget->screen_location.size.height;
+                ei_rect_t* rect_img = malloc(sizeof(ei_rect_t));
 
-                ei_copy_surface(surface, rect_to_fill_on_screen, frame->img, source_rectangle, hw_surface_has_alpha(frame->img));
+                if (frame->img_rect->size.height < rect_to_fill_on_screen->size.height && frame->img_rect->size.width < rect_to_fill_on_screen->size.width){
+                        rect_img->top_left.x = point_img->x;
+                        rect_img->top_left.y = point_img->y;
+                        rect_img->size.width = frame->img_rect->size.width;
+                        rect_img->size.height = frame->img_rect->size.height;
+                }
+                else {
+                        rect_img->top_left.x = point_img->x;
+                        rect_img->top_left.y = point_img->y;
+                        rect_img->size.width = rect_to_fill_on_screen->size.width;
+                        rect_img->size.height = rect_to_fill_on_screen->size.height;
+                }
+                ei_copy_surface(surface, rect_img, frame->img, source_rectangle, hw_surface_has_alpha(frame->img));
 
                 hw_surface_unlock(frame->img);
                 free(point_img);
                 free(source_rectangle);
+                free(rect_img);
+
         }
 
 
@@ -218,7 +232,6 @@ void ei_frame_drawfunc(struct	ei_widget_t*	widget,
 
         //on libère la mémoire
         free(rect_to_fill);
-        free(rect_img);
         free(rect_tot);
         free(rect_to_fill_on_screen);
 }
