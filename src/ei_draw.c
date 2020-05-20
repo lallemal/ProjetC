@@ -119,6 +119,7 @@ void ei_draw_text       (ei_surface_t		surface,
 		srcRect->top_left.y = -where->y;
 	}
 	ei_copy_surface(surface, &destRect, text_surface, srcRect, EI_TRUE);
+	free(srcRect);
 	// Release the text_surface no longer needed
 	hw_surface_unlock(text_surface);
 	hw_surface_free(text_surface);
