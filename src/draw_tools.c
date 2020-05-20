@@ -32,11 +32,11 @@ ei_point_t* anchor_point( ei_rect_t* rect, ei_anchor_t anchor, int width_text, i
         width=rect->size.width;
         height=rect->size.height;
         if (anchor == ei_anc_center){
-                point->x=min((x_rect+x_rect+width)/2, x_rect+width-width_text)-width_text/2;
-                point->y=min((y_rect+y_rect+height)/2, y_rect+height-height_text)-height_text/2;
+                point->x=(x_rect+x_rect+width)/2 - width_text/2;
+                point->y=(y_rect+y_rect+height)/2 - height_text/2;
         }
         if(anchor == ei_anc_north){
-                point->x=min((x_rect+x_rect+width)/2, x_rect+width-width_text)-width_text/2;
+                point->x=(x_rect+x_rect+width)/2 - width_text/2;
                 point->y=y_rect;
         }
         if(anchor == ei_anc_northeast){
@@ -45,14 +45,14 @@ ei_point_t* anchor_point( ei_rect_t* rect, ei_anchor_t anchor, int width_text, i
         }
         if(anchor == ei_anc_east){
                 point->x=x_rect+width-width_text;
-                point->y=min((y_rect+y_rect+height)/2, y_rect+height-height_text)-height_text/2;
+                point->y=(y_rect+y_rect+height)/2 - height_text/2;
         }
         if(anchor == ei_anc_southeast){
                 point->x=x_rect+width-width_text;
                 point->y=y_rect+height-height_text;
         }
         if(anchor == ei_anc_south){
-                point->x=min((x_rect+x_rect+width)/2, x_rect+width-width_text)-width_text/2;
+                point->x=(x_rect+x_rect+width)/2 - width_text/2;
                 point->y=y_rect+height-height_text;
         }
         if(anchor == ei_anc_southwest){
@@ -61,7 +61,7 @@ ei_point_t* anchor_point( ei_rect_t* rect, ei_anchor_t anchor, int width_text, i
         }
         if(anchor == ei_anc_west){
                 point->x=x_rect;
-                point->y=min((y_rect+y_rect+height)/2, y_rect+height-height_text)-height_text/2;
+                point->y=(y_rect+y_rect+height)/2 - height_text/2;
         }
         if(anchor == ei_anc_northwest){
                 point->x=x_rect;
