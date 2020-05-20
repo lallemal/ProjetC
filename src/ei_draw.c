@@ -114,13 +114,11 @@ void ei_draw_text       (ei_surface_t		surface,
 	srcRect->top_left.y = 0;
 	if (where->x < 0) {
 		srcRect->top_left.x = -where->x;
-		srcRect->size.width += where->x;
 	}
 	if (where->y < 0) {
 		srcRect->top_left.y = -where->y;
-		srcRect->size.height += where->y;
 	}
-	ei_copy_surface(surface, &destRect, text_surface, NULL, EI_TRUE);
+	ei_copy_surface(surface, &destRect, text_surface, srcRect, EI_TRUE);
 	// Release the text_surface no longer needed
 	hw_surface_unlock(text_surface);
 	hw_surface_free(text_surface);
@@ -155,8 +153,8 @@ int ei_copy_surface    (ei_surface_t		destination,
 	int src_x = 0;
 	int src_y = 0;
 	if (src_rect != NULL) {
-		int src_x = src_rect->top_left.x;
-		int src_y = src_rect->top_left.y;
+		src_x = src_rect->top_left.x;
+		src_y = src_rect->top_left.y;
 	}
 	int height_src;
 	int width_src;
@@ -187,8 +185,8 @@ int ei_copy_surface    (ei_surface_t		destination,
 			src_pt++;
 		}
 		// Put both pointers to the next beginning line
-		dest_pt += destSurface_size.width - (dest_x + width_dest) + dest_x;
-		src_pt += srcSurface_size.width - (src_x + width_dest) + src_x;
+		dest_pt += destSurface_size.width - width_dest;
+		src_pt += srcSurface_size.width - width_dest;
 	}
 	return EXIT_SUCCESS;
 }
