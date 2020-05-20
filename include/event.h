@@ -46,27 +46,42 @@ ei_linked_event_t*	retrieve_eventtype(ei_eventtype_t eventtype);
  *
  * @param list_todo	List of tag and callback and widget concerned
  */
-void			call(ei_linked_event_t list_todo);
+void			call(ei_linked_event_t list_todo, ei_surface_t pick_surface);
 
 /**
- * @brief		Return if the widget under the cursor or NULL if the event
- *			can't be positioned
+ * @brief		Return if the widget is under the cursor
+ *
  *
  * @param event		event considered
  *
- * @return		NULL if the event has no position or the widget under concerned.
+ * @return		0 if the widget or tag is not under the cursor, 1 if it is.
  */
-ei_widget_t*		on_widget(ei_event_t event);
+int			on_widget	(ei_event_t		event,
+					ei_surface_t		pick_surface,
+					ei_tag_t		tag,
+					ei_widget_t*		widget);
 
 
-void			add_to_tagcall(ei_linked_event_t list, ei_tag_t tag, ei_callback_t callback, void* user_param);
+void			add_to_tagcall	(ei_linked_event_t	list,
+					ei_tag_t		tag,
+					ei_callback_t		callback,
+					void*			user_param);
 
-void			del_to_tagcall(ei_linked_event_t list, ei_tag_t tag, ei_callback_t callback, void* user_param);
+void			del_to_tagcall	(ei_linked_event_t	list,
+					ei_tag_t		tag,
+					ei_callback_t		callback,
+					void*			user_param);
 
 
-void			add_to_widgetcall(ei_linked_event_t list, ei_tag_t tag, ei_callback_t callback, void* user_param);
+void			add_to_widgetcall	(ei_linked_event_t	list,
+						ei_tag_t		tag,
+						ei_callback_t		callback, 
+						void*			user_param);
 
-void			del_to_widgetcall(ei_linked_event_t list, ei_tag_t tag, ei_callback_t callback, void* user_param);
+void			del_to_widgetcall	(ei_linked_event_t	list,
+						ei_tag_t		tag,
+						ei_callback_t		callback,
+						void*			user_param);
 
 
 

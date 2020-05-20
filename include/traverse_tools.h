@@ -61,4 +61,20 @@ void draw_widgets      (ei_widget_t* begin,
  */
 void free_linked_rect(ei_linked_rect_t* begin);
 
+
+
+/**	TODO
+ * @brief 		Traverse widgets to find the one which has the color
+ *			given
+ *
+ * @param pick_color	The color of the widget to find
+ * @param pick_surface	The pick_surface (to have the channels)
+ *
+ * @return		The widget with this pick_color
+ */
+ei_widget_t* find_with_color(uint32_t pick_color, ei_surface_t pick_surface)
+{
+
+}
+
 #endif /* ifndef TRAVERSE_H */
