@@ -3,7 +3,7 @@
 *
 * Author:           Robin BERTIN (Nunwan)
 * Created:          05/14/20
-* Description:      
+* Description:
 *****************************************************************************/
 #include <stdlib.h>
 

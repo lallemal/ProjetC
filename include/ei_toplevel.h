@@ -7,16 +7,14 @@
 #include "ei_types.h"
 #include "ei_widget.h"
 typedef struct ei_toplevel {
-    ei_widget_t	        widget;
-
-    int                 is_closable;
-    ei_axis_set_t       resize_params;
-    char*		title   ;
-    ei_size_t           min_size;
-    int                 border;
-    ei_size_t           en_tete;
-
-    ei_font_t           title_font;
+    ei_widget_t*		widget;
+    ei_size_t		        requested_size;
+    ei_color_t		        color;
+    int 			border_width;
+    char*			title;
+    ei_bool_t		        closable;
+    ei_axis_set_t		resizable;
+    ei_size_t*  	        min_size;
 
 } ei_toplevel;
 
@@ -29,10 +27,8 @@ void                    ei_toplevel_setdefaultsfunc                     (ei_widg
 void                    ei_toplevel_geomnotifyfunc                      (struct ei_widget_t* widget);
 
 void                    ei_toplevel_drawfunc                            (struct	ei_widget_t*	widget,
-                                                                        ei_surface_t	surface,
-                                                                        ei_surface_t	pick_surface,
-                                                                        ei_rect_t*	clipper);
+                                                                         ei_surface_t	surface,
+                                                                         ei_surface_t	pick_surface,
+                                                                         ei_rect_t*	clipper);
 
-
-void                    ei_toplevel_register_class                      (void);
 #endif //PROJETC_IG_EI_TOPLEVEL_H
