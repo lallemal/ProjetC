@@ -13,6 +13,10 @@ typedef struct ei_toplevel {
     ei_axis_set_t       resize_params;
     char*		title   ;
     ei_size_t           min_size;
+    int                 border;
+    ei_size_t           en_tete;
+    ei_font_t           title_font;
+
 } ei_toplevel;
 
 void                    *ei_toplevel_allofunc                            (void);
