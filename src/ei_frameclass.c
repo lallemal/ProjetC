@@ -105,6 +105,8 @@ void ei_frame_drawfunc(struct	ei_widget_t*	widget,
         ei_rect_t* rect_tot = malloc(sizeof(ei_rect_t));
         //on prend les deux cas clipper nul et clipper non nul pour y associer un rectangle qu est concerné par les fonctions de dessins
         //dans le cas ou le clipper est NULL, on prend toute la surface comme délimitation (et on prend en compte la présence ou non d'une bordure)
+
+
         if (clipper == NULL){
                 ei_rect_t* rect_surface= malloc(sizeof(ei_rect_t));
                 *rect_surface = hw_surface_get_rect(surface);
