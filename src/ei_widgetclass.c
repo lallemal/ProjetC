@@ -13,7 +13,7 @@
 #include "ei_widgetclass.h"
 
 // save the head of the widgetclass head
-ei_widgetclass_t sentinel = {"sentinel", NULL, NULL, NULL, NULL, NULL, NULL};
+static ei_widgetclass_t sentinel = {"sentinel", NULL, NULL, NULL, NULL, NULL, NULL};
 
 /*
  * @brief	Update the pointer of widgetclass to the next one
