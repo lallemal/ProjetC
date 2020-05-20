@@ -7,6 +7,7 @@
 #include "hw_interface.h"
 #include "ei_application.h"
 #include "ei_types.h"
+#include "draw_tools.h"
 
 
 void*                    ei_toplevel_allofunc                            (void){
@@ -61,11 +62,14 @@ void                    ei_toplevel_drawfunc                            (struct	
         rect_to_fill->size.width        = rect_tot.size.width           - 2*(to_draw->border);
         rect_to_fill->size.height       = rect_tot.size.height          - 2*(to_draw->border);
 
+        ei_point_t  * text_pos;
+
         if (is_defined(to_draw->title)){
 
                 int text_width;
                 int text_height;
                 hw_text_compute_size(to_draw->title, to_draw->title_font, &text_width, &text_height);
+                text_pos = anchor_point(rect_to_fill, ei_anc_northwest, text_width, text_width);
         }
 
 

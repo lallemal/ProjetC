@@ -15,6 +15,7 @@ typedef struct ei_toplevel {
     ei_size_t           min_size;
     int                 border;
     ei_size_t           en_tete;
+
     ei_font_t           title_font;
 
 } ei_toplevel;
