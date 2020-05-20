@@ -14,7 +14,7 @@
 #include "ei_draw.h"
 #include "math.h"
 #include "draw_tools.h"
-
+#include "utils.h"
 
 
 #define max(a,b) (a>=b?a:b)
@@ -144,7 +144,7 @@ void draw_up_relief(ei_rect_t* rect_to_fill, ei_surface_t surface, ei_color_t co
         third_point_up.x = rect_to_fill->top_left.x + rect_to_fill->size.width-min(rect_to_fill->size.height/2, rect_to_fill->size.width/2);
         third_point_up.y = rect_to_fill->top_left.y + min(rect_to_fill->size.height/2, rect_to_fill->size.width/2);
         fourth_point_up.x =rect_to_fill->top_left.x + min(rect_to_fill->size.height/2, rect_to_fill->size.width/2);
-        fourth_point_up.y = rect_to_fill->top_left.y + min(rect_to_fill->size.height/2, rect_to_fill->size.width/2);
+        fourth_point_up.y = rect_to_fill->top_left.y + rect_to_fill->size.height - min(rect_to_fill->size.height/2, rect_to_fill->size.width/2);
         fifth_point_up.x = rect_to_fill->top_left.x;
         fifth_point_up.y = rect_to_fill->top_left.y + rect_to_fill->size.height;
 
@@ -194,7 +194,7 @@ void draw_down_relief(ei_rect_t* rect_to_fill, ei_surface_t surface, ei_color_t 
         third_point_down.x = rect_to_fill->top_left.x + rect_to_fill->size.width-min(rect_to_fill->size.height/2, rect_to_fill->size.width/2);
         third_point_down.y = rect_to_fill->top_left.y + min(rect_to_fill->size.height/2, rect_to_fill->size.width/2);
         fourth_point_down.x =rect_to_fill->top_left.x+ min(rect_to_fill->size.height/2, rect_to_fill->size.width/2);
-        fourth_point_down.y = rect_to_fill->top_left.x - min(rect_to_fill->size.height/2, rect_to_fill->size.width/2);
+        fourth_point_down.y = rect_to_fill->top_left.y + rect_to_fill->size.height - min(rect_to_fill->size.height/2, rect_to_fill->size.width/2);
         fifth_point_down.x = rect_to_fill->top_left.x;
         fifth_point_down.y = rect_to_fill->top_left.y + rect_to_fill->size.height;
 
