@@ -218,15 +218,9 @@ void ei_button_configure	(ei_widget_t*		widget,
 
 {
 	ei_button_t* button = (ei_button_t *) widget;
-	if (requested_size != NULL) {
-                widget->requested_size.height = requested_size->height;
-                widget->requested_size.width = requested_size->width;
-	}
+	int ancient_border_width = button->border_width;
 	if (color != NULL) {
 		button->color = *color;
-	}
-	if (border_width != NULL) {
-		button->border_width = *border_width;
 	}
 	if (corner_radius != NULL) {
 		button->corner_radius = *corner_radius;
@@ -243,9 +237,6 @@ void ei_button_configure	(ei_widget_t*		widget,
 	if (text_color != NULL) {
 		button->text_color = *text_color;
 	}
-	if (img != NULL) {
-		button->img = *img;
-	}
 	if (img_rect != NULL) {
 		button->img_rect = *img_rect;
 	}
@@ -258,5 +249,46 @@ void ei_button_configure	(ei_widget_t*		widget,
 	if (user_param != NULL) {
 		button->user_param = *user_param;
 	}
+	if (img != NULL) {
+		button->img = *img;
+		int height = 0;
+		int width = 0;
+		if (button->img_rect != NULL) {
+			height = button->img_rect->size.height;
+			width = button->img_rect->size.width;
+		}
+		else {
+			ei_size_t img_size = hw_surface_get_size(button->img);
+			height = img_size.height;
+			width = img_size.width;
+		}
+		height += 2* ancient_border_width;
+		width += 2 * ancient_border_width;
+		widget->requested_size.height = max(height, widget->requested_size.height);
+		widget->requested_size.width = max(width, widget->requested_size.width);
+	}
+	if (text != NULL) {
+		button->text = *text;
+		int height_text;
+		int width_text;
+		hw_text_compute_size(button->text, button->text_font, &width_text, &height_text);
+		height_text += 2 * ancient_border_width;
+		width_text += 2 * ancient_border_width;
+		widget->requested_size.height = max(height_text, widget->requested_size.height);
+		widget->requested_size.width = max(width_text, widget->requested_size.width);
+
+	}
+	if (border_width != NULL) {
+		button->border_width = *border_width;
+		widget->requested_size.height -= 2 * ancient_border_width;
+		widget->requested_size.height += 2 * button->border_width;
+		widget->requested_size.width -= 2 * ancient_border_width;
+		widget->requested_size.width += 2 * button->border_width;
+	}
+	if (requested_size != NULL) {
+		widget->requested_size.height = requested_size->height;
+		widget->requested_size.width = requested_size->width;
+	}
+	ei_app_invalidate_rect(&(widget->screen_location));
 }
 
