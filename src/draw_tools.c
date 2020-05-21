@@ -250,8 +250,8 @@ ei_linked_point_t* arc_point(ei_point_t center, int radius, float corner_begin, 
 
         if ((float)cos(corner_begin)==1 || (float)cos(corner_end)==1){
                 if ((float)sin(corner_end)==1 || (float)sin(corner_begin)==1){
-                        list_point1->point.x = (int)(x_center + radius*cos(corner_begin));
-                        list_point1->point.y = (int)(y_center + signe_inverse(sin(corner_begin))*radius*sin(corner_begin));
+                        list_point1->point.x = x_center+radius;
+                        list_point1->point.y = y_center;
                         list_point1->next = list_point2;
                         list_point2->point.x = (int)(x_center + radius*cos(-11*M_PI/6));
                         list_point2->point.y = (int)(y_center + signe_inverse(sin(-11*M_PI/6))*radius*sin(-11*M_PI/6));
@@ -262,13 +262,13 @@ ei_linked_point_t* arc_point(ei_point_t center, int radius, float corner_begin, 
                         list_point4->point.x = (int)(x_center + radius*cos(-5*M_PI/3));
                         list_point4->point.y = (int)(y_center + signe_inverse(sin(-5*M_PI/3))*radius*sin(-5*M_PI/3));
                         list_point4->next = list_point5;
-                        list_point5->point.x = (int)(x_center + radius*cos(corner_end));
-                        list_point5->point.y = (int)(y_center + signe_inverse(sin(corner_end))*radius*sin(corner_end));
+                        list_point5->point.x = x_center;
+                        list_point5->point.y = y_center - radius ;
                         list_point5->next = NULL;
                 }
                 if ((float)sin(corner_end)==-1 || (float)sin(corner_begin)==-1){
-                        list_point1->point.x = (int)(x_center + radius*cos(corner_begin));
-                        list_point1->point.y = (int)(y_center - radius*sin(corner_begin));
+                        list_point1->point.x = x_center ;
+                        list_point1->point.y = y_center + radius;
                         list_point1->next = list_point2;
                         list_point2->point.x = (int)(x_center + radius*cos(-M_PI/3));
                         list_point2->point.y = (int)(y_center - radius*sin(-M_PI/3));
@@ -279,15 +279,15 @@ ei_linked_point_t* arc_point(ei_point_t center, int radius, float corner_begin, 
                         list_point4->point.x = (int)(x_center + radius*cos(-M_PI/6));
                         list_point4->point.y = (int)(y_center - radius*sin(-M_PI/6));
                         list_point4->next = list_point5;
-                        list_point5->point.x = (int)(x_center + radius*cos(corner_end));
-                        list_point5->point.y = (int)(y_center - radius*sin(corner_end));
+                        list_point5->point.x = x_center + radius ;
+                        list_point5->point.y = y_center;
                         list_point5->next = NULL;
                 }
         }
         else{
                 if ((float)sin(corner_begin)==1 || (float)sin(corner_end)==1){
-                        list_point1->point.x = (int)(x_center + radius*cos(corner_begin));
-                        list_point1->point.y = (int)(y_center + signe_inverse(sin(corner_begin))*radius*sin(corner_begin));
+                        list_point1->point.x = x_center;
+                        list_point1->point.y = y_center - radius;
                         list_point1->next = list_point2;
                         list_point2->point.x = (int)(x_center + radius*cos(-4*M_PI/3));
                         list_point2->point.y = (int)(y_center + signe_inverse(sin(-4*M_PI/3))*radius*sin(-4*M_PI/3));
@@ -298,13 +298,13 @@ ei_linked_point_t* arc_point(ei_point_t center, int radius, float corner_begin, 
                         list_point4->point.x = (int)(x_center + radius*cos(-7*M_PI/6));
                         list_point4->point.y = (int)(y_center + signe_inverse(sin(-7*M_PI/6))*radius*sin(-7*M_PI/6));
                         list_point4->next = list_point5;
-                        list_point5->point.x = (int)(x_center + radius*cos(corner_end));
-                        list_point5->point.y = (int)(y_center + signe_inverse(sin(corner_end))*radius*sin(corner_end));
+                        list_point5->point.x = x_center-radius;
+                        list_point5->point.y = y_center;
                         list_point5->next = NULL;
                 }
                 if ((float)sin(corner_end) == -1 || (float)sin(corner_begin)==-1){
-                        list_point1->point.x = (int)(x_center + radius*cos(corner_begin));
-                        list_point1->point.y = (int)(y_center + signe_inverse(sin(corner_begin))*radius*sin(corner_begin));
+                        list_point1->point.x = x_center- radius;
+                        list_point1->point.y = y_center;
                         list_point1->next = list_point2;
                         list_point2->point.x = (int)(x_center + radius*cos(-5*M_PI/6));
                         list_point2->point.y = (int)(y_center - radius*sin(-5*M_PI/6));
@@ -315,8 +315,8 @@ ei_linked_point_t* arc_point(ei_point_t center, int radius, float corner_begin, 
                         list_point4->point.x = (int)(x_center + radius*cos(-2*M_PI/3));
                         list_point4->point.y = (int)(y_center - radius*sin(-2*M_PI/3));
                         list_point4->next = list_point5;
-                        list_point5->point.x = (int)(x_center + radius*cos(corner_end));
-                        list_point5->point.y = (int)(y_center - radius*sin(corner_end));
+                        list_point5->point.x = x_center;
+                        list_point5->point.y = y_center + radius;
                         list_point5->next = NULL;
                 }
         }
@@ -388,6 +388,7 @@ ei_linked_point_t* rounded_frame(ei_rect_t* rect, int radius, int part)
                 }
         }
 
+
 }
 
 void draw_button(ei_surface_t surface, ei_rect_t* rect_button, ei_color_t color, int border_width, int corner_radius, ei_relief_t relief, ei_rect_t* clipper)
@@ -414,9 +415,11 @@ void draw_button(ei_surface_t surface, ei_rect_t* rect_button, ei_color_t color,
                         ei_draw_polygon(surface, rounded_frame(rect_button, corner_radius, 1), dark_color(color), rect_button);
                         ei_draw_polygon(surface, rounded_frame(rect_button, corner_radius, 2), clear_color(color), rect_button);
                 }
-                ei_draw_polygon(surface, rounded_frame(rect_surface_with_border, corner_radius, 0), color,
+                ei_draw_polygon(surface, rounded_frame(rect_surface_with_border, corner_radius-border_width, 0), color,
                                 rect_button);
+        free(rect_surface_with_border);
         }
+
 
         //Surface de picking
         //ei_draw_polygon(pick_surface, rounded_frame(rect_button, corner_radius, 0), pick_color, rect_button);

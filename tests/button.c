@@ -47,18 +47,19 @@ int main(int argc, char** argv)
 
 	ei_widget_t*	button;
 	ei_size_t	button_size		= {300,200};
-	int		button_x		= 150;
-	int		button_y		= 200;
+	int		button_x		= 500;
+	int		button_y		= 250;
 	ei_color_t	button_color		= {0x88, 0x88, 0x88, 0xff};
 	char*		button_title		= "Mon premier Bouton !";
+	ei_anchor_t     button_anchor           = ei_anc_center;
 	ei_color_t	button_text_color	= {0x00, 0x00, 0x00, 0xff};
-	//ei_anchor_t     button_text_anchor      = ei_anc_northwest;
+	ei_anchor_t     button_text_anchor      = ei_anc_north;
 	int		button_corner_radius	= 20;
 	ei_relief_t	button_relief		= ei_relief_raised;
 	int		button_border_width	= 6;
 	ei_callback_t	button_callback 	= button_press;
-	//ei_surface_t    image;
-	//ei_rect_t*      rect_img;
+	ei_surface_t    image;
+	ei_rect_t*      rect_img;
 
 	/* Create the application and change the color of the background. */
 	ei_app_create(screen_size, EI_FALSE);
@@ -73,9 +74,9 @@ int main(int argc, char** argv)
         //rect_img->top_left.x = rect.top_left.x;
         //rect_img->top_left.y = rect.top_left.y;
 	ei_button_configure	(button, &button_size, &button_color,
-				 &button_border_width, &button_corner_radius, &button_relief, NULL, NULL, NULL, NULL,
+				 &button_border_width, &button_corner_radius, &button_relief, &button_title, NULL, &button_text_color, &button_text_anchor,
 				 NULL, NULL, NULL, &button_callback, NULL);
-	ei_place(button, NULL, &button_x, &button_y, NULL, NULL, NULL, NULL, NULL, NULL );
+	ei_place(button, &button_anchor, &button_x, &button_y, NULL, NULL, NULL, NULL, NULL, NULL );
 
 	/* Hook the keypress callback to the event. */
 	//ei_bind(ei_ev_keydown,		NULL, "all", process_key, NULL);

@@ -113,10 +113,10 @@ void ei_button_drawfunc(struct	ei_widget_t*	widget,
                 ei_rect_t* rect_int = malloc(sizeof(ei_rect_t));
                 int center_x = rect_tot->top_left.x + button->corner_radius;
                 int center_y = rect_tot->top_left.y + button->corner_radius;
-                rect_int->top_left.x = center_x + button->corner_radius*cos(2*M_PI/3);
-                rect_int->top_left.y = center_y + button->corner_radius*cos(2*M_PI/3);
-                rect_int->size.width = rect_tot->size.width - button->corner_radius;
-                rect_int->size.height = rect_tot->size.height - button->corner_radius;
+                rect_int->top_left.x = (int)(center_x + (button->corner_radius-button->border_width)*cos(-5*M_PI/4));
+                rect_int->top_left.y = (int)(center_y + signe_inverse(sin(-5*M_PI/4))*(button->corner_radius-button->border_width)*sin(-5*M_PI/4));
+                rect_int->size.width = (int)(rect_tot->top_left.x + rect_tot->size.width- button->corner_radius + (button->corner_radius-button->border_width)*cos(-7*M_PI/4)) - (int)(center_x + (button->corner_radius-button->border_width)*cos(-5*M_PI/4));
+                rect_int->size.height = (int)(rect_tot->top_left.y + rect_tot->size.height -button->corner_radius - (button->corner_radius-button->border_width)*sin(-3*M_PI/4))-(int)(center_y + signe_inverse(sin(-5*M_PI/4))*(button->corner_radius-button->border_width)*sin(-5*M_PI/4));
 
                 ei_rect_t* rect_int_on_screen = malloc(sizeof(ei_rect_t));
                 *rect_int_on_screen = inter_rect(clipper, rect_int);
@@ -127,7 +127,7 @@ void ei_button_drawfunc(struct	ei_widget_t*	widget,
                         int width_text;
                         hw_text_compute_size(button->text, button->text_font, &width_text, &height_text);
                         point_text = anchor_point(rect_int, button->text_anchor, width_text,height_text);
-                        ei_draw_text(surface, point_text, button->text, button->text_font, button->text_color, rect_int);
+                        ei_draw_text(surface, point_text, button->text, button->text_font, button->text_color, rect_int_on_screen);
                         free(point_text);
                 }
                 if (button->img != NULL){
