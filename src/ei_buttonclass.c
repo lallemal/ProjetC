@@ -62,12 +62,12 @@ void ei_button_releasefunc(ei_widget_t*	widget)
 	if (button->img_rect != NULL) {
 		free(button->img_rect);
 	}
-	if (button->text != NULL) {
-		free(button->text);
-	}
-	if (button->user_param != NULL) {
-		free(button->user_param);
-	}
+	//if (button->text != NULL) {
+	//	free(button->text);
+	//}
+	//if (button->user_param != NULL) {
+	//	free(button->user_param);
+	//}
 	// free(&(button->img_anchor));
 }
 
