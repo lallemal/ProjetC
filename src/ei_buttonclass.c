@@ -68,7 +68,7 @@ void ei_button_releasefunc(ei_widget_t*	widget)
 	//if (button->user_param != NULL) {
 	//	free(button->user_param);
 	//}
-	// free(&(button->img_anchor));
+	//free(&(button->img_anchor));
 }
 
 
