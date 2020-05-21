@@ -2,9 +2,11 @@
 // Created by devri on 13/05/2020.
 //
 #include <stdlib.h>
+#include <utils.h>
 #include "ei_application.h"
 #include "ei_placer.h"
 #include "ei_utils.h"
+#include "ei_toplevel.h"
 
 int  is_set_relative(float rel){
         return rel != -1.0;
@@ -16,9 +18,28 @@ int  are_old_and_new_diff (ei_rect_t r1, ei_rect_t r2){
                r1.top_left.y != r2.top_left.y;
 
 }
+int  special_case(struct ei_widget_t*	widget){
+        if (widget->parent != NULL){
+                if (strcmp(widget->parent->wclass, "toplevel")){
+                        ei_toplevel *parent = (ei_toplevel*)widget->parent;
+                        if (parent->sub_frame == widget){
+                                return EI_TRUE;
+                        }
+                }
+        }
+        return EI_FALSE;
+}
 void ei_run_func(struct ei_widget_t*	widget){
         ei_placer_t     *datas          = (ei_placer_t  *)widget->geom_params;
-        ei_rect_t       *container      = widget->parent->content_rect;
+        ei_rect_t       *container;
+
+
+        if (special_case(widget)){
+                container      = &widget->parent->screen_location;
+        } else {
+                container      = widget->parent->content_rect;
+        }
+
         ei_rect_t       new_screen_loc  = ei_rect_zero();
         if (widget->parent != NULL){
 
@@ -36,6 +57,8 @@ void ei_run_func(struct ei_widget_t*	widget){
 
                 new_screen_loc.top_left.x     =       container->size.width  * datas->rel_x  + datas->x;
                 new_screen_loc.top_left.y     =       container->size.height * datas->rel_y +  datas->y;
+
+
                 new_screen_loc.top_left = ei_point_add(new_screen_loc.top_left, container->top_left);
 
                 int half_height                   =       new_screen_loc.size.height/2;
@@ -77,7 +100,6 @@ void ei_run_func(struct ei_widget_t*	widget){
                         widget->wclass->geomnotifyfunc(widget);
                         ei_widget_t *child = widget->children_head;
                         widget->screen_location = new_screen_loc;
-                        widget->content_rect = &widget->screen_location;
                         while(child){
                                 ei_run_func(child);
                                 child = child->next_sibling;
