@@ -11,6 +11,7 @@
 #include "traverse_tools.h"
 #include "ei_types.h"
 #include "utils.h"
+#include "event.h"
 
 // Variables & definitions for linked list of rects
 #define LIST_RECT_PENDING 0
@@ -36,6 +37,7 @@ void ei_app_create(ei_size_t main_window_size, ei_bool_t fullscreen)
 	ei_frame_register_class();
 	ei_button_register_class();
 	ei_register_placer_manager();
+	create_base_eventlist();
 	rootWidget = ei_widget_create("frame", NULL, NULL, NULL);
 	rootWidget->screen_location.size.width = main_window_size.width;
 	rootWidget->screen_location.size.height = main_window_size.height;
@@ -101,6 +103,7 @@ void ei_app_free(void)
 	hw_surface_free(pick_surface);
 	hw_surface_free(main_window);
 	ei_widget_destroy(rootWidget);
+	destroy_base_eventlist();
 
 	ei_widgetclass_t* sentinel = ei_widgetclass_from_name("sentinel");
 	if (sentinel->next != NULL) {
@@ -147,10 +150,12 @@ void ei_app_run(void)
 		list_rect_head = NULL;
 		list_rect_tail = NULL;
 		rect_status = LIST_RECT_PENDING;
-		if (event.type == ei_ev_keydown && event.param.key.key_code == SDLK_ESCAPE) {
-			ei_app_quit_request();
-		}
+		//if (event.type == ei_ev_keydown && event.param.key.key_code == SDLK_ESCAPE) {
+		//	ei_app_quit_request();
+		//}
 		hw_event_wait_next(&event);
+		ei_linked_event_t* to_consider = retrieve_eventtype(event.type);
+		call(event, *to_consider, pick_surface);
 	}
 }
 

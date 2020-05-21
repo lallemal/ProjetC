@@ -8,6 +8,29 @@
 #include "ei_geometrymanager.h"
 
 
+ei_bool_t process_key(ei_widget_t* widget, ei_event_t* event, void* user_param)
+{
+	if (event->param.key.key_code == SDLK_ESCAPE) {
+		ei_app_quit_request();
+		return EI_TRUE;
+	}
+        return EI_FALSE;
+}
+
+ei_bool_t process_key2(ei_widget_t* widget, ei_event_t* event, void* user_param)
+{
+	if (event->param.key.key_code == SDLK_f) {
+		ei_app_quit_request();
+		return EI_TRUE;
+	}
+        return EI_FALSE;
+}
+
+ei_bool_t button_down(ei_widget_t* widget, ei_event_t* event, void* user_param)
+{
+	ei_app_quit_request();
+	return EI_TRUE;
+}
 /*
  * main --
  *
@@ -66,9 +89,15 @@ int main(int argc, char** argv)
 			    &frame2_border_width, &frame_relief, NULL, NULL, NULL, NULL,
 			    NULL, NULL, NULL);
 	ei_place(frame2, &anchor2, NULL, NULL, NULL, NULL, &frame2_x, &frame2_y, NULL, NULL ); */
+	ei_bind(ei_ev_keydown, NULL, "all", process_key, NULL);
+	ei_bind(ei_ev_keyup, NULL, "all", process_key2, NULL);
+	// ei_bind(ei_ev_mouse_buttondown, NULL, "all", button_down, NULL);
 
 	/* Run the application's main loop. */
 	ei_app_run();
+	ei_unbind(ei_ev_keydown, NULL, "all", process_key, NULL);
+	ei_unbind(ei_ev_keyup, NULL, "all", process_key2, NULL);
+	// ei_unbind(ei_ev_mouse_buttondown, NULL, "all", button_down, NULL);
 
 	/* We just exited from the main loop. Terminate the application (cleanup). */
 	ei_app_free();

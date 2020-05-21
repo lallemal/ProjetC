@@ -14,6 +14,39 @@
 static ei_linked_event_t* linked_event_head = NULL;
 static ei_linked_event_t* linked_event_tail = NULL;
 
+
+void			create_base_eventlist()
+{
+	ei_linked_event_t* for_keydown = calloc(1,sizeof(ei_linked_event_t));
+	for_keydown->eventtype = ei_ev_keydown;
+	ei_linked_event_t* for_keyup = calloc(1,sizeof(ei_linked_event_t));
+	for_keyup->eventtype = ei_ev_keyup;
+	for_keydown->next = for_keyup;
+	ei_linked_event_t* for_mouseup = calloc(1,sizeof(ei_linked_event_t));
+	for_mouseup->eventtype = ei_ev_mouse_buttonup;
+	for_keyup->next = for_mouseup;
+	ei_linked_event_t* for_mousedown = calloc(1,sizeof(ei_linked_event_t));
+	for_mousedown->eventtype = ei_ev_mouse_buttondown;
+	for_mouseup->next = for_mousedown;
+	ei_linked_event_t* for_mousemove = calloc(1,sizeof(ei_linked_event_t));
+	for_mousemove->eventtype = ei_ev_mouse_move;
+	for_mousedown->next = for_mousemove;
+	linked_event_head = for_keydown;
+	linked_event_tail = for_mousemove;
+}
+
+
+void			destroy_base_eventlist()
+{
+	ei_linked_event_t* element = linked_event_head;
+	while (element != NULL) {
+		ei_linked_event_t* next = element->next;
+		free(element);
+		element = next;
+	}
+}
+
+
 ei_linked_event_t*	retrieve_eventtype(ei_eventtype_t eventtype)
 {
 	ei_linked_event_t* element = linked_event_head;
@@ -70,10 +103,11 @@ void			call(ei_event_t event, ei_linked_event_t list_todo, ei_surface_t pick_sur
 {
 	// First , the tag list
 	ei_linked_tagcall_t* tag_call = list_todo.tagcall_list;
+	ei_bool_t not_continue = EI_FALSE;
 	while (tag_call != NULL) {
 		// if the tag is all : do the callback
 		if (strcmp(tag_call->tag, "all") == 0 ) {
-			tag_call->callback(NULL, &event, tag_call->user_param);
+			not_continue = tag_call->callback(NULL, &event, tag_call->user_param);
 		}
 		else {
 			int is_buttonup = event.type == ei_ev_mouse_buttonup;
@@ -84,14 +118,18 @@ void			call(ei_event_t event, ei_linked_event_t list_todo, ei_surface_t pick_sur
 				ei_widget_t* widget_cursor = on_widget(event, pick_surface, tag_call->tag);
 				// if there is a widget of class _tag_ under cursor
 				if (widget_cursor != NULL) {
-					tag_call->callback(widget_cursor, &event, tag_call->user_param);
+					not_continue = tag_call->callback(widget_cursor, &event, tag_call->user_param);
 
 				}
 			}
 			// if it can't be localized, call the function.
 			else {
-				tag_call->callback(NULL, &event, tag_call->user_param);
+				not_continue = tag_call->callback(NULL, &event, tag_call->user_param);
 			}
+		}
+		// if the event is consumed
+		if (not_continue) {
+			return;
 		}
 		tag_call = tag_call->next;
 	}
@@ -108,11 +146,15 @@ void			call(ei_event_t event, ei_linked_event_t list_todo, ei_surface_t pick_sur
 			uint32_t pick_color = retrieve_color(pick_surface, x_cursor, y_cursor);
 			// Verify the pick color to know if the widget is under cursor
 			if (pick_color == ei_map_rgba(pick_surface, widget_call->widget->pick_color)) {
-				widget_call->callback(widget_call->widget, &event, widget_call->user_param);
+				not_continue = widget_call->callback(widget_call->widget, &event, widget_call->user_param);
 			}
 		}
 		else {
-			widget_call->callback(NULL, &event, tag_call->user_param);
+			not_continue = widget_call->callback(NULL, &event, tag_call->user_param);
+		}
+		// if the event is consumed
+		if (not_continue) {
+			return;
 		}
 		widget_call = widget_call->next;
 	}
@@ -191,15 +233,15 @@ void			del_to_listcall	(ei_linked_event_t*	list,
 		}
 		if (isequal_tagcall(cel, tag, callback)) {
 			ei_linked_tagcall_t* next = cel->next;
-			free(cel->tag);
 			free(cel->user_param);
 			free(cel);
 			list->tagcall_list = next;
+			return;
 		}
-		while (cel != NULL && isequal_tagcall(cel->next, tag, callback)) {
+		while (cel->next != NULL && isequal_tagcall(cel->next, tag, callback)) {
 			cel = cel->next;
 		}
-		if (cel == NULL) {
+		if (cel->next == NULL) {
 			return;
 		}
 		ei_linked_tagcall_t* to_destroy = cel->next;

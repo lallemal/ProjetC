@@ -32,6 +32,9 @@ typedef struct ei_linked_event {
 } ei_linked_event_t;
 
 
+void			create_base_eventlist(void);
+
+void			destroy_base_eventlist(void);
 /**
  * @brief		Retrieve the tag, widget and callback bind to the type
  *
