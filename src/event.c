@@ -6,13 +6,61 @@
 * Description:      
 *****************************************************************************/
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
+
 #include "event.h"
 #include "traverse_tools.h"
 #include "ei_application.h"
 
+// Static Variables of the linked lists of event.
 static ei_linked_event_t* linked_event_head = NULL;
 static ei_linked_event_t* linked_event_tail = NULL;
+
+
+// Prototypes of tools functions
+
+/**
+ * @brief i			Retrive the rgba int below of pixel x,y
+ *
+ * @param pick_surface		Pick_surface where to find the pixel
+ * @param x			x coordinate of the pixel
+ * @param y			y coordinate of the pixel
+ *
+ * @return			integer on 32 bits which represent the pick_color
+ */
+ei_linked_event_t*	retrieve_eventtype(ei_eventtype_t eventtype);
+
+
+/**
+ * @brief		Give if a tag in a linked tagcall list is equal
+ *			to tag + callback
+ *
+ * @param element	Element of linked tagcall list to test
+ * @param tag		Tag to test the equality
+ * @param callback	Callback to test the equality
+ *
+ * @return		1 or 0 : booleen to equality
+ */
+int	isequal_tagcall(ei_linked_tagcall_t*	element,
+			ei_tag_t		tag,
+			ei_callback_t		callback);
+
+
+/**
+ * @brief		Give if a widget in a linked widgetcall list is equal
+ *			to widget + callback
+ *
+ * @param element	Element of linked tagcall list to test
+ * @param tag		widget to test the equality
+ * @param callback	Callback to test the equality
+ *
+ * @return		1 or 0 : booleen to equality
+ */
+int	isequal_widgetcall(ei_linked_widgetcall_t*	element,
+			ei_widget_t*		widget,
+			ei_callback_t		callback);
+
 
 
 void			create_base_eventlist()
@@ -60,15 +108,6 @@ ei_linked_event_t*	retrieve_eventtype(ei_eventtype_t eventtype)
 }
 
 
-/**
- * @brief i			Retrive the rgba int below of pixel x,y
- *
- * @param pick_surface		Pick_surface where to find the pixel
- * @param x			x coordinate of the pixel
- * @param y			y coordinate of the pixel
- *
- * @return			integer on 32 bits which represent the pick_color
- */
 uint32_t retrieve_color(ei_surface_t pick_surface, int x, int y)
 {
 	hw_surface_lock(pick_surface);
@@ -198,27 +237,6 @@ void			add_to_listcall	(ei_linked_event_t*	list,
 }
 
 
-// Tool to verify if bindings of an event by a tag are equals
-int	isequal_tagcall(ei_linked_tagcall_t*	element,
-			ei_tag_t		tag,
-			ei_callback_t		callback)
-{
-	int tag_idem = strcmp(tag, element->tag) == 0;
-	int callback_idem = callback == element->callback;
-	return callback_idem && tag_idem;
-}
-
-
-
-// Tool to verify if bindings of an event by a widget are equals
-int	isequal_widgetcall(ei_linked_widgetcall_t*	element,
-			ei_widget_t*		widget,
-			ei_callback_t		callback)
-{
-	int widget_idem = widget == element->widget;
-	int callback_idem = callback == element->callback;
-	return callback_idem && widget_idem;
-}
 
 void			del_to_listcall	(ei_linked_event_t*	list,
 					ei_tag_t		tag,
@@ -226,11 +244,16 @@ void			del_to_listcall	(ei_linked_event_t*	list,
 					ei_callback_t		callback,
 					void*			user_param)
 {
+	if (widget != NULL && tag != NULL) {
+		fprintf(stderr, "Both widget and tag can't be destroyed at the same time.\n");
+	}
 	if (widget == NULL) {
 		ei_linked_tagcall_t* cel = list->tagcall_list;
+		// if the list is empty
 		if (cel == NULL) {
 			return;
 		}
+		// If it is the first element
 		if (isequal_tagcall(cel, tag, callback)) {
 			ei_linked_tagcall_t* next = cel->next;
 			free(cel->user_param);
@@ -241,6 +264,7 @@ void			del_to_listcall	(ei_linked_event_t*	list,
 		while (cel->next != NULL && isequal_tagcall(cel->next, tag, callback)) {
 			cel = cel->next;
 		}
+		// If the tag,callback is not in the list
 		if (cel->next == NULL) {
 			return;
 		}
@@ -251,6 +275,7 @@ void			del_to_listcall	(ei_linked_event_t*	list,
 		free(to_destroy);
 		return;
 	}
+	// Verify for the widget case.
 	ei_linked_widgetcall_t* cel = list->widgetcall_list;
 	if (cel == NULL) {
 		return;
@@ -272,4 +297,27 @@ void			del_to_listcall	(ei_linked_event_t*	list,
 	free(to_destroy->user_param);
 	free(to_destroy);
 	return;
+}
+
+
+// Tool to verify if bindings of an event by a tag are equals
+int	isequal_tagcall(ei_linked_tagcall_t*	element,
+			ei_tag_t		tag,
+			ei_callback_t		callback)
+{
+	int tag_idem = strcmp(tag, element->tag) == 0;
+	int callback_idem = callback == element->callback;
+	return callback_idem && tag_idem;
+}
+
+
+
+// Tool to verify if bindings of an event by a widget are equals
+int	isequal_widgetcall(ei_linked_widgetcall_t*	element,
+			ei_widget_t*		widget,
+			ei_callback_t		callback)
+{
+	int widget_idem = widget == element->widget;
+	int callback_idem = callback == element->callback;
+	return callback_idem && widget_idem;
 }

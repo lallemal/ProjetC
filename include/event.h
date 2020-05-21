@@ -32,8 +32,14 @@ typedef struct ei_linked_event {
 } ei_linked_event_t;
 
 
+/**
+ * @brief		Initialize the event list with the different eventtype
+ */
 void			create_base_eventlist(void);
 
+/**
+ * @brief		Free all the eventtype list
+ */
 void			destroy_base_eventlist(void);
 /**
  * @brief		Retrieve the tag, widget and callback bind to the type
@@ -68,30 +74,39 @@ ei_widget_t*		on_widget	(ei_event_t		event,
 					ei_tag_t		tag);
 
 
+/**
+ * @brief			Add to list of binding for a given eventype
+ *				a tag OR widget with its callback and parameters
+ *
+ * @param list			List of bindings for one eventtype
+ * @param tag			A tag of widget OR NULL if not used (has to be NULL
+ *				if widget is not
+ * @param widget		A widget to bind OR NULL if not used (has to be NULL
+ *				if tag is not
+ * @param callback		The callback function to call if the event is triggered
+ * @param user_param		The user parameters that was provided by the caller when registering this callback.
+ */
 void			add_to_listcall	(ei_linked_event_t*	list,
 					ei_tag_t		tag,
 					ei_widget_t*		widget,
 					ei_callback_t		callback,
 					void*			user_param);
 
+/**
+ * @brief			Delete to list of binding for a given eventype
+ *				a tag OR widget with its callback and parameters
+ *
+ * @param list			List of bindings for one eventtype
+ * @param tag			A tag of widget OR NULL if not used (has to be NULL
+ *				if widget is not
+ * @param widget		A widget to bind OR NULL if not used (has to be NULL
+ *				if tag is not
+ * @param callback		The callback function linked to the tag OR widget
+ * @param user_param		The user parameters that was provided by the caller when registering this callback.
+ */
 void			del_to_listcall	(ei_linked_event_t*	list,
 					ei_tag_t		tag,
 					ei_widget_t*		widget,
 					ei_callback_t		callback,
 					void*			user_param);
-
-/* 
-void			add_to_widgetcall	(ei_linked_event_t	list,
-						ei_tag_t		tag,
-						ei_callback_t		callback,
-						void*			user_param);
-
-void			del_to_widgetcall	(ei_linked_event_t	list,
-						ei_tag_t		tag,
-						ei_callback_t		callback,
-						void*			user_param);
-
-*/
-
-
 #endif /* ifndef EVENT_H */
