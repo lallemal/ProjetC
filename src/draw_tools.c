@@ -224,47 +224,19 @@ void draw_down_relief(ei_rect_t* rect_to_fill, ei_surface_t surface, ei_color_t 
 
 }
 
-ei_linked_point_t* arc_point1(ei_point_t center, int radius, int corner_begin, int corner_end)
+
+int signe_inverse(float nombre)
 {
-        int x_center = center.x;
-        int y_center = center.y;
-        ei_linked_point_t* list_point1 = malloc(sizeof(ei_linked_point_t));
-        ei_linked_point_t* list_point2 = malloc(sizeof(ei_linked_point_t));
-        ei_linked_point_t* list_point3 = malloc(sizeof(ei_linked_point_t));
-        ei_linked_point_t* list_point4 = malloc(sizeof(ei_linked_point_t));
-        ei_linked_point_t* list_point5 = malloc(sizeof(ei_linked_point_t));
+        if (nombre <= 0){
+                return 1;
+        }
 
-        int x1=(int)(x_center - radius*cos(corner_begin + (1./5)*(corner_end - corner_begin)));
-        list_point1->point.x = x1;
-        int y1 = (int)(y_center - radius*sin(corner_begin + (1./5)*(corner_end - corner_begin)));
-        list_point1->point.y = y1;
-        list_point1->next = list_point2;
-        int x2 = (int)(x_center - radius*cos(corner_begin + (2./5)*(corner_end - corner_begin)));
-        list_point2->point.x = x2;
-        int y2 = (int)(y_center - radius*sin(corner_begin + (2./5)*(corner_end - corner_begin)));
-        list_point2->point.y = y2;
-        list_point2->next = list_point3;
-        int x3 = (int)(x_center - radius*cos(corner_begin + (3./5)*(corner_end - corner_begin)));
-        list_point3->point.x = x3;
-        int y3 = (int)(y_center - radius*sin(corner_begin + (3./5)*(corner_end - corner_begin)));
-        list_point3->point.y = y3;
-        list_point3->next = list_point4;
-        int x4 = (int)(x_center - radius*cos(corner_begin + (4./5)*(corner_end - corner_begin)));
-        list_point4->point.x = x4;
-        int y4 = (int)(y_center - radius*sin(corner_begin + (4./5)*(corner_end - corner_begin)));
-        list_point4->point.y = y4;
-        list_point4->next = list_point5;
-        int x5 = (int)(x_center - radius*cos(corner_end));
-        list_point5->point.x = x5;
-        int y5 = (int)(y_center - radius*sin(corner_end));
-        list_point5->point.y = y5;
-        list_point5->next = NULL;
-
-        return list_point1;
-
+        else{
+                return -1;
+        }
 }
 
-ei_linked_point_t* arc_point2(ei_point_t center, int radius, int corner_begin, int corner_end)
+ei_linked_point_t* arc_point(ei_point_t center, int radius, float corner_begin, float corner_end)
 {
         int x_center = center.x;
         int y_center = center.y;
@@ -274,31 +246,81 @@ ei_linked_point_t* arc_point2(ei_point_t center, int radius, int corner_begin, i
         ei_linked_point_t* list_point4 = malloc(sizeof(ei_linked_point_t));
         ei_linked_point_t* list_point5 = malloc(sizeof(ei_linked_point_t));
 
-        int x1=(int)(x_center + radius*cos(corner_begin + (1./5)*(corner_end - corner_begin)));
-        list_point1->point.x = x1;
-        int y1 = (int)(y_center + radius*sin(corner_begin + (1./5)*(corner_end - corner_begin)));
-        list_point1->point.y = y1;
-        list_point1->next = list_point2;
-        int x2 = (int)(x_center + radius*cos(corner_begin + (2./5)*(corner_end - corner_begin)));
-        list_point2->point.x = x2;
-        int y2 = (int)(y_center + radius*sin(corner_begin + (2./5)*(corner_end - corner_begin)));
-        list_point2->point.y = y2;
-        list_point2->next = list_point3;
-        int x3 = (int)(x_center + radius*cos(corner_begin + (3./5)*(corner_end - corner_begin)));
-        list_point3->point.x = x3;
-        int y3 = (int)(y_center + radius*sin(corner_begin + (3./5)*(corner_end - corner_begin)));
-        list_point3->point.y = y3;
-        list_point3->next = list_point4;
-        int x4 = (int)(x_center + radius*cos(corner_begin + (4./5)*(corner_end - corner_begin)));
-        list_point4->point.x = x4;
-        int y4 = (int)(y_center + radius*sin(corner_begin + (4./5)*(corner_end - corner_begin)));
-        list_point4->point.y = y4;
-        list_point4->next = list_point5;
-        int x5 = (int)(x_center + radius*cos(corner_end));
-        list_point5->point.x = x5;
-        int y5 = (int)(y_center + radius*sin(corner_end));
-        list_point5->point.y = y5;
-        list_point5->next = NULL;
+
+
+        if ((float)cos(corner_begin)==1 || (float)cos(corner_end)==1){
+                if ((float)sin(corner_end)==1 || (float)sin(corner_begin)==1){
+                        list_point1->point.x = (int)(x_center + radius*cos(corner_begin));
+                        list_point1->point.y = (int)(y_center + signe_inverse(sin(corner_begin))*radius*sin(corner_begin));
+                        list_point1->next = list_point2;
+                        list_point2->point.x = (int)(x_center + radius*cos(-11*M_PI/6));
+                        list_point2->point.y = (int)(y_center + signe_inverse(sin(-11*M_PI/6))*radius*sin(-11*M_PI/6));
+                        list_point2->next = list_point3;
+                        list_point3->point.x = (int)(x_center + radius*cos(-7*M_PI/4));
+                        list_point3->point.y = (int)(y_center + signe_inverse(sin(-7*M_PI/4))*radius*sin(-7*M_PI/4));
+                        list_point3->next = list_point4;
+                        list_point4->point.x = (int)(x_center + radius*cos(-5*M_PI/3));
+                        list_point4->point.y = (int)(y_center + signe_inverse(sin(-5*M_PI/3))*radius*sin(-5*M_PI/3));
+                        list_point4->next = list_point5;
+                        list_point5->point.x = (int)(x_center + radius*cos(corner_end));
+                        list_point5->point.y = (int)(y_center + signe_inverse(sin(corner_end))*radius*sin(corner_end));
+                        list_point5->next = NULL;
+                }
+                if ((float)sin(corner_end)==-1 || (float)sin(corner_begin)==-1){
+                        list_point1->point.x = (int)(x_center + radius*cos(corner_begin));
+                        list_point1->point.y = (int)(y_center - radius*sin(corner_begin));
+                        list_point1->next = list_point2;
+                        list_point2->point.x = (int)(x_center + radius*cos(-M_PI/3));
+                        list_point2->point.y = (int)(y_center - radius*sin(-M_PI/3));
+                        list_point2->next = list_point3;
+                        list_point3->point.x = (int)(x_center + radius*cos(-M_PI/4));
+                        list_point3->point.y = (int)(y_center - radius*sin(-M_PI/4));
+                        list_point3->next = list_point4;
+                        list_point4->point.x = (int)(x_center + radius*cos(-M_PI/6));
+                        list_point4->point.y = (int)(y_center - radius*sin(-M_PI/6));
+                        list_point4->next = list_point5;
+                        list_point5->point.x = (int)(x_center + radius*cos(corner_end));
+                        list_point5->point.y = (int)(y_center - radius*sin(corner_end));
+                        list_point5->next = NULL;
+                }
+        }
+        else{
+                if ((float)sin(corner_begin)==1 || (float)sin(corner_end)==1){
+                        list_point1->point.x = (int)(x_center + radius*cos(corner_begin));
+                        list_point1->point.y = (int)(y_center + signe_inverse(sin(corner_begin))*radius*sin(corner_begin));
+                        list_point1->next = list_point2;
+                        list_point2->point.x = (int)(x_center + radius*cos(-4*M_PI/3));
+                        list_point2->point.y = (int)(y_center + signe_inverse(sin(-4*M_PI/3))*radius*sin(-4*M_PI/3));
+                        list_point2->next = list_point3;
+                        list_point3->point.x = (int)(x_center + radius*cos(-5*M_PI/4));
+                        list_point3->point.y = (int)(y_center + signe_inverse(sin(-5*M_PI/4))*radius*sin(-5*M_PI/4));
+                        list_point3->next = list_point4;
+                        list_point4->point.x = (int)(x_center + radius*cos(-7*M_PI/6));
+                        list_point4->point.y = (int)(y_center + signe_inverse(sin(-7*M_PI/6))*radius*sin(-7*M_PI/6));
+                        list_point4->next = list_point5;
+                        list_point5->point.x = (int)(x_center + radius*cos(corner_end));
+                        list_point5->point.y = (int)(y_center + signe_inverse(sin(corner_end))*radius*sin(corner_end));
+                        list_point5->next = NULL;
+                }
+                if ((float)sin(corner_end) == -1 || (float)sin(corner_begin)==-1){
+                        list_point1->point.x = (int)(x_center + radius*cos(corner_begin));
+                        list_point1->point.y = (int)(y_center + signe_inverse(sin(corner_begin))*radius*sin(corner_begin));
+                        list_point1->next = list_point2;
+                        list_point2->point.x = (int)(x_center + radius*cos(-5*M_PI/6));
+                        list_point2->point.y = (int)(y_center - radius*sin(-5*M_PI/6));
+                        list_point2->next = list_point3;
+                        list_point3->point.x = (int)(x_center + radius*cos(-3*M_PI/4));
+                        list_point3->point.y = (int)(y_center - radius*sin(-3*M_PI/4));
+                        list_point3->next = list_point4;
+                        list_point4->point.x = (int)(x_center + radius*cos(-2*M_PI/3));
+                        list_point4->point.y = (int)(y_center - radius*sin(-2*M_PI/3));
+                        list_point4->next = list_point5;
+                        list_point5->point.x = (int)(x_center + radius*cos(corner_end));
+                        list_point5->point.y = (int)(y_center - radius*sin(corner_end));
+                        list_point5->next = NULL;
+                }
+        }
+
 
         return list_point1;
 }
@@ -319,102 +341,60 @@ ei_linked_point_t* rounded_frame(ei_rect_t* rect, int radius, int part)
         center_bottom_right.x = rect->top_left.x + rect->size.width - radius;
         center_bottom_right.y = rect->top_left.y + rect->size.height - radius;
 
-        ei_linked_point_t *rounded_top_left = malloc(sizeof(ei_linked_point_t));
-        ei_linked_point_t *rounded2_top_left = malloc(sizeof(ei_linked_point_t));
-        ei_point_t point1_top_left;
-        ei_point_t point2_top_left;
-        point1_top_left.x = rect->top_left.x + radius;
-        point1_top_left.y = rect->top_left.y;
-        point2_top_left.x = rect->top_left.x;
-        point2_top_left.y = rect->top_left.y +radius;
-        rounded2_top_left->point= point1_top_left;
-        rounded2_top_left->next = NULL;
-
-        rounded_top_left->point = point2_top_left;
-        rounded_top_left->next = arc_point1(center_top_left, radius, -2*M_PI, -3*M_PI/2);
-        rounded_top_left->next->next->next->next->next->next= rounded2_top_left;
-
-
-
-
-        ei_linked_point_t *rounded_top_right =malloc(sizeof(ei_linked_point_t));
-        ei_linked_point_t *rounded2_top_right = malloc(sizeof(ei_linked_point_t));
-        ei_point_t  point1_top_right;
-        ei_point_t point2_top_right;
-        point1_top_right.x = rect->top_left.x +rect->size.width - radius;
-        point1_top_right.y = rect->top_left.y ;
-        point2_top_right.x = rect->top_left.x + rect->size.width;
-        point2_top_right.y = rect->top_left.y +radius;
-        rounded2_top_right->point= point2_top_right;
-        rounded2_top_right->next = NULL;
-        rounded_top_right->point = point1_top_right;
-        rounded_top_right->next = arc_point2(center_top_right, radius, -5*M_PI/2, -2*M_PI);
-        rounded_top_right->next->next->next->next->next->next= rounded2_top_right;
-
-
-        ei_linked_point_t *rounded_bottom_left =malloc(sizeof(ei_linked_point_t));
-        ei_linked_point_t *rounded2_bottom_left = malloc(sizeof(ei_linked_point_t));
-        ei_point_t  point1_bottom_left;
-        ei_point_t point2_bottom_left;
-        point1_bottom_left.x = rect->top_left.x + radius;
-        point1_bottom_left.y = rect->top_left.y + rect->size.height;
-        point2_bottom_left.x = rect->top_left.x ;
-        point2_bottom_left.y = rect->top_left.y + rect->size.height -radius;
-        rounded2_bottom_left->point= point2_bottom_left;
-        rounded2_bottom_left->next = NULL;
-        rounded_bottom_left->point = point1_bottom_left;
-        rounded_bottom_left->next = arc_point2(center_bottom_left, radius,-3*M_PI/2, -( M_PI));
-        rounded_bottom_left->next->next->next->next->next->next= rounded2_bottom_left;
-
-
-        ei_linked_point_t *rounded_bottom_right =malloc(sizeof(ei_linked_point_t));
-        ei_linked_point_t *rounded2_bottom_right = malloc(sizeof(ei_linked_point_t));
-        ei_point_t  point1_bottom_right;
-        ei_point_t point2_bottom_right;
-        point2_bottom_right.x = rect->top_left.x +rect->size.width - radius;
-        point2_bottom_right.y = rect->top_left.y +rect->size.height;
-        point1_bottom_right.x = rect->top_left.x + rect->size.width;
-        point2_bottom_right.y = rect->top_left.y +rect->size.height - radius;
-        rounded2_bottom_right->point= point2_bottom_right;
-        rounded2_bottom_right->next = NULL;
-        rounded_bottom_right->point = point1_bottom_right;
-        rounded_bottom_right->next = arc_point1(center_bottom_right, radius, (-M_PI),
-                                             -M_PI/2);
-        rounded_bottom_right->next->next->next->next->next->next= rounded2_bottom_right;
-
-
-
+        ei_linked_point_t *rounded_top_left = arc_point(center_top_left, radius, -3*M_PI/2, -M_PI);
+        ei_linked_point_t *rounded_top_right = arc_point(center_top_right, radius, -2*M_PI, -3*M_PI/2);
+        ei_linked_point_t *rounded_bottom_left = arc_point(center_bottom_left, radius, -M_PI, -M_PI/2 );
+        ei_linked_point_t *rounded_bottom_right = arc_point(center_bottom_right, radius, (-M_PI) / 2,
+                                                            0);
         if (part == 0) {
-                rounded_top_left->next->next->next->next = rounded_top_right;
-                rounded_top_right->next->next->next->next = rounded_bottom_right;
-                rounded_bottom_right->next->next->next->next = rounded_bottom_left;
+                rounded_top_left->next->next->next->next->next = rounded_bottom_left;
+                rounded_bottom_left->next->next->next->next->next = rounded_bottom_right;
+                rounded_bottom_right->next->next->next->next->next = rounded_top_right;
                 return rounded_top_left;
         }
         else{
+                ei_point_t point_inter_bas;
+                ei_point_t point_inter_haut;
+                point_inter_haut.x = rect->top_left.x + rect->size.width-min(rect->size.height/2, rect->size.width/2);
+                point_inter_haut.y = rect->top_left.y + min(rect->size.height/2, rect->size.width/2);
+                point_inter_bas.x =rect->top_left.x+ min(rect->size.height/2, rect->size.width/2);
+                point_inter_bas.y = rect->top_left.y + rect->size.height - min(rect->size.height/2, rect->size.width/2);
+                ei_linked_point_t* inter_bas = malloc(sizeof(ei_linked_point_t));
+                ei_linked_point_t* inter_haut = malloc(sizeof(ei_linked_point_t));
+
                 if (part == 1){
                         ei_linked_point_t* rounded_up;
                         rounded_up = rounded_top_right->next->next;
-                        rounded_top_right->next->next->next->next = rounded_top_left;
-                        rounded_top_left->next->next->next->next = rounded_bottom_left;
-                        rounded_bottom_left->next->next = NULL;
+                        rounded_top_right->next->next->next->next->next = rounded_top_left;
+                        rounded_top_left->next->next->next->next->next = rounded_bottom_left;
+                        rounded_bottom_left->next->next->next = inter_bas;
+                        inter_bas->point = point_inter_bas;
+                        inter_bas->next = inter_haut;
+                        inter_haut->point = point_inter_haut;
+                        inter_haut->next = NULL;
                         return rounded_up;
                 }
                 else{
                         ei_linked_point_t* rounded_down;
                         rounded_down = rounded_bottom_left->next->next;
-                        rounded_bottom_left->next->next->next->next = rounded_bottom_right;
-                        rounded_bottom_right->next->next->next->next = rounded_top_right;
-                        rounded_top_right->next->next = NULL;
+                        rounded_bottom_left->next->next->next->next->next = rounded_bottom_right;
+                        rounded_bottom_right->next->next->next->next->next = rounded_top_right;
+                        rounded_top_right->next->next->next= inter_haut;
+                        inter_haut->point = point_inter_haut;
+                        inter_haut->next = inter_bas;
+                        inter_bas->point = point_inter_bas;
+                        inter_bas->next = NULL;
                         return rounded_down;
                 }
         }
+
 }
 
-void draw_button(ei_surface_t surface, ei_rect_t* rect_button, ei_color_t color, int border_width, int corner_radius, ei_relief_t relief)
+void draw_button(ei_surface_t surface, ei_rect_t* rect_button, ei_color_t color, int border_width, int corner_radius, ei_relief_t relief, ei_rect_t* clipper)
 {
 
         if ( border_width== 0){
-                ei_draw_polygon(surface, rounded_frame(rect_button, corner_radius, 0 ), color, rect_button);
+                ei_draw_polygon(surface, rounded_frame(rect_button, corner_radius, 0 ), color, clipper);
         }
         else{
                 ei_rect_t *rect_surface_with_border = malloc(sizeof(ei_rect_t));

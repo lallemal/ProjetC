@@ -74,6 +74,16 @@ void draw_up_relief(ei_rect_t* rect_to_fill, ei_surface_t surface, ei_color_t co
 void draw_down_relief(ei_rect_t* rect_to_fill, ei_surface_t surface, ei_color_t color, ei_bool_t clear_up);
 
 /**
+ * @brief	Fonction which return the sign of the number
+ *
+ * @param       nombre         number which we want to know the sign
+ *
+ * @return		       -1 if the number is negative, 1 if the number is positive
+ */
+
+int signe_inverse(float nombre);
+
+/**
  * @brief	Fonction which create an arc of circle.
  *
  * @param       center         point which is the center of the circle
@@ -84,9 +94,7 @@ void draw_down_relief(ei_rect_t* rect_to_fill, ei_surface_t surface, ei_color_t 
  * @return		       a linked point list which represents the arc
  */
 
-ei_linked_point_t* arc_point1(ei_point_t center, int radius, int corner_begin, int corner_end);
-
-ei_linked_point_t* arc_point2(ei_point_t center, int radius, int corner_begin, int corner_end);
+ei_linked_point_t* arc_point(ei_point_t center, int radius, float corner_begin, float corner_end);
 
 /**
  * @brief	Fonction which draw a rectangle with rounded corner
@@ -112,7 +120,7 @@ ei_linked_point_t* rounded_frame(ei_rect_t* rect, int radius, int part);
  *
  */
 
-void draw_button(ei_surface_t surface, ei_rect_t* rect_button, ei_color_t color, int border_width, int corner_radius, ei_relief_t relief);
+void draw_button(ei_surface_t surface, ei_rect_t* rect_button, ei_color_t color, int border_width, int corner_radius, ei_relief_t relief, ei_rect_t* clipper);
 
 
 #endif /* ifndef DRAW_H */
