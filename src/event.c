@@ -92,7 +92,6 @@ void			call(ei_event_t event, ei_linked_event_t list_todo, ei_surface_t pick_sur
 			else {
 				tag_call->callback(NULL, &event, tag_call->user_param);
 			}
-				
 		}
 		tag_call = tag_call->next;
 	}
@@ -117,4 +116,118 @@ void			call(ei_event_t event, ei_linked_event_t list_todo, ei_surface_t pick_sur
 		}
 		widget_call = widget_call->next;
 	}
+}
+
+
+void			add_to_listcall	(ei_linked_event_t*	list,
+					ei_tag_t		tag,
+					ei_widget_t*		widget,
+					ei_callback_t		callback,
+					void*			user_param)
+{
+	// If it is a tag to add
+	if (widget == NULL) {
+		ei_linked_tagcall_t* newElement = malloc(sizeof(ei_linked_tagcall_t));
+		newElement->callback = callback;
+		newElement->user_param = user_param;
+		newElement->tag = tag;
+		// If the list is empty
+		if (list->tagcall_list == NULL) {
+			newElement->next = NULL;
+			list->tagcall_list = newElement;
+			return;
+		}
+		newElement->next = list->tagcall_list;
+		list->tagcall_list = newElement;
+		return;
+	}
+	// If it is a widget to add
+	ei_linked_widgetcall_t* newElement = malloc(sizeof(ei_linked_widgetcall_t));
+	newElement->callback = callback;
+	newElement->widget = widget;
+	newElement->user_param = user_param;
+	if (list->widgetcall_list == NULL) {
+		newElement->next = NULL;
+		list->widgetcall_list = newElement;
+		return;
+	}
+	newElement->next = list->widgetcall_list;
+	list->widgetcall_list = newElement;
+}
+
+
+// Tool to verify if bindings of an event by a tag are equals
+int	isequal_tagcall(ei_linked_tagcall_t*	element,
+			ei_tag_t		tag,
+			ei_callback_t		callback)
+{
+	int tag_idem = strcmp(tag, element->tag) == 0;
+	int callback_idem = callback == element->callback;
+	return callback_idem && tag_idem;
+}
+
+
+
+// Tool to verify if bindings of an event by a widget are equals
+int	isequal_widgetcall(ei_linked_widgetcall_t*	element,
+			ei_widget_t*		widget,
+			ei_callback_t		callback)
+{
+	int widget_idem = widget == element->widget;
+	int callback_idem = callback == element->callback;
+	return callback_idem && widget_idem;
+}
+
+void			del_to_listcall	(ei_linked_event_t*	list,
+					ei_tag_t		tag,
+					ei_widget_t*		widget,
+					ei_callback_t		callback,
+					void*			user_param)
+{
+	if (widget == NULL) {
+		ei_linked_tagcall_t* cel = list->tagcall_list;
+		if (cel == NULL) {
+			return;
+		}
+		if (isequal_tagcall(cel, tag, callback)) {
+			ei_linked_tagcall_t* next = cel->next;
+			free(cel->tag);
+			free(cel->user_param);
+			free(cel);
+			list->tagcall_list = next;
+		}
+		while (cel != NULL && isequal_tagcall(cel->next, tag, callback)) {
+			cel = cel->next;
+		}
+		if (cel == NULL) {
+			return;
+		}
+		ei_linked_tagcall_t* to_destroy = cel->next;
+		cel->next = cel->next->next;
+		free(to_destroy->tag);
+		free(to_destroy->user_param);
+		free(to_destroy);
+		return;
+	}
+	ei_linked_widgetcall_t* cel = list->widgetcall_list;
+	if (cel == NULL) {
+		return;
+	}
+	if (isequal_widgetcall(cel, widget, callback)) {
+		ei_linked_widgetcall_t* next = cel->next;
+		free(cel->user_param);
+		free(cel);
+		list->widgetcall_list = next;
+	}
+	while (cel != NULL && isequal_widgetcall(cel->next, widget, callback)) {
+		cel = cel->next;
+	}
+	if (cel == NULL) {
+		return;
+	}
+	ei_linked_widgetcall_t* to_destroy = cel->next;
+	cel->next = cel->next->next;
+	free(to_destroy->user_param);
+	free(to_destroy);
+	return;
 }

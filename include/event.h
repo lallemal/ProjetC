@@ -65,17 +65,19 @@ ei_widget_t*		on_widget	(ei_event_t		event,
 					ei_tag_t		tag);
 
 
-void			add_to_tagcall	(ei_linked_event_t	list,
+void			add_to_listcall	(ei_linked_event_t*	list,
 					ei_tag_t		tag,
+					ei_widget_t*		widget,
 					ei_callback_t		callback,
 					void*			user_param);
 
-void			del_to_tagcall	(ei_linked_event_t	list,
+void			del_to_listcall	(ei_linked_event_t*	list,
 					ei_tag_t		tag,
+					ei_widget_t*		widget,
 					ei_callback_t		callback,
 					void*			user_param);
 
-
+/* 
 void			add_to_widgetcall	(ei_linked_event_t	list,
 						ei_tag_t		tag,
 						ei_callback_t		callback,
@@ -86,7 +88,7 @@ void			del_to_widgetcall	(ei_linked_event_t	list,
 						ei_callback_t		callback,
 						void*			user_param);
 
-
+*/
 
 
 #endif /* ifndef EVENT_H */
