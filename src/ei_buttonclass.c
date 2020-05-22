@@ -59,9 +59,6 @@ void ei_button_releasefunc(ei_widget_t*	widget)
 	//free(&(button->text_anchor));
 	//free(&(button->text_color));
 	//free(&(button->img));
-	if (button->img_rect != NULL) {
-		free(button->img_rect);
-	}
 	//if (button->text != NULL) {
 	//	free(button->text);
 	//}
@@ -69,6 +66,9 @@ void ei_button_releasefunc(ei_widget_t*	widget)
 	//	free(button->user_param);
 	//}
 	//free(&(button->img_anchor));
+	if (button->img != NULL) {
+		hw_surface_free(button->img);
+	}
 }
 
 

@@ -59,7 +59,7 @@ int main(int argc, char** argv)
 	int		button_border_width	= 6;
 	ei_callback_t	button_callback 	= button_press;
 	ei_surface_t    image;
-	ei_rect_t*      rect_img;
+	ei_rect_t*      rect_img		= malloc(sizeof(ei_rect_t));
 	ei_anchor_t     anchor_image            = ei_anc_center;
 
 	/* Create the application and change the color of the background. */
