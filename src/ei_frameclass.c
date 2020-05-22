@@ -211,10 +211,30 @@ void ei_frame_drawfunc(struct	ei_widget_t*	widget,
                         }
                 }
                 else {
-                        rect_img->top_left.x = max(0,point_img->x);
-                        rect_img->top_left.y = max(0, point_img->y);
+                        rect_img->top_left.x = max(rect_to_fill_on_screen->top_left.x,point_img->x);
+                        rect_img->top_left.y = max(rect_to_fill_on_screen->top_left.y, point_img->y);
                         rect_img->size.width = rect_to_fill_on_screen->size.width;
                         rect_img->size.height = rect_to_fill_on_screen->size.height;
+                        if (point_img->x < 0) {
+                                source_rectangle->top_left.x = frame->img_rect->top_left.x + abs(point_img->x);
+                                source_rectangle->size.width = rect_img->size.width - source_rectangle->top_left.x;
+
+
+                        }
+                        if (point_img->y < 0) {
+                                source_rectangle->top_left.y = frame->img_rect->top_left.y + abs(point_img->y);
+                                source_rectangle->size.height = rect_img->size.height - source_rectangle->top_left.y;
+                        }
+
+
+                        if (point_img->x >= 0) {
+                                source_rectangle->top_left.x = point_img->x;
+                                source_rectangle->size.width = rect_img->size.width;
+                        }
+                        if (point_img->y >= 0){
+                                source_rectangle->top_left.y = point_img->y;
+                                source_rectangle->size.height = rect_img->size.height;
+                        }
                 }
                 ei_copy_surface(surface, rect_img, frame->img, source_rectangle, hw_surface_has_alpha(frame->img));
 

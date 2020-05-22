@@ -47,8 +47,8 @@ int main(int argc, char** argv)
 
 	ei_widget_t*	button;
 	ei_size_t	button_size		= {300,200};
-	int		button_x		= 5;
-	int		button_y		= 250;
+	int		button_x		= 500;
+	int		button_y		= 500;
 	ei_color_t	button_color		= {0x88, 0x88, 0x88, 0xff};
 	char*		button_title		= "Mon premier Bouton !";
 	ei_anchor_t     button_anchor           = ei_anc_center;
@@ -68,7 +68,7 @@ int main(int argc, char** argv)
 
 	/* Create, configure and place the button on screen. */
 	button = ei_widget_create("button", ei_app_root_widget(), NULL, NULL);
-        image = hw_image_load("misc/flag.png", ei_app_root_surface());
+        image = hw_image_load("misc/klimt.jpg", ei_app_root_surface());
         ei_rect_t  rect = hw_surface_get_rect(image);
         rect_img->size.height = rect.size.height;
         rect_img->size.width = rect.size.width;

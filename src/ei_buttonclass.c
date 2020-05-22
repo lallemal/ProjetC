@@ -138,55 +138,57 @@ void ei_button_drawfunc(struct	ei_widget_t*	widget,
 
                         ei_rect_t* rect_img = malloc(sizeof(ei_rect_t));
 
-                        if (source_rectangle->size.height < rect_int_on_screen->size.height && source_rectangle->size.width < rect_int_on_screen->size.width){
-                                rect_img->top_left.x = point_img->x;
-                                rect_img->top_left.y = point_img->y;
+                        if (button->img_rect->size.height < rect_int->size.height && button->img_rect->size.width < rect_int->size.width){
+                                rect_img->top_left.x = max(0, point_img->x);
+                                rect_img->top_left.y = max(0,point_img->y);
                                 rect_img->size.width = button->img_rect->size.width;
                                 rect_img->size.height = button->img_rect->size.height;
-                                if (point_img->x < 0 || point_img->x > rect_int_on_screen->top_left.x + rect_int_on_screen->size.width) {
+                                if (point_img->x < 0) {
                                         source_rectangle->top_left.x = button->img_rect->top_left.x + abs(point_img->x);
-                                        source_rectangle->size.width = rect_int_on_screen->size.width;
+                                        source_rectangle->size.width = source_rectangle->size.width - source_rectangle->top_left.x;
+                                        rect_img->size.width = source_rectangle->size.width;
                                 }
                                 if (point_img->y < 0) {
                                         source_rectangle->top_left.y = button->img_rect->top_left.y + abs(point_img->y);
-                                        source_rectangle->size.height = rect_int_on_screen->size.height;
+                                        source_rectangle->size.height = source_rectangle->size.height - source_rectangle->top_left.y;
+                                        rect_img->size.height = source_rectangle->size.height;
                                 }
 
 
-
-                                if ((point_img->x >= 0 && point_img->x <= rect_int_on_screen->size.width + rect_int_on_screen->top_left.x) && (point_img->y >= 0 && point_img->y <= rect_int_on_screen->size.height + rect_int_on_screen->top_left.y)){
+                                if (point_img->x >= 0 && point_img->y >= 0) {
                                         source_rectangle = NULL;
                                 }
                         }
                         else {
-                                rect_img->top_left.x = point_img->x;
-                                rect_img->top_left.y = point_img->y;
+                                rect_img->top_left.x = max(rect_int_on_screen->top_left.x,point_img->x);
+                                rect_img->top_left.y = max(rect_int_on_screen->top_left.y, point_img->y);
                                 rect_img->size.width = rect_int_on_screen->size.width;
                                 rect_img->size.height = rect_int_on_screen->size.height;
                                 if (point_img->x < 0) {
                                         source_rectangle->top_left.x = button->img_rect->top_left.x + abs(point_img->x);
-                                        source_rectangle->size.width = rect_int_on_screen->size.width;
+                                        source_rectangle->size.width = rect_img->size.width - source_rectangle->top_left.x;
+
+
                                 }
                                 if (point_img->y < 0) {
                                         source_rectangle->top_left.y = button->img_rect->top_left.y + abs(point_img->y);
-                                        source_rectangle->size.height = rect_int_on_screen->size.height;
+                                        source_rectangle->size.height = rect_img->size.height - source_rectangle->top_left.y;
                                 }
 
 
-
-                                if (point_img->x >= 0 && point_img->y >= 0) {
-                                        source_rectangle->size.width = rect_int_on_screen->size.width;
-                                        source_rectangle->size.height = rect_int_on_screen->size.height;
-                                        source_rectangle->top_left.x = rect_int_on_screen->top_left.x;
-                                        source_rectangle->top_left.y = rect_int_on_screen->top_left.y;
+                                if (point_img->x >= 0) {
+                                        source_rectangle->top_left.x = point_img->x;
+                                        source_rectangle->size.width = rect_img->size.width;
+                                }
+                                if (point_img->y >= 0){
+                                        source_rectangle->top_left.y = point_img->y;
+                                        source_rectangle->size.height = rect_img->size.height;
                                 }
                         }
                         ei_copy_surface(surface, rect_img, button->img, source_rectangle, hw_surface_has_alpha(button->img));
 
                         hw_surface_unlock(button->img);
                         free(point_img);
-                        free(rect_int_on_screen);
-                        //free(source_rectangle);
                         free(rect_img);
 
                 }
