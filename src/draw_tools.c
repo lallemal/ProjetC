@@ -446,6 +446,8 @@ ei_linked_point_t* rounded_frame(ei_rect_t* rect, int radius, int part)
 
                 if (part == 1){
                         ei_linked_point_t* rounded_up;
+                        ei_linked_point_t* rounded_top_right_part1 = rounded_top_right;
+                        rounded_top_right_part1->next->next =NULL;
                         rounded_up = rounded_top_right->next->next;
                         rounded_top_right->next->next->next->next->next = rounded_top_left;
                         rounded_top_left->next->next->next->next->next = rounded_bottom_left;
@@ -454,12 +456,16 @@ ei_linked_point_t* rounded_frame(ei_rect_t* rect, int radius, int part)
                         inter_bas->next = inter_haut;
                         inter_haut->point = point_inter_haut;
                         inter_haut->next = NULL;
+                        free_linked_point_list(rounded_top_right_part1);
                         free_linked_point_list(rounded_bottom_right);
+                        free(rounded_bottom_left->next->next->next->next);
                         return rounded_up;
                 }
                 else{
                         ei_linked_point_t* rounded_down;
                         rounded_down = rounded_bottom_left->next->next;
+                        ei_linked_point_t* rounded_bottom_left_part1 = rounded_bottom_left;
+                        rounded_bottom_left_part1->next->next=NULL;
                         rounded_bottom_left->next->next->next->next->next = rounded_bottom_right;
                         rounded_bottom_right->next->next->next->next->next = rounded_top_right;
                         rounded_top_right->next->next->next= inter_haut;
@@ -467,7 +473,9 @@ ei_linked_point_t* rounded_frame(ei_rect_t* rect, int radius, int part)
                         inter_haut->next = inter_bas;
                         inter_bas->point = point_inter_bas;
                         inter_bas->next = NULL;
-                        free_linked_point_list(rounded_bottom_left);
+                        free_linked_point_list(rounded_top_left);
+                        free_linked_point_list(rounded_bottom_left_part1);
+                        free(rounded_top_right->next->next->next->next);
                         return rounded_down;
                 }
         }
