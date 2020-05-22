@@ -159,10 +159,10 @@ void draw_up_relief(ei_rect_t* rect_to_fill, ei_surface_t surface, ei_color_t co
         list_point_up4->next = list_point_up5;
         list_point_up5->next = NULL;
         if (clear_up==EI_TRUE) {
-                ei_draw_polygon(surface, list_point_up1, clear_color(color), rect_to_fill, clipper);
+                ei_draw_polygon(surface, list_point_up1, clear_color(color), clipper);
         }
         if (clear_up==EI_FALSE){
-                ei_draw_polygon(surface, list_point_up1, dark_color(color), rect_to_fill, clipper);
+                ei_draw_polygon(surface, list_point_up1, dark_color(color), clipper);
         }
         free(list_point_up1);
         free(list_point_up2);
@@ -209,10 +209,10 @@ void draw_down_relief(ei_rect_t* rect_to_fill, ei_surface_t surface, ei_color_t 
         list_point_down4->next = list_point_down5;
         list_point_down5->next = NULL;
         if (clear_up==EI_TRUE) {
-                ei_draw_polygon(surface, list_point_down1, dark_color(color), rect_to_fill, clipper);
+                ei_draw_polygon(surface, list_point_down1, dark_color(color), clipper);
         }
         if (clear_up==EI_FALSE){
-                ei_draw_polygon(surface, list_point_down1, clear_color(color), rect_to_fill, clipper);
+                ei_draw_polygon(surface, list_point_down1, clear_color(color), clipper);
         }
         free(list_point_down1);
         free(list_point_down2);
