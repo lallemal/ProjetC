@@ -47,8 +47,8 @@ int main(int argc, char** argv)
 
 	ei_widget_t*	button;
 	ei_size_t	button_size		= {300,200};
-	int		button_x		= 10;
-	int		button_y		= 10;
+	int		button_x		= 300;
+	int		button_y		= 300;
 	ei_color_t	button_color		= {0x88, 0x88, 0x88, 0xff};
 	char*		button_title		= "Mon premier Bouton !";
 	ei_anchor_t     button_anchor           = ei_anc_center;
