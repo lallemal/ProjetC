@@ -486,17 +486,14 @@ void draw_button(ei_surface_t surface, ei_rect_t* rect_button, ei_color_t color,
                 rect_surface_with_border->top_left.x = rect_button->top_left.x + border_width;
                 rect_surface_with_border->top_left.y = rect_button->top_left.y + border_width;
                 if (relief == ei_relief_none){
-                        ei_linked_point_t* rounded_frame_button = malloc(sizeof(ei_linked_point_t));
-                        rounded_frame_button = rounded_frame(rect_button, corner_radius, 0);
+                        ei_linked_rect_t* rounded_frame_button = rounded_frame(rect_button, corner_radius, 0);
                         ei_draw_polygon(surface, rounded_frame_button, dark_color(color),
                                         rect_button);
                         free_linked_point_list(rounded_frame_button);
                 }
                 if (relief == ei_relief_raised){
-                        ei_linked_point_t* rounded_frame_up = malloc(sizeof(ei_linked_point_t));
-                        rounded_frame_up = rounded_frame(rect_button, corner_radius, 1);
-                        ei_linked_point_t* rounded_frame_down = malloc(sizeof(ei_linked_point_t));
-                        rounded_frame_down = rounded_frame(rect_button, corner_radius, 2);
+                        ei_linked_point_t* rounded_frame_up = rounded_frame(rect_button, corner_radius, 1);
+                        ei_linked_point_t* rounded_frame_down = rounded_frame(rect_button, corner_radius, 2);
                         ei_draw_polygon(surface, rounded_frame_up, clear_color(color), rect_button);
                         ei_draw_polygon(surface, rounded_frame_down, dark_color(color), rect_button);
                         free_linked_point_list(rounded_frame_up);
@@ -505,16 +502,14 @@ void draw_button(ei_surface_t surface, ei_rect_t* rect_button, ei_color_t color,
                 if (relief == ei_relief_sunken){
                         rect_button->top_left.x = rect_button->top_left.x + 2;
                         rect_button->top_left.y = rect_button->top_left.y +2;
-                        ei_linked_point_t* rounded_frame_up = malloc(sizeof(ei_linked_point_t));
-                        rounded_frame_up = rounded_frame(rect_button, corner_radius, 1);
-                        ei_linked_point_t* rounded_frame_down = malloc(sizeof(ei_linked_point_t));
+                        ei_linked_point_t* rounded_frame_up = rounded_frame(rect_button, corner_radius, 1);
+                        ei_linked_point_t* rounded_frame_down = rounded_frame(rect_button, corner_radius, 2);
                         ei_draw_polygon(surface, rounded_frame_up, dark_color(color), rect_button);
                         ei_draw_polygon(surface, rounded_frame_down, clear_color(color), rect_button);
                         free_linked_point_list(rounded_frame_up);
                         free_linked_point_list(rounded_frame_down);
                 }
-                ei_linked_point_t* rounded_frame_int = malloc(sizeof(ei_linked_point_t));
-                rounded_frame_int = rounded_frame(rect_surface_with_border, corner_radius-border_width, 0);
+                ei_linked_point_t* rounded_frame_int = rounded_frame(rect_surface_with_border, corner_radius-border_width, 0);
                 ei_draw_polygon(surface, rounded_frame_int, color,
                                 rect_button);
                 free_linked_point_list(rounded_frame_int);
