@@ -165,7 +165,9 @@ void ei_frame_drawfunc(struct	ei_widget_t*	widget,
                 if (frame->relief == ei_relief_none){
                         ei_color_t color_to_fill;
                         color_to_fill = dark_color(frame->color);
-                        ei_fill(surface, &color_to_fill, rect_tot);
+                        ei_rect_t* rect_tot_on_screen = malloc(sizeof(ei_rect_t));
+                        *rect_tot_on_screen = inter_rect(clipper, rect_tot);
+                        ei_fill(surface, &color_to_fill, rect_tot_on_screen);
 
                 }
 

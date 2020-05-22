@@ -27,7 +27,7 @@ int main(int argc, char** argv)
 	int		frame_y			= 100;
 	ei_anchor_t     anchor                  = ei_anc_northwest;
 	ei_color_t	frame_color		= {0x88, 0x88, 0x88, 0xff};
-	ei_relief_t	frame_relief		= ei_relief_raised;
+	ei_relief_t	frame_relief		= ei_relief_none;
 	int		frame_border_width	= 6;
 
 	ei_surface_t    image;
@@ -43,7 +43,7 @@ int main(int argc, char** argv)
 
 	/* Create, configure and place the frame on screen. */
 	frame = ei_widget_create("frame", ei_app_root_widget(), NULL, NULL);
-        image = hw_image_load("misc/flag.png", ei_app_root_surface());
+        image = hw_image_load("misc/klimt.jpg", ei_app_root_surface());
         ei_rect_t  rect = hw_surface_get_rect(image);
         rect_img->size.height = rect.size.height;
         rect_img->size.width = rect.size.width;
