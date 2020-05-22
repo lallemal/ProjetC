@@ -15,6 +15,7 @@
 #include "ei_draw.h"
 #include "utils.h"
 #include "math.h"
+#include "ei_application.h"
 
 
 #define max(a,b) (a>=b?a:b)
@@ -58,16 +59,16 @@ void ei_button_releasefunc(ei_widget_t*	widget)
 	//free(&(button->text_anchor));
 	//free(&(button->text_color));
 	//free(&(button->img));
-	if (button->img_rect != NULL) {
-		free(button->img_rect);
+	//if (button->text != NULL) {
+	//	free(button->text);
+	//}
+	//if (button->user_param != NULL) {
+	//	free(button->user_param);
+	//}
+	//free(&(button->img_anchor));
+	if (button->img != NULL) {
+		hw_surface_free(button->img);
 	}
-	if (button->text != NULL) {
-		free(button->text);
-	}
-	if (button->user_param != NULL) {
-		free(button->user_param);
-	}
-	// free(&(button->img_anchor));
 }
 
 
@@ -99,89 +100,45 @@ void ei_button_drawfunc(struct	ei_widget_t*	widget,
 {
         ei_button_t* button=(ei_button_t*)widget;
         hw_surface_lock(surface);
+        hw_surface_lock(pick_surface);
         ei_rect_t* rect_tot = malloc(sizeof(ei_rect_t));
 
-        if (clipper == NULL){
-                *rect_tot = widget->screen_location;
-        }
-        else{
-                *rect_tot = widget->screen_location;
-        }
+        *rect_tot = widget->screen_location;
 
-        //on trace le bouton
-        draw_button(surface, rect_tot, button->border_width, button->corner_radius, button->relief, button->color);
+        //on trace le bouton (avec ses reliefs et bordures)
+        draw_button(surface, rect_tot,  button->color, button->border_width, button->corner_radius, button->relief, clipper);
 
-        //On créé le rectangle 'intérieur' qui contiendra l'image ou le texte
+
         if (button->img != NULL || button->text != NULL){
+                //On créé le rectangle 'intérieur' qui contiendra l'image ou le texte
                 ei_rect_t* rect_int = malloc(sizeof(ei_rect_t));
                 int center_x = rect_tot->top_left.x + button->corner_radius;
                 int center_y = rect_tot->top_left.y + button->corner_radius;
-                rect_int->top_left.x = center_x + button->corner_radius*cos(2*M_PI/3);
-                rect_int->top_left.y = center_y + button->corner_radius*cos(2*M_PI/3);
-                rect_int->size.width = rect_tot->size.width - button->corner_radius;
-                rect_int->size.height = rect_tot->size.height - button->corner_radius;
+                rect_int->top_left.x = (int)(center_x + (button->corner_radius-button->border_width)*cos(-5*M_PI/4));
+                rect_int->top_left.y = (int)(center_y + signe_inverse(sin(-5*M_PI/4))*(button->corner_radius-button->border_width)*sin(-5*M_PI/4));
+                rect_int->size.width = (int)(rect_tot->top_left.x + rect_tot->size.width- button->corner_radius + (button->corner_radius-button->border_width)*cos(-7*M_PI/4)) - (int)(center_x + (button->corner_radius-button->border_width)*cos(-5*M_PI/4));
+                rect_int->size.height = (int)(rect_tot->top_left.y + rect_tot->size.height -button->corner_radius - (button->corner_radius-button->border_width)*sin(-3*M_PI/4))-(int)(center_y + signe_inverse(sin(-5*M_PI/4))*(button->corner_radius-button->border_width)*sin(-5*M_PI/4));
 
-                ei_rect_t* rect_int_on_screen = malloc(sizeof(ei_rect_t));
-                *rect_int_on_screen = inter_rect(clipper, rect_int);
 
+                //mise en place du texte
                 if (button->text != NULL){
-                        ei_point_t* point_text;
-                        int height_text;
-                        int width_text;
-                        hw_text_compute_size(button->text, button->text_font, &width_text, &height_text);
-                        point_text = anchor_point(rect_int, button->text_anchor, width_text,height_text);
-                        ei_draw_text(surface, point_text, button->text, button->text_font, button->text_color, rect_int);
-                        free(point_text);
+                        draw_text(button->text, button->text_font, rect_int, button->text_anchor, surface, button->text_color, clipper);
                 }
-                if (button->img != NULL){
-                        ei_point_t* point_img;
-                        point_img = anchor_point(rect_int, button->img_anchor, button->img_rect->size.width, button->img_rect->size.height);
-                        hw_surface_lock(button->img);
-                        ei_rect_t *source_rectangle = button->img_rect;
-                        if (point_img->x < 0) {
-                                source_rectangle->top_left.x = button->img_rect->top_left.x + abs(point_img->x);
-                                source_rectangle->size.width = rect_int_on_screen->size.width;
-                        }
-                        if (point_img->y < 0) {
-                                source_rectangle->top_left.y = button->img_rect->top_left.y + abs(point_img->y);
-                                source_rectangle->size.height = rect_int_on_screen->size.height;
-                        }
-
-
-
-                        if (point_img->x >= 0 && point_img->y >= 0) {
-                                source_rectangle = NULL;
-                        }
-
-                        ei_rect_t* rect_img = malloc(sizeof(ei_rect_t));
-
-                        if (button->img_rect->size.height < rect_int_on_screen->size.height && button->img_rect->size.width < rect_int_on_screen->size.width){
-                                rect_img->top_left.x = point_img->x;
-                                rect_img->top_left.y = point_img->y;
-                                rect_img->size.width = button->img_rect->size.width;
-                                rect_img->size.height = button->img_rect->size.height;
-                        }
-                        else {
-                                rect_img->top_left.x = point_img->x;
-                                rect_img->top_left.y = point_img->y;
-                                rect_img->size.width = rect_int_on_screen->size.width;
-                                rect_img->size.height = rect_int_on_screen->size.height;
-                        }
-                        ei_copy_surface(surface, rect_img, button->img, source_rectangle, hw_surface_has_alpha(button->img));
-
-                        hw_surface_unlock(button->img);
-                        free(point_img);
-                        free(rect_int_on_screen);
-                        free(source_rectangle);
-                        free(rect_img);
-
+                //mise en place de l'image
+                if (button->img != NULL) {
+                        draw_image(button->img, rect_int, button->img_anchor, button->img_rect, clipper, surface);
                 }
         }
 
         hw_surface_unlock(surface);
+        hw_surface_unlock(pick_surface);
         free(rect_tot);
 }
 
+void ei_button_geomnotifyfunc(struct ei_widget_t* widget)
+{
+	ei_app_invalidate_rect(&(widget->screen_location));
+}
 
 
 void ei_button_register_class(void)
@@ -192,6 +149,7 @@ void ei_button_register_class(void)
 	button->releasefunc = &ei_button_releasefunc;
 	button->drawfunc = &ei_button_drawfunc;
 	button->setdefaultsfunc = &ei_button_setdefaultsfunc;
+	button->geomnotifyfunc = &ei_button_geomnotifyfunc;
 	button->next = NULL;
 	ei_widgetclass_register(button);
 }
@@ -215,14 +173,9 @@ void ei_button_configure	(ei_widget_t*		widget,
 
 {
 	ei_button_t* button = (ei_button_t *) widget;
-	if (requested_size != NULL) {
-		widget->screen_location.size = *requested_size;
-	}
+	int ancient_border_width = button->border_width;
 	if (color != NULL) {
 		button->color = *color;
-	}
-	if (border_width != NULL) {
-		button->border_width = *border_width;
 	}
 	if (corner_radius != NULL) {
 		button->corner_radius = *corner_radius;
@@ -239,9 +192,6 @@ void ei_button_configure	(ei_widget_t*		widget,
 	if (text_color != NULL) {
 		button->text_color = *text_color;
 	}
-	if (img != NULL) {
-		button->img = *img;
-	}
 	if (img_rect != NULL) {
 		button->img_rect = *img_rect;
 	}
@@ -254,5 +204,46 @@ void ei_button_configure	(ei_widget_t*		widget,
 	if (user_param != NULL) {
 		button->user_param = *user_param;
 	}
+	if (img != NULL) {
+		button->img = *img;
+		int height = 0;
+		int width = 0;
+		if (button->img_rect != NULL) {
+			height = button->img_rect->size.height;
+			width = button->img_rect->size.width;
+		}
+		else {
+			ei_size_t img_size = hw_surface_get_size(button->img);
+			height = img_size.height;
+			width = img_size.width;
+		}
+		height += 2* ancient_border_width;
+		width += 2 * ancient_border_width;
+		widget->requested_size.height = max(height, widget->requested_size.height);
+		widget->requested_size.width = max(width, widget->requested_size.width);
+	}
+	if (text != NULL) {
+		button->text = *text;
+		int height_text;
+		int width_text;
+		hw_text_compute_size(button->text, button->text_font, &width_text, &height_text);
+		height_text += 2 * ancient_border_width;
+		width_text += 2 * ancient_border_width;
+		widget->requested_size.height = max(height_text, widget->requested_size.height);
+		widget->requested_size.width = max(width_text, widget->requested_size.width);
+
+	}
+	if (border_width != NULL) {
+		button->border_width = *border_width;
+		widget->requested_size.height -= 2 * ancient_border_width;
+		widget->requested_size.height += 2 * button->border_width;
+		widget->requested_size.width -= 2 * ancient_border_width;
+		widget->requested_size.width += 2 * button->border_width;
+	}
+	if (requested_size != NULL) {
+		widget->requested_size.height = requested_size->height;
+		widget->requested_size.width = requested_size->width;
+	}
+	ei_app_invalidate_rect(&(widget->screen_location));
 }
 
