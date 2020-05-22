@@ -15,6 +15,15 @@
 #include "ei_types.h"
 
 /**
+ * @brief	Free the linked point list give in argument
+ *
+ * @param	begin		first linked point (linked to others)
+ * 
+ */
+
+void free_linked_point_list(ei_linked_point_t* begin);
+
+/**
  * @brief	Fonction to know where is the point at the top right corner in the rectangle
  *
  * @param	rect		Global rectangle which will contain the text or the image
