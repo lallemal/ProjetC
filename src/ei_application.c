@@ -30,19 +30,23 @@ bool running = true;
 
 void ei_app_create(ei_size_t main_window_size, ei_bool_t fullscreen)
 {
+	// Initialize hardware and different surfaces.
 	hw_init();
 	main_window = hw_create_window(main_window_size, fullscreen);
 	pick_surface = hw_surface_create(main_window, main_window_size, EI_FALSE);
+	// Initialize core variables of the API : classes, placer, eventlist
 	create_base_eventlist();
 	ei_register_placer_manager();
 	ei_frame_register_class();
 	ei_button_register_class();
+	// Binding of internal comportments
 	ei_bind(ei_ev_mouse_buttondown, NULL, "button", button_on_press, NULL);
-	ei_register_placer_manager();
+	// Creation of the root Widget
 	rootWidget = ei_widget_create("frame", NULL, NULL, NULL);
 	rootWidget->screen_location.size.width = main_window_size.width;
 	rootWidget->screen_location.size.height = main_window_size.height;
 	ei_frame_configure(rootWidget, &main_window_size, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+	// Creation of the default font
 	ei_default_font = hw_text_font_create(ei_default_font_filename, ei_style_normal, ei_font_default_size);
 }
 
@@ -101,10 +105,14 @@ void ei_app_invalidate_rect(ei_rect_t* rect)
 void ei_app_free(void)
 {
 	//hw_text_font_free(ei_default_font);
+	// Free the surfaces
 	hw_surface_free(pick_surface);
 	hw_surface_free(main_window);
+	// Destroy rootWidget
 	ei_widget_destroy(rootWidget);
+	// Unbind internal comportments
 	ei_unbind(ei_ev_mouse_buttondown, NULL, "button", button_on_press, NULL);
+	// Destruction of core variables
 	destroy_base_eventlist();
 
 	ei_widgetclass_t* sentinel = ei_widgetclass_from_name("sentinel");
@@ -120,6 +128,7 @@ void ei_app_free(void)
                 free(current);
 	}
 
+	// Hardware quitting
 	hw_quit();
 }
 
