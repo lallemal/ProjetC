@@ -138,6 +138,9 @@ void destroy_linked_rect(ei_linked_rect_t* to_destroy, ei_linked_rect_t**  head_
 	while (element != NULL && element->next != to_destroy) {
 		element = element->next;
 	}
+	if (element == NULL) {
+		return;
+	}
 	if (to_destroy->next == NULL) {
 		element->next = NULL;
 		free(to_destroy);

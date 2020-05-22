@@ -12,6 +12,7 @@
 #include "ei_types.h"
 #include "utils.h"
 #include "callfunction.h"
+#include "event.h"
 
 // Variables & definitions for linked list of rects
 #define LIST_RECT_PENDING 0
@@ -32,10 +33,11 @@ void ei_app_create(ei_size_t main_window_size, ei_bool_t fullscreen)
 	hw_init();
 	main_window = hw_create_window(main_window_size, fullscreen);
 	pick_surface = hw_surface_create(main_window, main_window_size, false);
+	create_base_eventlist();
 	ei_register_placer_manager();
 	ei_frame_register_class();
 	ei_button_register_class();
-	// ei_bind(ei_ev_mouse_buttondown, NULL, "button", button_on_press, NULL);
+	ei_bind(ei_ev_mouse_buttondown, NULL, "button", button_on_press, NULL);
 	ei_register_placer_manager();
 	rootWidget = ei_widget_create("frame", NULL, NULL, NULL);
 	rootWidget->screen_location.size.width = main_window_size.width;
@@ -102,12 +104,13 @@ void ei_app_free(void)
 	hw_surface_free(pick_surface);
 	hw_surface_free(main_window);
 	ei_widget_destroy(rootWidget);
+	ei_unbind(ei_ev_mouse_buttondown, NULL, "button", button_on_press, NULL);
+	destroy_base_eventlist();
 
 	ei_widgetclass_t* sentinel = ei_widgetclass_from_name("sentinel");
 	if (sentinel->next != NULL) {
 		destroy_widgetclass(sentinel->next);
 	}
-	// ei_unbind(ei_ev_mouse_buttondown, NULL, "button", button_on_press, NULL);
 
         ei_geometrymanager_t *current = ei_geometrymanager_from_name("sentinel");
 	ei_geometrymanager_t *next    = current->next;
@@ -149,10 +152,12 @@ void ei_app_run(void)
 		list_rect_head = NULL;
 		list_rect_tail = NULL;
 		rect_status = LIST_RECT_PENDING;
-		if (event.type == ei_ev_keydown && event.param.key.key_code == SDLK_ESCAPE) {
-			ei_app_quit_request();
-		}
+		//if (event.type == ei_ev_keydown && event.param.key.key_code == SDLK_ESCAPE) {
+		//	ei_app_quit_request();
+		//}
 		hw_event_wait_next(&event);
+		ei_linked_event_t* to_consider = retrieve_eventtype(event.type);
+		call(event, *to_consider, pick_surface);
 	}
 }
 
