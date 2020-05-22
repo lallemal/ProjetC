@@ -93,15 +93,20 @@ void                    ei_toplevel_drawfunc                            (struct	
         ei_color_t header_color = {255, 25, 25};
         ei_fill(surface, &to_draw->color, &rectangle_to_fill);
         ei_point_t* point_text;
-        int height_text;
-        int width_text;
+        int height_text = to_draw->title_height;
+        int width_text = to_draw->title_width;
         ei_font_t font  = ei_default_font;
         ei_color_t dark = {0, 0, 0};
         ei_rect_t text_placer = *rect_to_fill;
         text_placer.top_left.x += 10;
         text_placer.top_left.y += 5;
-        point_text = anchor_point(&text_placer, ei_anc_northwest, width_text,height_text);
+        text_placer.size.width = to_draw->title_width;
+        text_placer.size.height = to_draw->title_height;
+        point_text = anchor_point(&text_placer, ei_anc_center, width_text,height_text);
+
+
         ei_draw_text(surface, point_text, to_draw->title, font, dark, &text_placer);
+
         free(point_text);
 
 
@@ -125,6 +130,40 @@ void			ei_toplevel_register_class 	          (void){
         toplevel->geomnotifyfunc = &ei_toplevel_geomnotifyfunc;
         toplevel->next = NULL;
         ei_widgetclass_register(toplevel);
+
+}
+
+void                    configure_sub_part                           (ei_toplevel *to_configure){
+        //settings x and y rel for resize tool
+        float rel_x_rt = 1;
+        float rel_y_rt = 1;
+
+        //setting the ancher of resize tool
+        ei_anchor_t anchor_rt = ei_anc_southeast;
+
+        // setting the y axis of subframe in order to be under the header
+        int y_subframe = margin_top * 2 + to_configure->title_height + 2 * to_configure->border_width;
+
+        //setting a darker color
+        ei_color_t sub_color = {25, 25, 25};
+
+        //settings of the resize tools
+        ei_frame_configure(to_configure->resize_tool, &default_tool_size, &sub_color, 0,
+                           NULL, NULL, NULL, NULL, NULL,
+                           NULL, NULL,  NULL);
+        ei_place(to_configure->resize_tool, &anchor_rt, NULL, NULL, NULL, NULL, &rel_x_rt, &rel_y_rt, NULL, NULL);
+
+
+
+
+        //setting
+        //to_configure->sub_frame->content_rect   = &to_configure->widget.screen_location;
+
+        ei_frame_configure(to_configure->sub_frame, &to_configure->widget.requested_size, &to_configure->color, &to_configure->border_width,
+                           NULL, NULL, NULL, NULL, NULL,
+                           NULL, NULL,  NULL);
+        to_configure->widget.content_rect       = to_configure->sub_frame->content_rect;
+        ei_place(to_configure->sub_frame, NULL, NULL, &y_subframe, NULL, NULL, NULL, NULL, NULL, NULL);
 
 }
 
@@ -157,7 +196,6 @@ void			ei_toplevel_configure		          (ei_widget_t*		widget,
 
 
         int marging_height = margin_top * 2 + to_configure->border_width * 2 + to_configure->title_height;
-        int marging_width  = to_configure->border_width * 2;
 
         widget->requested_size.height   = max(to_configure->min_size->height, to_configure->requested_size.height);
         widget->requested_size.width    = max(to_configure->min_size->width, to_configure->requested_size.width);
@@ -166,24 +204,11 @@ void			ei_toplevel_configure		          (ei_widget_t*		widget,
         widget->requested_size.height   += to_configure->border_width * 2;
         widget->requested_size.width    += to_configure->border_width * 2;
         //content rect for children, starts just after window header
-        int y_subframe = margin_top * 2 + to_configure->title_height + 2 * to_configure->border_width;
-        ei_color_t sub_color = dark_color(to_configure->color);
-        ei_frame_configure(to_configure->resize_tool, &default_tool_size, &sub_color, 0,
-                           NULL, NULL, NULL, NULL, NULL,
-                           NULL, NULL,  NULL);
-        float rel_x = 1;
-        float rel_y= 1;
-        ei_anchor_t anchor = ei_anc_southeast;
-        ei_color_t bluuue = {0, 0 ,255};
-        ei_place(to_configure->resize_tool, &anchor, NULL, NULL, NULL, NULL, &rel_x, &rel_y, NULL, NULL);
-        to_configure->sub_frame->content_rect = &widget->screen_location;
+
+
+        configure_sub_part(to_configure);
+
         widget->content_rect = to_configure->sub_frame->content_rect;
-        ei_frame_configure(to_configure->sub_frame, &widget->requested_size, &to_configure->color, &to_configure->border_width,
-                           NULL, NULL, NULL, NULL, NULL,
-                           NULL, NULL,  NULL);
-        ei_place(to_configure->sub_frame, NULL, NULL, &y_subframe, NULL, NULL, NULL, NULL, NULL, NULL);
-
-
 
         widget->requested_size.height   += marging_height;
         ei_app_invalidate_rect(&(widget->screen_location));

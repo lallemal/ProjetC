@@ -31,6 +31,7 @@ ei_point_t* anchor_point( ei_rect_t* rect, ei_anchor_t anchor, int width_text, i
         y_rect=rect->top_left.y;
         width=rect->size.width;
         height=rect->size.height;
+
         if (anchor == ei_anc_center){
                 point->x=(x_rect+x_rect+width)/2 - width_text/2;
                 point->y=(y_rect+y_rect+height)/2 - height_text/2;

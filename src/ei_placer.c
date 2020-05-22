@@ -20,9 +20,9 @@ int  are_old_and_new_diff (ei_rect_t r1, ei_rect_t r2){
 }
 int  special_case(struct ei_widget_t*	widget){
         if (widget->parent != NULL){
-                if (strcmp(widget->parent->wclass, "toplevel")){
-                        ei_toplevel *parent = (ei_toplevel*)widget->parent;
-                        if (parent->sub_frame == widget){
+                if (widget->parent->wclass, ei_widgetclass_from_name("toplevel")){
+
+                        if (widget->parent->content_rect == &widget->screen_location){
                                 return EI_TRUE;
                         }
                 }
@@ -36,6 +36,7 @@ void ei_run_func(struct ei_widget_t*	widget){
 
         if (special_case(widget)){
                 container      = &widget->parent->screen_location;
+
         } else {
                 container      = widget->parent->content_rect;
         }
@@ -54,12 +55,12 @@ void ei_run_func(struct ei_widget_t*	widget){
                 } else{
                         new_screen_loc.size.height = datas->height;
                 }
+                new_screen_loc.top_left = container->top_left;
 
-                new_screen_loc.top_left.x     =       container->size.width  * datas->rel_x  + datas->x;
-                new_screen_loc.top_left.y     =       container->size.height * datas->rel_y +  datas->y;
+                new_screen_loc.top_left.x     +=       container->size.width  * datas->rel_x  + datas->x;
+                new_screen_loc.top_left.y     +=       container->size.height * datas->rel_y +  datas->y;
 
 
-                new_screen_loc.top_left = ei_point_add(new_screen_loc.top_left, container->top_left);
 
                 int half_height                   =       new_screen_loc.size.height/2;
                 int half_width                    =       new_screen_loc.size.width/2;
