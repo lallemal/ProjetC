@@ -130,6 +130,7 @@ void ei_button_drawfunc(struct	ei_widget_t*	widget,
                 if (button->img != NULL) {
                         draw_image(button->img, rect_int, button->img_anchor, button->img_rect, clipper, surface);
                 }
+                free(rect_int);
         }
 
         hw_surface_unlock(surface);

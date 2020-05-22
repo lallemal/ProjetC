@@ -454,6 +454,7 @@ ei_linked_point_t* rounded_frame(ei_rect_t* rect, int radius, int part)
                         inter_bas->next = inter_haut;
                         inter_haut->point = point_inter_haut;
                         inter_haut->next = NULL;
+                        free_linked_point_list(rounded_bottom_right);
                         return rounded_up;
                 }
                 else{
@@ -466,6 +467,7 @@ ei_linked_point_t* rounded_frame(ei_rect_t* rect, int radius, int part)
                         inter_haut->next = inter_bas;
                         inter_bas->point = point_inter_bas;
                         inter_bas->next = NULL;
+                        free_linked_point_list(rounded_bottom_left);
                         return rounded_down;
                 }
         }
