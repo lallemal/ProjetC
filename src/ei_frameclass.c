@@ -186,27 +186,27 @@ void ei_frame_drawfunc(struct	ei_widget_t*	widget,
         if (frame->img != NULL) {
                 hw_surface_lock(frame->img);
                 ei_rect_t *source_rectangle = frame->img_rect;
-                if (point_img->x < 0) {
-                        source_rectangle->top_left.x = frame->img_rect->top_left.x + abs(point_img->x);
-                        source_rectangle->size.width = rect_to_fill_on_screen->size.width;
-                }
-                if (point_img->y < 0) {
-                        source_rectangle->top_left.y = frame->img_rect->top_left.y + abs(point_img->y);
-                        source_rectangle->size.height = rect_to_fill_on_screen->size.height;
-                }
-
-
-                if (point_img->x >= 0 && point_img->y >= 0) {
-                        source_rectangle = NULL;
-                }
 
                 ei_rect_t* rect_img = malloc(sizeof(ei_rect_t));
 
-                if (frame->img_rect->size.height < rect_to_fill_on_screen->size.height && frame->img_rect->size.width < rect_to_fill_on_screen->size.width){
+                if (frame->img_rect->size.height < rect_to_fill->size.height && frame->img_rect->size.width < rect_to_fill->size.width){
                         rect_img->top_left.x = max(0, point_img->x);
                         rect_img->top_left.y = max(0,point_img->y);
                         rect_img->size.width = frame->img_rect->size.width;
                         rect_img->size.height = frame->img_rect->size.height;
+                        if (point_img->x < 0) {
+                                source_rectangle->top_left.x = frame->img_rect->top_left.x + abs(point_img->x);
+                                source_rectangle->size.width = source_rectangle->size.width - source_rectangle->top_left.x;
+                        }
+                        if (point_img->y < 0) {
+                                source_rectangle->top_left.y = frame->img_rect->top_left.y + abs(point_img->y);
+                                source_rectangle->size.height = source_rectangle->size.height;
+                        }
+
+
+                        if (point_img->x >= 0 && point_img->y >= 0) {
+                                source_rectangle = NULL;
+                        }
                 }
                 else {
                         rect_img->top_left.x = max(0,point_img->x);
