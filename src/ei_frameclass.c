@@ -197,10 +197,12 @@ void ei_frame_drawfunc(struct	ei_widget_t*	widget,
                         if (point_img->x < 0) {
                                 source_rectangle->top_left.x = frame->img_rect->top_left.x + abs(point_img->x);
                                 source_rectangle->size.width = source_rectangle->size.width - source_rectangle->top_left.x;
+                                rect_img->size.width = source_rectangle->size.width;
                         }
                         if (point_img->y < 0) {
                                 source_rectangle->top_left.y = frame->img_rect->top_left.y + abs(point_img->y);
-                                source_rectangle->size.height = source_rectangle->size.height;
+                                source_rectangle->size.height = source_rectangle->size.height - source_rectangle->top_left.y;
+                                rect_img->size.height = source_rectangle->size.height;
                         }
 
 
