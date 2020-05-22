@@ -11,6 +11,7 @@
 #include "traverse_tools.h"
 #include "ei_types.h"
 #include "utils.h"
+#include "callfunction.h"
 
 // Variables & definitions for linked list of rects
 #define LIST_RECT_PENDING 0
@@ -25,11 +26,6 @@ ei_surface_t main_window;
 ei_surface_t pick_surface;
 ei_widget_t* rootWidget;
 bool running = true;
-
-
-ei_bool_t button_on_release(ei_widget_t* widget, ei_event_t* event, void* user_param);
-ei_bool_t button_on_press(ei_widget_t* widget, ei_event_t* event, void* user_param);
-
 
 void ei_app_create(ei_size_t main_window_size, ei_bool_t fullscreen)
 {
@@ -171,27 +167,3 @@ ei_surface_t ei_app_root_surface(void)
 {
 	return main_window;
 }
-
-
-ei_bool_t button_on_release(ei_widget_t* widget, ei_event_t* event, void* user_param)
-{
-	ei_relief_t newRelief2 = ei_relief_raised;
-	ei_button_t* button = (ei_button_t *)widget;
-	ei_callback_t callback_button = *(button->callback);
-	callback_button(widget, event, user_param);
-	ei_button_configure(widget, NULL, NULL, NULL, NULL, &newRelief2, NULL, NULL,
-			NULL, NULL, NULL, NULL, NULL, NULL, NULL);
-	ei_unbind(ei_ev_mouse_buttonup, widget, NULL, button_on_release, NULL);
-}
-
-
-ei_bool_t button_on_press(ei_widget_t* widget, ei_event_t* event, void* user_param)
-{
-	ei_relief_t newRelief = ei_relief_sunken;
-	ei_button_configure(widget, NULL, NULL, NULL, NULL, &newRelief, NULL, NULL,
-			NULL, NULL, NULL, NULL, NULL, NULL, NULL);
-	ei_bind(ei_ev_mouse_buttonup, widget, NULL, button_on_release, NULL);
-}
-
-
-

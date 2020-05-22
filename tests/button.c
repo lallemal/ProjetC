@@ -53,7 +53,7 @@ int main(int argc, char** argv)
 	char*		button_title		= "Mon premier Bouton !";
 	ei_anchor_t     button_anchor           = ei_anc_center;
 	ei_color_t	button_text_color	= {0x00, 0x00, 0x00, 0xff};
-	ei_anchor_t     button_text_anchor      = ei_anc_northeast;
+	ei_anchor_t     button_text_anchor      = ei_anc_northwest;
 	int		button_corner_radius	= 20;
 	ei_relief_t	button_relief		= ei_relief_raised;
 	int		button_border_width	= 6;
@@ -75,8 +75,8 @@ int main(int argc, char** argv)
         rect_img->top_left.x = rect.top_left.x;
         rect_img->top_left.y = rect.top_left.y;
 	ei_button_configure	(button, &button_size, &button_color,
-				 &button_border_width, &button_corner_radius, &button_relief, NULL, NULL, NULL, NULL,
-				 &image, &rect_img, &anchor_image, &button_callback, NULL);
+				 &button_border_width, &button_corner_radius, &button_relief, &button_title, NULL, &button_text_color, &button_text_anchor,
+				 NULL, &rect_img, &anchor_image, &button_callback, NULL);
 	ei_place(button, &button_anchor, &button_x, &button_y, NULL, NULL, NULL, NULL, NULL, NULL );
 
 	/* Hook the keypress callback to the event. */
