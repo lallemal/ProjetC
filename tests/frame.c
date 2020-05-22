@@ -17,16 +17,16 @@ int main(int argc, char** argv)
 {
 	ei_size_t	screen_size		= {600, 600};
 	ei_color_t	root_bgcol		= {0x52, 0x7f, 0xb4, 0xff};
-
+        ei_size_t       top_level_size          = {450, 450};
 	ei_widget_t*	frame;
 	ei_widget_t*	toplevel;
 	ei_size_t	frame_size		= {300,200};
 	char*           text_frame              = "Salut";
 	ei_anchor_t	text_anchor		= ei_anc_northwest;
 	ei_color_t      text_color              = {0, 0, 0, 0xff};
-	int		frame_x			= 450;
-	int		frame_y			= 450;
-	ei_anchor_t     anchor                  = ei_anc_center;
+	int		frame_x			= 0;
+	int		frame_y			= 0;
+	ei_anchor_t     anchor                  = ei_anc_northwest;
 	ei_color_t	frame_color		= {0x88, 0x88, 0x88, 0xff};
 	ei_relief_t	frame_relief		= ei_relief_raised;
 	int		frame_border_width	= 6;
@@ -42,7 +42,7 @@ int main(int argc, char** argv)
 	toplevel = ei_widget_create("toplevel", ei_app_root_widget(), NULL, NULL);
 
 
-        ei_toplevel_configure(toplevel, NULL, &frame_color, NULL, NULL, NULL, NULL, NULL);
+        ei_toplevel_configure(toplevel, &top_level_size, &frame_color, NULL, NULL, NULL, NULL, NULL);
         ei_place(toplevel, &anchor, &frame_x, &frame_y, NULL, NULL, NULL, NULL, NULL, NULL );
 
 	ei_app_run();
