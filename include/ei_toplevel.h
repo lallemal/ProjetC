@@ -6,8 +6,9 @@
 #define PROJETC_IG_EI_TOPLEVEL_H
 #include "ei_types.h"
 #include "ei_widget.h"
+
 typedef struct ei_toplevel {
-    ei_widget_t*		widget;
+    ei_widget_t		        widget;
     ei_size_t		        requested_size;
     ei_color_t		        color;
     int 			border_width;
@@ -15,6 +16,11 @@ typedef struct ei_toplevel {
     ei_bool_t		        closable;
     ei_axis_set_t		resizable;
     ei_size_t*  	        min_size;
+
+    int                         title_width;
+    int                         title_height;
+    ei_widget_t                 *sub_frame;
+    ei_widget_t                 *resize_tool;
 
 } ei_toplevel;
 

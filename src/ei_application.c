@@ -11,7 +11,7 @@
 #include "traverse_tools.h"
 #include "ei_types.h"
 #include "utils.h"
-
+#include "ei_toplevel.h"
 // Variables & definitions for linked list of rects
 #define LIST_RECT_PENDING 0
 #define LIST_RECT_NULL 1
@@ -35,6 +35,7 @@ void ei_app_create(ei_size_t main_window_size, ei_bool_t fullscreen)
 	ei_register_placer_manager();
 	ei_frame_register_class();
 	ei_button_register_class();
+	ei_toplevel_register_class();
 	ei_register_placer_manager();
 	rootWidget = ei_widget_create("frame", NULL, NULL, NULL);
 	rootWidget->screen_location.size.width = main_window_size.width;
