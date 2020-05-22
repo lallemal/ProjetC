@@ -196,7 +196,6 @@ void ei_frame_drawfunc(struct	ei_widget_t*	widget,
                 }
 
 
-
                 if (point_img->x >= 0 && point_img->y >= 0) {
                         source_rectangle = NULL;
                 }
@@ -204,14 +203,14 @@ void ei_frame_drawfunc(struct	ei_widget_t*	widget,
                 ei_rect_t* rect_img = malloc(sizeof(ei_rect_t));
 
                 if (frame->img_rect->size.height < rect_to_fill_on_screen->size.height && frame->img_rect->size.width < rect_to_fill_on_screen->size.width){
-                        rect_img->top_left.x = point_img->x;
-                        rect_img->top_left.y = point_img->y;
+                        rect_img->top_left.x = max(0, point_img->x);
+                        rect_img->top_left.y = max(0,point_img->y);
                         rect_img->size.width = frame->img_rect->size.width;
                         rect_img->size.height = frame->img_rect->size.height;
                 }
                 else {
-                        rect_img->top_left.x = point_img->x;
-                        rect_img->top_left.y = point_img->y;
+                        rect_img->top_left.x = max(0,point_img->x);
+                        rect_img->top_left.y = max(0, point_img->y);
                         rect_img->size.width = rect_to_fill_on_screen->size.width;
                         rect_img->size.height = rect_to_fill_on_screen->size.height;
                 }
