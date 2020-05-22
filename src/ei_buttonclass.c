@@ -251,7 +251,7 @@ void ei_button_configure	(ei_widget_t*		widget,
 	ei_app_invalidate_rect(&(widget->screen_location));
 }
 
-
+/*
 ei_bool_t button_on_release(ei_widget_t* widget, ei_event_t* event, void* user_param)
 {
 	ei_relief_t newRelief2 = ei_relief_raised;
@@ -271,3 +271,4 @@ ei_bool_t button_on_press(ei_widget_t* widget, ei_event_t* event, void* user_par
 			NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 	ei_bind(ei_ev_mouse_buttonup, widget, NULL, button_on_release, NULL);
 }
+*/

@@ -35,7 +35,7 @@ void ei_app_create(ei_size_t main_window_size, ei_bool_t fullscreen)
 	ei_register_placer_manager();
 	ei_frame_register_class();
 	ei_button_register_class();
-	ei_bind(ei_ev_mouse_buttondown, NULL, "button", button_on_press, NULL);
+	//ei_bind(ei_ev_mouse_buttondown, NULL, "button", button_on_press, NULL);
 	ei_register_placer_manager();
 	rootWidget = ei_widget_create("frame", NULL, NULL, NULL);
 	rootWidget->screen_location.size.width = main_window_size.width;
@@ -107,7 +107,7 @@ void ei_app_free(void)
 	if (sentinel->next != NULL) {
 		destroy_widgetclass(sentinel->next);
 	}
-	ei_unbind(ei_ev_mouse_buttondown, NULL, "button", button_on_press, NULL);
+	//ei_unbind(ei_ev_mouse_buttondown, NULL, "button", button_on_press, NULL);
 
         ei_geometrymanager_t *current = ei_geometrymanager_from_name("sentinel");
 	ei_geometrymanager_t *next    = current->next;
