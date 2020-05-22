@@ -58,7 +58,7 @@ ei_color_t dark_color(ei_color_t color);
  * @param	clear_up	booleen which means if we want the clearer color on the top (depends on the value of relief)
  *
  */
-void draw_up_relief(ei_rect_t* rect_to_fill, ei_surface_t surface, ei_color_t color, ei_bool_t clear_up);
+void draw_up_relief(ei_rect_t* rect_to_fill, ei_surface_t surface, ei_color_t color, ei_bool_t clear_up, ei_rect_t* clipper);
 
 /**
  * @brief	Fonction which draw down of the rect to make a relief.
@@ -70,7 +70,7 @@ void draw_up_relief(ei_rect_t* rect_to_fill, ei_surface_t surface, ei_color_t co
  * @param	clear_up	booleen which means if we want the clearer color on the top (depends on the value of relief)
  *
  */
-void draw_down_relief(ei_rect_t* rect_to_fill, ei_surface_t surface, ei_color_t color, ei_bool_t clear_up);
+void draw_down_relief(ei_rect_t* rect_to_fill, ei_surface_t surface, ei_color_t color, ei_bool_t clear_up, ei_rect_t* clipper);
 
 /**
  * @brief	Fonction which create an arc of circle.
