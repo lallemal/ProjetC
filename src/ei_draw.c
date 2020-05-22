@@ -28,16 +28,6 @@ uint32_t ei_map_rgba(ei_surface_t surface, const ei_color_t* color)
 }
 
 
-/**
- * \brief	Converts a 32 bits integer into red, blue, green, alpha colors
- *		using the order of the channels of the surface.
- *
- * @param	surface		The surface where to store this pixel.
- * @param	rgba		The integer to convert.
- *
- * @return	ei_color_t : a color with the four channel.
- *
- */
 ei_color_t ei_map_color (ei_surface_t surface, const uint32_t rgba)
 {
 	int ir, ig, ib, ia;
@@ -51,7 +41,7 @@ ei_color_t ei_map_color (ei_surface_t surface, const uint32_t rgba)
 		color.alpha = (rgba & (mask << 8*ia)) >> (8*ia);
 	}
 	else {
-		color.alpha = 0;
+		color.alpha = 255;
 	}
 	return color;
 

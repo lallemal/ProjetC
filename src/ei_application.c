@@ -32,7 +32,7 @@ void ei_app_create(ei_size_t main_window_size, ei_bool_t fullscreen)
 {
 	hw_init();
 	main_window = hw_create_window(main_window_size, fullscreen);
-	pick_surface = hw_surface_create(main_window, main_window_size, false);
+	pick_surface = hw_surface_create(main_window, main_window_size, EI_FALSE);
 	create_base_eventlist();
 	ei_register_placer_manager();
 	ei_frame_register_class();

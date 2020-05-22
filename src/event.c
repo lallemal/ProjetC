@@ -29,7 +29,7 @@ static ei_linked_event_t* linked_event_tail = NULL;
  *
  * @return			integer on 32 bits which represent the pick_color
  */
-ei_linked_event_t*	retrieve_eventtype(ei_eventtype_t eventtype);
+uint32_t retrieve_color(ei_surface_t pick_surface, int x, int y);
 
 
 /**
@@ -114,6 +114,8 @@ uint32_t retrieve_color(ei_surface_t pick_surface, int x, int y)
 {
 	hw_surface_lock(pick_surface);
 	uint32_t *color_rgba = (uint32_t *)hw_surface_get_buffer(pick_surface);
+	ei_size_t size_pick = hw_surface_get_size(pick_surface);
+	color_rgba += y * size_pick.width + x;
 	uint32_t pick_color = *color_rgba;
 	hw_surface_unlock(pick_surface);
 	return pick_color;
@@ -289,6 +291,7 @@ void			del_to_listcall	(ei_linked_event_t*	list,
 		free(cel->user_param);
 		free(cel);
 		list->widgetcall_list = next;
+		return;
 	}
 	while (cel != NULL && isequal_widgetcall(cel->next, widget, callback)) {
 		cel = cel->next;

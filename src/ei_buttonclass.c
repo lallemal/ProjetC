@@ -100,6 +100,8 @@ void ei_button_drawfunc(struct	ei_widget_t*	widget,
                        ei_surface_t	pick_surface,
                        ei_rect_t*	clipper)
 {
+	ei_color_t pick_color = ei_map_color(pick_surface, widget->pick_id);
+	widget->pick_color= &pick_color;
         ei_button_t* button=(ei_button_t*)widget;
         hw_surface_lock(surface);
         hw_surface_lock(pick_surface);
@@ -109,6 +111,7 @@ void ei_button_drawfunc(struct	ei_widget_t*	widget,
 
         //on trace le bouton (avec ses reliefs et bordures)
         draw_button(surface, rect_tot,  button->color, button->border_width, button->corner_radius, button->relief, clipper);
+        draw_button(pick_surface, rect_tot, pick_color, 0, button->corner_radius, button->relief, clipper);
 
 
         if (button->img != NULL || button->text != NULL){
