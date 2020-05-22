@@ -74,8 +74,8 @@ void                    ei_toplevel_drawfunc                            (struct	
         }
         rect_to_fill->top_left.x        = rect_tot.top_left.x;
         rect_to_fill->top_left.y        = rect_tot.top_left.y;
-        rect_to_fill->size.width        = rect_tot.size.width           ;
-        rect_to_fill->size.height       = rect_tot.size.height          ;
+        rect_to_fill->size.width        = rect_tot.size.width;
+        rect_to_fill->size.height       = rect_tot.size.height;
 //        rect_to_fill->size.width        = rect_tot.size.width           - 2 * to_draw->border_width;
 //        rect_to_fill->size.height       = rect_tot.size.height          - 2 * to_draw->border_width;
 
@@ -186,7 +186,7 @@ void			ei_toplevel_configure		          (ei_widget_t*		widget,
 
 
         widget->requested_size.height   += marging_height;
-
         ei_app_invalidate_rect(&(widget->screen_location));
+
 
 }
