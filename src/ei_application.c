@@ -27,6 +27,10 @@ ei_widget_t* rootWidget;
 bool running = true;
 
 
+ei_bool_t button_on_release(ei_widget_t* widget, ei_event_t* event, void* user_param);
+ei_bool_t button_on_press(ei_widget_t* widget, ei_event_t* event, void* user_param);
+
+
 void ei_app_create(ei_size_t main_window_size, ei_bool_t fullscreen)
 {
 	hw_init();
@@ -35,6 +39,7 @@ void ei_app_create(ei_size_t main_window_size, ei_bool_t fullscreen)
 	ei_register_placer_manager();
 	ei_frame_register_class();
 	ei_button_register_class();
+	ei_bind(ei_ev_mouse_buttondown, NULL, "button", button_on_press, NULL);
 	ei_register_placer_manager();
 	rootWidget = ei_widget_create("frame", NULL, NULL, NULL);
 	rootWidget->screen_location.size.width = main_window_size.width;
@@ -106,6 +111,7 @@ void ei_app_free(void)
 	if (sentinel->next != NULL) {
 		destroy_widgetclass(sentinel->next);
 	}
+	ei_unbind(ei_ev_mouse_buttondown, NULL, "button", button_on_press, NULL);
 
         ei_geometrymanager_t *current = ei_geometrymanager_from_name("sentinel");
 	ei_geometrymanager_t *next    = current->next;
@@ -165,3 +171,27 @@ ei_surface_t ei_app_root_surface(void)
 {
 	return main_window;
 }
+
+
+ei_bool_t button_on_release(ei_widget_t* widget, ei_event_t* event, void* user_param)
+{
+	ei_relief_t newRelief2 = ei_relief_raised;
+	ei_button_t* button = (ei_button_t *)widget;
+	ei_callback_t callback_button = *(button->callback);
+	callback_button(widget, event, user_param);
+	ei_button_configure(widget, NULL, NULL, NULL, NULL, &newRelief2, NULL, NULL,
+			NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+	ei_unbind(ei_ev_mouse_buttonup, widget, NULL, button_on_release, NULL);
+}
+
+
+ei_bool_t button_on_press(ei_widget_t* widget, ei_event_t* event, void* user_param)
+{
+	ei_relief_t newRelief = ei_relief_sunken;
+	ei_button_configure(widget, NULL, NULL, NULL, NULL, &newRelief, NULL, NULL,
+			NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+	ei_bind(ei_ev_mouse_buttonup, widget, NULL, button_on_release, NULL);
+}
+
+
+
