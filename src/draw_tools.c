@@ -408,6 +408,8 @@ void draw_button(ei_surface_t surface, ei_rect_t* rect_button, ei_color_t color,
                                         rect_button);
                 }
                 if (relief == ei_relief_raised){
+                        rect_button->top_left.x = rect_button->top_left.x + 2;
+                        rect_button->top_left.y = rect_button->top_left.y +2;
                         ei_draw_polygon(surface, rounded_frame(rect_button, corner_radius, 1), clear_color(color), rect_button);
                         ei_draw_polygon(surface, rounded_frame(rect_button, corner_radius, 2), dark_color(color), rect_button);
                 }
