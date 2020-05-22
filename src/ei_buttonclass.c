@@ -16,6 +16,8 @@
 #include "utils.h"
 #include "math.h"
 #include "ei_application.h"
+#include "ei_event.h"
+#include "callfunction.h"
 
 
 #define max(a,b) (a>=b?a:b)
@@ -135,10 +137,12 @@ void ei_button_drawfunc(struct	ei_widget_t*	widget,
         free(rect_tot);
 }
 
+
 void ei_button_geomnotifyfunc(struct ei_widget_t* widget)
 {
 	ei_app_invalidate_rect(&(widget->screen_location));
 }
+
 
 
 void ei_button_register_class(void)
@@ -247,3 +251,23 @@ void ei_button_configure	(ei_widget_t*		widget,
 	ei_app_invalidate_rect(&(widget->screen_location));
 }
 
+
+ei_bool_t button_on_release(ei_widget_t* widget, ei_event_t* event, void* user_param)
+{
+	ei_relief_t newRelief2 = ei_relief_raised;
+	ei_button_t* button = (ei_button_t *)widget;
+	ei_callback_t callback_button = *(button->callback);
+	callback_button(widget, event, user_param);
+	ei_button_configure(widget, NULL, NULL, NULL, NULL, &newRelief2, NULL, NULL,
+			NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+	ei_unbind(ei_ev_mouse_buttonup, widget, NULL, button_on_release, NULL);
+}
+
+
+ei_bool_t button_on_press(ei_widget_t* widget, ei_event_t* event, void* user_param)
+{
+	ei_relief_t newRelief = ei_relief_sunken;
+	ei_button_configure(widget, NULL, NULL, NULL, NULL, &newRelief, NULL, NULL,
+			NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+	ei_bind(ei_ev_mouse_buttonup, widget, NULL, button_on_release, NULL);
+}

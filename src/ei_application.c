@@ -11,6 +11,7 @@
 #include "traverse_tools.h"
 #include "ei_types.h"
 #include "utils.h"
+#include "callfunction.h"
 
 // Variables & definitions for linked list of rects
 #define LIST_RECT_PENDING 0
@@ -26,7 +27,6 @@ ei_surface_t pick_surface;
 ei_widget_t* rootWidget;
 bool running = true;
 
-
 void ei_app_create(ei_size_t main_window_size, ei_bool_t fullscreen)
 {
 	hw_init();
@@ -35,6 +35,7 @@ void ei_app_create(ei_size_t main_window_size, ei_bool_t fullscreen)
 	ei_register_placer_manager();
 	ei_frame_register_class();
 	ei_button_register_class();
+	ei_bind(ei_ev_mouse_buttondown, NULL, "button", button_on_press, NULL);
 	ei_register_placer_manager();
 	rootWidget = ei_widget_create("frame", NULL, NULL, NULL);
 	rootWidget->screen_location.size.width = main_window_size.width;
@@ -106,6 +107,7 @@ void ei_app_free(void)
 	if (sentinel->next != NULL) {
 		destroy_widgetclass(sentinel->next);
 	}
+	ei_unbind(ei_ev_mouse_buttondown, NULL, "button", button_on_press, NULL);
 
         ei_geometrymanager_t *current = ei_geometrymanager_from_name("sentinel");
 	ei_geometrymanager_t *next    = current->next;
