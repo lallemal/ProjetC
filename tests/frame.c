@@ -49,15 +49,15 @@ int main(int argc, char** argv)
 	ei_size_t	screen_size		= {600, 600};
 	ei_color_t	root_bgcol		= {0x52, 0x7f, 0xb4, 0xff};
         ei_size_t       top_level_size          = {450, 450};
-	ei_widget_t*	frame;
+	ei_widget_t*	button;
 	ei_widget_t*	toplevel;
 	ei_size_t	frame_size		= {300,200};
 	char*           text_frame              = "Salut";
 	ei_anchor_t	text_anchor		= ei_anc_northwest;
 
 	ei_color_t      text_color              = {0, 0, 0, 0xff};
-	int		frame_x			= 70;
-	int		frame_y			= 70;
+	int		frame_x			= 0;
+	int		frame_y			= 0;
 
 	ei_anchor_t     anchor                  = ei_anc_northwest;
 	ei_color_t	frame_color		= {0x88, 0x88, 0x88, 0xff};
@@ -73,16 +73,18 @@ int main(int argc, char** argv)
 	ei_app_create(screen_size, EI_FALSE);
         //ei_toplevel_configure();
 	/* Create, configure and place the frame on screen. */
+	button = ei_widget_create("button", ei_app_root_widget(), NULL, NULL);
 	toplevel = ei_widget_create("toplevel", ei_app_root_widget(), NULL, NULL);
-
-
+//	ei_button_configure(button, &top_level_size, &frame_color, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+//        ei_place(button, &anchor, &frame_x, &frame_y, NULL, NULL, NULL, NULL, NULL, NULL );
+//
         ei_toplevel_configure(toplevel, &top_level_size, &frame_color, NULL, NULL, &closable, &axis, NULL);
         ei_place(toplevel, &anchor, &frame_x, &frame_y, NULL, NULL, NULL, NULL, NULL, NULL );
 
 
 	ei_app_run();
-	ei_unbind(ei_ev_keydown, NULL, "all", process_key, NULL);
-	ei_unbind(ei_ev_keyup, NULL, "all", process_key2, NULL);
+//	ei_unbind(ei_ev_keydown, NULL, "all", process_key, NULL);
+//	ei_unbind(ei_ev_keyup, NULL, "all", process_key2, NULL);
 	// ei_unbind(ei_ev_mouse_buttondown, NULL, "all", button_down, NULL);
 
 	/* We just exited from the main loop. Terminate the application (cleanup). */

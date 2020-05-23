@@ -59,51 +59,30 @@ void                    ei_toplevel_drawfunc                            (struct	
         hw_surface_lock(surface);
 
         ei_toplevel *to_draw            = (ei_toplevel *)widget;
-        ei_rect_t   *rect_to_fill       = safe_malloc(sizeof(ei_rect_t));
         ei_rect_t   rect_tot;
 
-
-        if (!is_defined(clipper)){
-                rect_tot = hw_surface_get_rect(surface);
-        } else {
-                rect_tot = inter_rect(clipper, &widget->screen_location);;
-        }
-        rect_to_fill->top_left.x        = rect_tot.top_left.x;
-        rect_to_fill->top_left.y        = rect_tot.top_left.y;
-        rect_to_fill->size.width        = rect_tot.size.width;
-        rect_to_fill->size.height       = to_draw->title_height + 2 * margin_top;
+        rect_tot = widget->screen_location;
+        rect_tot.size.height = to_draw->title_height + 2 * margin_top;
 
 
-        ei_rect_t rectangle_to_fill = inter_rect(clipper, rect_to_fill);
-//        draw_button(surface, &rect_tot, to_draw->border_width, k_default_button_corner_radius, ei_relief_none, to_draw->color);
-//        ei_rect_t *new_one = ei_linked_point_t* rounded_frame(ei_rect_t* rect, int radius, int part);
-        ei_fill(surface, &to_draw->color, &rectangle_to_fill);
+        ei_linked_point_t* rounded0 = rounded_top_level(&rect_tot, 20, 0);
+        ei_draw_polygon(surface, rounded0, to_draw->color, clipper);
+        free_linked_point_list(rounded0);
 
-        //parameters of text location
-        ei_point_t* point_text;
 
-        ei_font_t font  = ei_default_font;
         ei_color_t dark = {0, 0, 0};
-        ei_rect_t text_placer = *rect_to_fill;
+        ei_rect_t text_placer = rect_tot;
 
         text_placer.top_left.x = to_draw->close_button->screen_location.top_left.x + to_draw->close_button->screen_location.size.width * 2;
         text_placer.top_left.y += margin_top;
         text_placer.size.width = to_draw->title_width;
         text_placer.size.height = to_draw->title_height;
 
-        point_text = anchor_point(&text_placer, ei_anc_northwest, to_draw->title_width,to_draw->title_height);
 
-
-        ei_draw_text(surface, point_text, to_draw->title, font, dark, &text_placer);
-
-        free(point_text);
-
-
+        draw_text(to_draw->title, ei_default_font, &text_placer, ei_anc_northwest, surface, dark, clipper);
 
         hw_surface_unlock(surface);
 
-        //on libère la mémoire
-        free(rect_to_fill);
 
 
 }

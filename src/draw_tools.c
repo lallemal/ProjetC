@@ -397,6 +397,19 @@ void fusion_2_list(ei_linked_point_t* list1, ei_linked_point_t* list2, int tokee
 	}
 }
 
+ei_linked_point_t*  rounded_top_level(ei_rect_t* rect, int radius, int part){
+        ei_point_t center_top_left;
+        center_top_left.x = rect->top_left.x + radius;
+        center_top_left.y = rect->top_left.y + radius;
+        ei_point_t center_top_right;
+        center_top_right.x = rect->top_left.x + rect->size.width - radius;
+        center_top_right.y = rect->top_left.y + radius;
+        ei_linked_point_t *rounded_top_left = arc_point(center_top_left, radius, -3*M_PI/2, -M_PI);
+        ei_linked_point_t *rounded_top_right = arc_point(center_top_right, radius, -2*M_PI, -3*M_PI/2);
+        fusion_2_list(rounded_top_left, rounded_top_right, 5);
+        return rounded_top_left;
+
+}
 
 ei_linked_point_t* rounded_frame(ei_rect_t* rect, int radius, int part)
 {
