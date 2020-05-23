@@ -149,25 +149,27 @@ void ei_frame_drawfunc(struct	ei_widget_t*	widget,
         //Création de relief
         //on considère le rectangle total (bordure comprise) (rect_tot)
         if (frame->border_width>0) {
+                ei_rect_t* rect_tot_on_screen = malloc(sizeof(ei_rect_t));
+                *rect_tot_on_screen = inter_rect(clipper, rect_tot);
 
                 if (frame->relief == ei_relief_raised) {
-                        draw_down_relief(rect_tot, surface, frame->color, EI_TRUE);
+                        draw_down_relief(rect_tot, surface, frame->color, EI_TRUE, rect_tot_on_screen);
 
-                        draw_up_relief(rect_tot, surface, frame->color, EI_TRUE);
+                        draw_up_relief(rect_tot, surface, frame->color, EI_TRUE, rect_tot_on_screen);
 
 
                 }
                 if (frame->relief == ei_relief_sunken) {
-                        draw_up_relief(rect_tot, surface, frame->color, EI_FALSE);
-                        draw_down_relief(rect_tot, surface, frame->color, EI_FALSE);
+                        draw_up_relief(rect_tot, surface, frame->color, EI_FALSE, rect_tot_on_screen);
+                        draw_down_relief(rect_tot, surface, frame->color, EI_FALSE, rect_tot_on_screen);
 
                 }
                 if (frame->relief == ei_relief_none){
                         ei_color_t color_to_fill;
                         color_to_fill = dark_color(frame->color);
-                        ei_fill(surface, &color_to_fill, rect_tot);
-
+                        ei_fill(surface, &color_to_fill, rect_tot_on_screen);
                 }
+                free(rect_tot_on_screen);
 
         }
 

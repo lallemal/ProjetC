@@ -147,7 +147,7 @@ ei_widget_t*		ei_widget_pick			(ei_point_t*		where);
  *				Defines both the anchoring point on the parent and on the widget.
  *				Defaults to \ref ei_anc_center.
  * @param	img		The image to display in the widget, or NULL. Any surface can be
- *				used, but usually a surface returned by \ref hw_image_load. Only one
+ *				used, but usually a surface returned by \ref hw_image_l²oad. Only one
  *				of the parameter "text" and "img" should be used (i.e. non-NULL).
  				Defaults to NULL.
  * @param	img_rect	If not NULL, this rectangle defines a subpart of "img" to use as the

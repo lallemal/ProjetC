@@ -9,26 +9,25 @@
 #include "ei_application.h"
 #include "ei_types.h"
 #include "draw_tools.h"
-ei_size_t       min_size_default = {160, 120};
-ei_size_t       default_tool_size = {16, 16};
-int             margin_left     = 5;
-int             margin_top      = 0;
+ei_size_t       min_size_default        = {160, 120};
+ei_size_t       default_rt_size         = {16, 16};
+ei_size_t       default_cb_size         = {16, 16};
+int             margin_top              = 5;
+int             margin_left             = 10;
 
 void*                    ei_toplevel_allofunc                            (void){
         ei_toplevel *new_top_level = safe_malloc(sizeof(ei_toplevel));
         new_top_level->sub_frame = ei_widget_create("frame", new_top_level, NULL, NULL);
-        new_top_level->resize_tool = ei_widget_create("frame", new_top_level->sub_frame, NULL, NULL);
         return new_top_level;
 }
 
 void                    ei_toplevel_releasefunc                         (ei_widget_t*	widget){
-
+        //nothing to do here, everything is released when the children are released
 }
 
 void                    ei_toplevel_setdefaultsfunc                     (ei_widget_t* widget){
         ei_toplevel *to_configure               = (ei_toplevel *)widget;
 
-        ei_color_t color                = {255, 0, 0, 0};
         to_configure->color             = ei_default_background_color;
         to_configure->border_width      = 4;
         to_configure->requested_size    = ei_size(320, 240);
@@ -45,10 +44,6 @@ void                    ei_toplevel_setdefaultsfunc                     (ei_widg
 //        to_configure->requested_size.height += taille_texte.height;
 
 
-
-
-
-
 }
 
 
@@ -62,6 +57,7 @@ void                    ei_toplevel_drawfunc                            (struct	
                                                                                 ei_surface_t	pick_surface,
                                                                                 ei_rect_t*	clipper){
         hw_surface_lock(surface);
+
         ei_toplevel *to_draw            = (ei_toplevel *)widget;
         ei_rect_t   *rect_to_fill       = safe_malloc(sizeof(ei_rect_t));
         ei_rect_t   rect_tot;
@@ -75,34 +71,27 @@ void                    ei_toplevel_drawfunc                            (struct	
         rect_to_fill->top_left.x        = rect_tot.top_left.x;
         rect_to_fill->top_left.y        = rect_tot.top_left.y;
         rect_to_fill->size.width        = rect_tot.size.width;
-        rect_to_fill->size.height       = rect_tot.size.height;
-//        rect_to_fill->size.width        = rect_tot.size.width           - 2 * to_draw->border_width;
-//        rect_to_fill->size.height       = rect_tot.size.height          - 2 * to_draw->border_width;
+        rect_to_fill->size.height       = to_draw->title_height + 2 * margin_top;
 
-        ei_point_t  * text_pos;
-
-        if (is_defined(to_draw->title)){
-
-                int text_width;
-                int text_height;
-                hw_text_compute_size(to_draw->title, ei_default_font, &text_width, &text_height);
-                text_pos = anchor_point(rect_to_fill, ei_anc_northwest, text_width, text_width);
-        }
 
         ei_rect_t rectangle_to_fill = inter_rect(clipper, rect_to_fill);
-        ei_color_t header_color = {255, 25, 25};
-        ei_fill(surface, &to_draw->color, &rectangle_to_fill);
+        draw_button(surface, &rect_tot, to_draw->border_width, k_default_button_corner_radius, ei_relief_none, to_draw->color);
+        //        ei_rect_t *new_one = ei_linked_point_t* rounded_frame(ei_rect_t* rect, int radius, int part);
+//        ei_fill(surface, &to_draw->color, &rectangle_to_fill);
+
+        //parameters of text location
         ei_point_t* point_text;
-        int height_text = to_draw->title_height;
-        int width_text = to_draw->title_width;
+
         ei_font_t font  = ei_default_font;
         ei_color_t dark = {0, 0, 0};
         ei_rect_t text_placer = *rect_to_fill;
-        text_placer.top_left.x += 10;
-        text_placer.top_left.y += 5;
+
+        text_placer.top_left.x = to_draw->close_button->screen_location.top_left.x + to_draw->close_button->screen_location.size.width * 2;
+        text_placer.top_left.y += margin_top;
         text_placer.size.width = to_draw->title_width;
         text_placer.size.height = to_draw->title_height;
-        point_text = anchor_point(&text_placer, ei_anc_center, width_text,height_text);
+
+        point_text = anchor_point(&text_placer, ei_anc_northwest, to_draw->title_width,to_draw->title_height);
 
 
         ei_draw_text(surface, point_text, to_draw->title, font, dark, &text_placer);
@@ -141,30 +130,61 @@ void                    configure_sub_part                           (ei_topleve
         //setting the ancher of resize tool
         ei_anchor_t anchor_rt = ei_anc_southeast;
 
-        // setting the y axis of subframe in order to be under the header
-        int y_subframe = margin_top * 2 + to_configure->title_height + 2 * to_configure->border_width;
-
-        //setting a darker color
+        //setting a darker color for resizetool
         ei_color_t sub_color = {25, 25, 25};
 
+        //setting red for the closing button
+        ei_color_t cb_color = {250, 25, 25};
+
+        // setting the y axis of subframe in order to be under the header
+        int y_subframe = margin_top * 2 + to_configure->title_height;
+
+        ei_size_t cb_size;
+
         //settings of the resize tools
-        ei_frame_configure(to_configure->resize_tool, &default_tool_size, &sub_color, 0,
-                           NULL, NULL, NULL, NULL, NULL,
-                           NULL, NULL,  NULL);
-        ei_place(to_configure->resize_tool, &anchor_rt, NULL, NULL, NULL, NULL, &rel_x_rt, &rel_y_rt, NULL, NULL);
+        if (to_configure->resizable != ei_axis_none){
+                ei_frame_configure(to_configure->resize_tool, &default_rt_size, &sub_color, 0,
+                                   NULL, NULL, NULL, NULL, NULL,
+                                   NULL, NULL,  NULL);
+                ei_place(to_configure->resize_tool, &anchor_rt, NULL, NULL, NULL, NULL, &rel_x_rt, &rel_y_rt, NULL, NULL);
 
-
-
-
-        //setting
-        //to_configure->sub_frame->content_rect   = &to_configure->widget.screen_location;
-
+        }
+        
+        //settings of the subframe
         ei_frame_configure(to_configure->sub_frame, &to_configure->widget.requested_size, &to_configure->color, &to_configure->border_width,
                            NULL, NULL, NULL, NULL, NULL,
                            NULL, NULL,  NULL);
         to_configure->widget.content_rect       = to_configure->sub_frame->content_rect;
         ei_place(to_configure->sub_frame, NULL, NULL, &y_subframe, NULL, NULL, NULL, NULL, NULL, NULL);
 
+        //settings of the close_button
+        if (to_configure->closable){
+
+                cb_size.height = to_configure->title_height/2;
+                cb_size.width = to_configure->title_height/2;
+
+                int             middle_text_pos         = to_configure->title_height/2 + margin_top;
+                int             middle_button_pos       = cb_size.height + margin_left;
+                ei_anchor_t     bc_anchor               = ei_anc_center;
+
+                // enable us to have a small button, never bigger than text height
+                ei_frame_configure(to_configure->close_button, &cb_size, &cb_color, NULL,
+                                   NULL, NULL, NULL, NULL, NULL,
+                                   NULL, NULL,  NULL);
+                ei_place(to_configure->close_button, &bc_anchor, &middle_button_pos, &middle_text_pos, NULL, NULL, NULL, NULL, NULL, NULL);
+                //                ei_button_configure(to_configure->close_button, &cb_size, &cb_color, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+//                ei_place(to_configure->close_button, NULL, &margin_left, &margin_top, NULL, NULL, NULL, NULL, NULL, NULL);
+        }
+
+}
+
+void                    init_the_sub_tools                       (ei_toplevel *toplevel){
+        //malloc of the subframe
+        if (toplevel->resizable != ei_axis_none && toplevel->resize_tool == NULL)
+                toplevel->resize_tool = ei_widget_create("frame", toplevel->sub_frame, NULL, NULL);
+        //malloc of the closing button
+        if (toplevel->closable == EI_TRUE && toplevel->close_button == NULL)
+                toplevel->close_button = ei_widget_create("frame", toplevel, NULL, NULL);
 }
 
 void			ei_toplevel_configure		          (ei_widget_t*		widget,
@@ -183,35 +203,46 @@ void			ei_toplevel_configure		          (ei_widget_t*		widget,
         is_defined(closable)            ? to_configure->closable        = *closable             : do_nothing();
         is_defined(resizable)           ? to_configure->resizable       = *resizable            : do_nothing();
         is_defined(border_width)        ? to_configure->border_width    = *border_width         : do_nothing();
-        // initialisation de la taille minimale
+
+        //calculating the needed space for title
+        hw_text_compute_size(to_configure->title, ei_default_font, &to_configure->title_width, &to_configure->title_height);
+
+        init_the_sub_tools(to_configure);
+
+        // minimum size initialisation
         if (is_defined(min_size)){
                 to_configure->min_size = *min_size;
         } else {
                 to_configure->min_size = &min_size_default;
         }
-        hw_text_compute_size(to_configure->title, ei_default_font, &to_configure->title_width, &to_configure->title_height);
 
         is_defined(title)               ? to_configure->title           = *title                 : do_nothing();
+        //if the requested size is lower than the min size, then the size is set to the min size
+        if (requested_size->width < to_configure->min_size->width) {
+                to_configure->requested_size.width = to_configure->min_size->width;
+        }
 
+        if (requested_size->height < to_configure->min_size->height) {
+                to_configure->requested_size.height = to_configure->min_size->height;
+        }
 
-
-        int marging_height = margin_top * 2 + to_configure->border_width * 2 + to_configure->title_height;
+        int marging_height = margin_top * 2 + to_configure->title_height;
 
         widget->requested_size.height   = max(to_configure->min_size->height, to_configure->requested_size.height);
         widget->requested_size.width    = max(to_configure->min_size->width, to_configure->requested_size.width);
 
-
+        //adding 2 times boder width for the size of the subframe
         widget->requested_size.height   += to_configure->border_width * 2;
         widget->requested_size.width    += to_configure->border_width * 2;
-        //content rect for children, starts just after window header
 
-
+        //configuration of closing button, resize_tool and subframe
         configure_sub_part(to_configure);
 
+
+        //the content rect is now the subframe (all the widget exept the header)
         widget->content_rect = to_configure->sub_frame->content_rect;
 
         widget->requested_size.height   += marging_height;
-        ei_app_invalidate_rect(&(widget->screen_location));
 
 
 }
