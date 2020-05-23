@@ -307,17 +307,6 @@ void draw_image(ei_surface_t image, ei_rect_t* rect_to_fill, ei_anchor_t img_anc
 }
 
 
-int signe_inverse(float nombre)
-{
-        if (nombre <= 0){
-                return 1;
-        }
-
-        else{
-                return -1;
-        }
-}
-
 
 // Add a point x, y to a linked list by tail bc of order
 void add_point_list(ei_linked_point_t** begin_pt, int x, int y)
@@ -372,9 +361,9 @@ ei_linked_point_t* arc_point(ei_point_t center, int radius, float corner_begin, 
 			add_point_list(&list_head, x_center, y_center - radius);
                 }
                 if ((float)sin(corner_end)==-1 || (float)sin(corner_begin)==-1){
-			add_point_list(&list_head, x_center + radius, y_center);
+			add_point_list(&list_head, x_center, y_center +radius);
 			add_points_coin(&list_head, x_center, y_center, radius, -M_PI/3, -M_PI/4, -M_PI/6);
-			add_point_list(&list_head, x_center, y_center + radius);
+			add_point_list(&list_head, x_center+radius, y_center);
                 }
         }
         else{
@@ -524,8 +513,7 @@ ei_rect_t* draw_button_relief_up_down(ei_rect_t* rect_tot, int corner_radius, in
         int center_y = rect_tot->top_left.y + corner_radius;
         rect_int->top_left.x = (int) (center_x + (corner_radius - border_width) *
                                                  cos(-5 * M_PI / 4)) + decalage_x;
-        rect_int->top_left.y = (int) (center_y + signe_inverse(sin(-5 * M_PI / 4)) *
-                                                 (corner_radius - border_width) *
+        rect_int->top_left.y = (int) (center_y - (corner_radius - border_width) *
                                                  sin(-5 * M_PI / 4)) + decalage_y;
         rect_int->size.width =
                 (int) (rect_tot->top_left.x + rect_tot->size.width - corner_radius +
@@ -534,8 +522,7 @@ ei_rect_t* draw_button_relief_up_down(ei_rect_t* rect_tot, int corner_radius, in
         rect_int->size.height =
                 (int) (rect_tot->top_left.y + rect_tot->size.height - corner_radius -
                        (corner_radius - border_width) * sin(-3 * M_PI / 4)) -
-                (int) (center_y + signe_inverse(sin(-5 * M_PI / 4)) *
-                                  (corner_radius - border_width) * sin(-5 * M_PI / 4)) - decalage_height;
+                (int) (center_y - (corner_radius - border_width) * sin(-5 * M_PI / 4)) - decalage_height;
 
         return rect_int;
 
