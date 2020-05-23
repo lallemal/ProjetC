@@ -161,9 +161,6 @@ void ei_app_run(void)
 		list_rect_head = NULL;
 		list_rect_tail = NULL;
 		rect_status = LIST_RECT_PENDING;
-		//if (event.type == ei_ev_keydown && event.param.key.key_code == SDLK_ESCAPE) {
-		//	ei_app_quit_request();
-		//}
 		hw_event_wait_next(&event);
 		ei_linked_event_t* to_consider = retrieve_eventtype(event.type);
 		call(event, *to_consider, pick_surface);
