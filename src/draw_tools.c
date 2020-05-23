@@ -399,11 +399,11 @@ void fusion_2_list(ei_linked_point_t* list1, ei_linked_point_t* list2, int tokee
 	ei_linked_point_t* to_link_1 = list1;
 	while (to_link_1 != NULL && i < tokeep_1 - 1) {
 		to_link_1 = to_link_1->next;
+		i++;
 	}
 	if (to_link_1 != NULL) {
-		ei_linked_point_t* next = to_link_1;
+		free_linked_point_list(to_link_1->next);
 		to_link_1->next = list2;
-		free_linked_point_list(next);
 	}
 }
 
