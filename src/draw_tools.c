@@ -444,37 +444,27 @@ ei_linked_point_t* rounded_frame(ei_rect_t* rect, int radius, int part)
                 ei_linked_point_t* inter_haut = malloc(sizeof(ei_linked_point_t));
 
                 if (part == 1){
-                        ei_linked_point_t* rounded_up;
-                        ei_linked_point_t* rounded_top_right_part1 = rounded_top_right;
-                        rounded_top_right_part1->next->next =NULL;
-                        rounded_up = rounded_top_right->next->next;
-                        rounded_top_right->next->next->next->next->next = rounded_top_left;
-                        rounded_top_left->next->next->next->next->next = rounded_bottom_left;
-                        rounded_bottom_left->next->next->next = inter_bas;
-                        inter_bas->point = point_inter_bas;
-                        inter_bas->next = inter_haut;
-                        inter_haut->point = point_inter_haut;
-                        inter_haut->next = NULL;
-                        free_linked_point_list(rounded_top_right_part1);
+                        fusion_2_list(rounded_top_right, rounded_top_left, 5);
+                        fusion_2_list(rounded_top_left, rounded_bottom_left, 5);
+                        fusion_2_list(rounded_bottom_left, inter_bas, 3);
+                        add_point_list(&inter_bas, point_inter_haut.x, point_inter_haut.y);
+                        ei_linked_point_t* rounded_up = rounded_top_right->next->next;
+                        rounded_top_right->next->next = NULL;
+                        free_linked_point_list(rounded_top_right);
                         free_linked_point_list(rounded_bottom_right);
-                        free(rounded_bottom_left->next->next->next->next);
+                        free_linked_point_list(inter_haut);
                         return rounded_up;
                 }
                 else{
-                        ei_linked_point_t* rounded_down;
-                        rounded_down = rounded_bottom_left->next->next;
-                        ei_linked_point_t* rounded_bottom_left_part1 = rounded_bottom_left;
-                        rounded_bottom_left_part1->next->next=NULL;
-                        rounded_bottom_left->next->next->next->next->next = rounded_bottom_right;
-                        rounded_bottom_right->next->next->next->next->next = rounded_top_right;
-                        rounded_top_right->next->next->next= inter_haut;
-                        inter_haut->point = point_inter_haut;
-                        inter_haut->next = inter_bas;
-                        inter_bas->point = point_inter_bas;
-                        inter_bas->next = NULL;
+                        fusion_2_list(rounded_bottom_left, rounded_bottom_right, 5);
+                        fusion_2_list(rounded_bottom_right, rounded_top_right, 5);
+                        fusion_2_list(rounded_top_right, inter_haut, 3);
+                        add_point_list(&inter_haut, point_inter_bas.x, point_inter_bas.y);
+                        ei_linked_point_t* rounded_down = rounded_bottom_left->next->next;
+                        rounded_bottom_left->next->next = NULL;
+                        free_linked_point_list(rounded_bottom_left);
                         free_linked_point_list(rounded_top_left);
-                        free_linked_point_list(rounded_bottom_left_part1);
-                        free(rounded_top_right->next->next->next->next);
+                        free_linked_point_list(inter_bas);
                         return rounded_down;
                 }
         }
@@ -509,8 +499,6 @@ void draw_button(ei_surface_t surface, ei_rect_t* rect_button, ei_color_t color,
                         free_linked_point_list(rounded_frame_down);
                 }
                 if (relief == ei_relief_sunken){
-                        rect_button->top_left.x = rect_button->top_left.x + 2;
-                        rect_button->top_left.y = rect_button->top_left.y +2;
                         ei_linked_point_t* rounded_frame_up = rounded_frame(rect_button, corner_radius, 1);
                         ei_linked_point_t* rounded_frame_down = rounded_frame(rect_button, corner_radius, 2);
                         ei_draw_polygon(surface, rounded_frame_up, dark_color(color), rect_button);
