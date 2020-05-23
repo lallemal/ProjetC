@@ -19,6 +19,20 @@ ei_bool_t button_press(ei_widget_t* widget, ei_event_t* event, void* user_param)
 	return EI_TRUE;
 }
 
+ei_bool_t button_press2(ei_widget_t* widget, ei_event_t* event, void* user_param)
+{
+	ei_color_t	root_bgcol		= {0x12, 0x7f, 0xb4, 0xff};
+	ei_frame_configure(widget, NULL, &root_bgcol, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+	return EI_TRUE;
+}
+
+ei_bool_t button_release2(ei_widget_t* widget, ei_event_t* event, void* user_param)
+{
+	ei_color_t	root_bgcol		= {0x52, 0x7f, 0xb4, 0xff};
+	ei_frame_configure(widget, NULL, &root_bgcol, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+	return EI_TRUE;
+}
+
 /*
  * process_key --
  *
@@ -81,12 +95,16 @@ int main(int argc, char** argv)
 
 	/* Hook the keypress callback to the event. */
 	ei_bind(ei_ev_keydown,		NULL, "all", process_key, NULL);
+	ei_bind(ei_ev_mouse_buttondown, NULL, "frame", button_press2, NULL);
+	ei_bind(ei_ev_mouse_buttonup, NULL, "frame", button_release2, NULL);
 
 	/* Run the application's main loop. */
 	ei_app_run();
 
 	/* We just exited from the main loop. Terminate the application (cleanup). */
 	ei_unbind(ei_ev_keydown,	NULL, "all", process_key, NULL);
+	ei_unbind(ei_ev_mouse_buttondown, NULL, "frame", button_press2, NULL);
+	ei_unbind(ei_ev_mouse_buttonup, NULL, "frame", button_release2, NULL);
 	ei_app_free();
 
 	return (EXIT_SUCCESS);

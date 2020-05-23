@@ -64,6 +64,9 @@ void ei_frame_releasefunc(ei_widget_t*	widget)
 	//	free(frame->text);
 	//}
 	// free(&(frame->img_anchor));
+	if (widget->pick_color != NULL) {
+		free(widget->pick_color);
+	}
 }
 
 
@@ -99,17 +102,21 @@ void ei_frame_drawfunc(struct	ei_widget_t*	widget,
                        ei_surface_t	pick_surface,
                        ei_rect_t*	clipper)
 {
-        ei_frame_t* frame=(ei_frame_t*)widget;
+	ei_color_t* pick_color = malloc(sizeof(ei_color_t));
+	*pick_color = ei_map_color(pick_surface, widget->pick_id);
+	widget->pick_color = pick_color;
+
+        ei_frame_t* frame = (ei_frame_t*)widget;
         hw_surface_lock(surface);
         hw_surface_lock(pick_surface);
         ei_rect_t *rect_to_fill=malloc(sizeof(ei_rect_t));
         ei_rect_t* rect_tot = malloc(sizeof(ei_rect_t));
 
         //surface de picking --> GROS PORBLEME
-        //ei_rect_t* rect_to_pick = malloc(sizeof(ei_rect_t));
-        //*rect_to_pick = inter_rect(clipper, rect_tot);
-        //ei_fill(pick_surface, widget->pick_color, rect_to_pick);
-        //free(rect_to_pick);
+        ei_rect_t* rect_to_pick = malloc(sizeof(ei_rect_t));
+        *rect_to_pick = inter_rect(clipper, rect_tot);
+        ei_fill(pick_surface, widget->pick_color, rect_to_pick);
+        free(rect_to_pick);
 
 
         *rect_tot = widget->screen_location;
