@@ -136,7 +136,7 @@ ei_widget_t*		on_widget	(ei_event_t		event,
 		uint32_t pick_color = retrieve_color(pick_surface, x_mouse, y_mouse);
 		// If the event is linked to a tag
 		ei_widget_t* widget_with_color = find_with_color(ei_app_root_widget(), pick_color, pick_surface);
-		if (strcmp(tag, widget_with_color->wclass->name) == 0) {
+		if (widget_with_color != NULL && strcmp(tag, widget_with_color->wclass->name) == 0) {
 			return widget_with_color;
 		}
 	}
