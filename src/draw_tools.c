@@ -361,7 +361,7 @@ ei_linked_point_t* arc_point(ei_point_t center, int radius, float corner_begin, 
 {
         int x_center = center.x;
         int y_center = center.y;
-        ei_linked_point_t* list_head;
+        ei_linked_point_t* list_head = NULL;
 
 
 
@@ -440,7 +440,7 @@ ei_linked_point_t* rounded_frame(ei_rect_t* rect, int radius, int part)
                 point_inter_haut.y = rect->top_left.y + min(rect->size.height/2, rect->size.width/2);
                 point_inter_bas.x =rect->top_left.x+ min(rect->size.height/2, rect->size.width/2);
                 point_inter_bas.y = rect->top_left.y + rect->size.height - min(rect->size.height/2, rect->size.width/2);
-                ei_linked_point_t* inter_list;
+                ei_linked_point_t* inter_list = NULL;
 
                 if (part == 1){
                         fusion_2_list(rounded_top_right, rounded_top_left, 5);
