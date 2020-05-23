@@ -319,92 +319,92 @@ int signe_inverse(float nombre)
 }
 
 
+// Add a point x, y to a linked list by tail bc of order
+void add_point_list(ei_linked_point_t** begin_pt, int x, int y)
+{
+	ei_linked_point_t* begin = *begin_pt;
+	ei_linked_point_t* newElement = malloc(sizeof(ei_linked_point_t));
+	newElement->point.x = x;
+	newElement->point.y = y;
+	if (begin == NULL) {
+		*begin_pt = newElement;
+		newElement->next = NULL;
+		return;
+	}
+	while (begin->next != NULL) {
+		begin = begin->next;
+	}
+	begin->next = newElement;
+	newElement->next = NULL;
+}
+
+
+void add_points_coin	(ei_linked_point_t**	begin_pt,
+			int 			x_center,
+			int			y_center,
+			int			radius,
+			float			angle1,
+			float			angle2,
+			float			angle3)
+{
+	add_point_list(begin_pt, (int)(x_center + radius*cos(angle1)), (int)(y_center - radius*sin(angle1)));
+	add_point_list(begin_pt, (int)(x_center + radius*cos(angle2)), (int)(y_center - radius*sin(angle2)));
+	add_point_list(begin_pt, (int)(x_center + radius*cos(angle3)), (int)(y_center - radius*sin(angle3)));
+}
+
+
+
+
+
+
 ei_linked_point_t* arc_point(ei_point_t center, int radius, float corner_begin, float corner_end)
 {
         int x_center = center.x;
         int y_center = center.y;
-        ei_linked_point_t* list_point1 = malloc(sizeof(ei_linked_point_t));
-        ei_linked_point_t* list_point2 = malloc(sizeof(ei_linked_point_t));
-        ei_linked_point_t* list_point3 = malloc(sizeof(ei_linked_point_t));
-        ei_linked_point_t* list_point4 = malloc(sizeof(ei_linked_point_t));
-        ei_linked_point_t* list_point5 = malloc(sizeof(ei_linked_point_t));
+        ei_linked_point_t* list_head;
 
 
 
         if ((float)cos(corner_begin)==1 || (float)cos(corner_end)==1){
                 if ((float)sin(corner_end)==1 || (float)sin(corner_begin)==1){
-                        list_point1->point.x = x_center+radius;
-                        list_point1->point.y = y_center;
-                        list_point1->next = list_point2;
-                        list_point2->point.x = (int)(x_center + radius*cos(-11*M_PI/6));
-                        list_point2->point.y = (int)(y_center + signe_inverse(sin(-11*M_PI/6))*radius*sin(-11*M_PI/6));
-                        list_point2->next = list_point3;
-                        list_point3->point.x = (int)(x_center + radius*cos(-7*M_PI/4));
-                        list_point3->point.y = (int)(y_center + signe_inverse(sin(-7*M_PI/4))*radius*sin(-7*M_PI/4));
-                        list_point3->next = list_point4;
-                        list_point4->point.x = (int)(x_center + radius*cos(-5*M_PI/3));
-                        list_point4->point.y = (int)(y_center + signe_inverse(sin(-5*M_PI/3))*radius*sin(-5*M_PI/3));
-                        list_point4->next = list_point5;
-                        list_point5->point.x = x_center;
-                        list_point5->point.y = y_center - radius ;
-                        list_point5->next = NULL;
+			add_point_list(&list_head, x_center+radius, y_center);
+			add_points_coin(&list_head, x_center, y_center, radius, -11*M_PI/6, -7*M_PI/4, -5*M_PI/3);
+			add_point_list(&list_head, x_center, y_center - radius);
                 }
                 if ((float)sin(corner_end)==-1 || (float)sin(corner_begin)==-1){
-                        list_point1->point.x = x_center ;
-                        list_point1->point.y = y_center + radius;
-                        list_point1->next = list_point2;
-                        list_point2->point.x = (int)(x_center + radius*cos(-M_PI/3));
-                        list_point2->point.y = (int)(y_center - radius*sin(-M_PI/3));
-                        list_point2->next = list_point3;
-                        list_point3->point.x = (int)(x_center + radius*cos(-M_PI/4));
-                        list_point3->point.y = (int)(y_center - radius*sin(-M_PI/4));
-                        list_point3->next = list_point4;
-                        list_point4->point.x = (int)(x_center + radius*cos(-M_PI/6));
-                        list_point4->point.y = (int)(y_center - radius*sin(-M_PI/6));
-                        list_point4->next = list_point5;
-                        list_point5->point.x = x_center + radius ;
-                        list_point5->point.y = y_center;
-                        list_point5->next = NULL;
+			add_point_list(&list_head, x_center + radius, y_center);
+			add_points_coin(&list_head, x_center, y_center, radius, -M_PI/3, -M_PI/4, -M_PI/6);
+			add_point_list(&list_head, x_center, y_center + radius);
                 }
         }
         else{
                 if ((float)sin(corner_begin)==1 || (float)sin(corner_end)==1){
-                        list_point1->point.x = x_center;
-                        list_point1->point.y = y_center - radius;
-                        list_point1->next = list_point2;
-                        list_point2->point.x = (int)(x_center + radius*cos(-4*M_PI/3));
-                        list_point2->point.y = (int)(y_center + signe_inverse(sin(-4*M_PI/3))*radius*sin(-4*M_PI/3));
-                        list_point2->next = list_point3;
-                        list_point3->point.x = (int)(x_center + radius*cos(-5*M_PI/4));
-                        list_point3->point.y = (int)(y_center + signe_inverse(sin(-5*M_PI/4))*radius*sin(-5*M_PI/4));
-                        list_point3->next = list_point4;
-                        list_point4->point.x = (int)(x_center + radius*cos(-7*M_PI/6));
-                        list_point4->point.y = (int)(y_center + signe_inverse(sin(-7*M_PI/6))*radius*sin(-7*M_PI/6));
-                        list_point4->next = list_point5;
-                        list_point5->point.x = x_center-radius;
-                        list_point5->point.y = y_center;
-                        list_point5->next = NULL;
+			add_point_list(&list_head, x_center, y_center - radius);
+			add_points_coin(&list_head, x_center, y_center, radius, -4*M_PI/3, -5*M_PI/4, -7*M_PI/6);
+			add_point_list(&list_head, x_center - radius, y_center);
                 }
                 if ((float)sin(corner_end) == -1 || (float)sin(corner_begin)==-1){
-                        list_point1->point.x = x_center- radius;
-                        list_point1->point.y = y_center;
-                        list_point1->next = list_point2;
-                        list_point2->point.x = (int)(x_center + radius*cos(-5*M_PI/6));
-                        list_point2->point.y = (int)(y_center - radius*sin(-5*M_PI/6));
-                        list_point2->next = list_point3;
-                        list_point3->point.x = (int)(x_center + radius*cos(-3*M_PI/4));
-                        list_point3->point.y = (int)(y_center - radius*sin(-3*M_PI/4));
-                        list_point3->next = list_point4;
-                        list_point4->point.x = (int)(x_center + radius*cos(-2*M_PI/3));
-                        list_point4->point.y = (int)(y_center - radius*sin(-2*M_PI/3));
-                        list_point4->next = list_point5;
-                        list_point5->point.x = x_center;
-                        list_point5->point.y = y_center + radius;
-                        list_point5->next = NULL;
+			add_point_list(&list_head, x_center - radius, y_center);
+			add_points_coin(&list_head, x_center, y_center, radius, -5*M_PI/6, -3*M_PI/4, -2*M_PI/3);
+			add_point_list(&list_head, x_center, y_center + radius);
                 }
         }
+        return list_head;
+}
 
-        return list_point1;
+
+void fusion_2_list(ei_linked_point_t* list1, ei_linked_point_t* list2, int tokeep_1)
+{
+	int i = 0;
+	ei_linked_point_t* to_link_1 = list1;
+	while (to_link_1 != NULL && i < tokeep_1 - 1) {
+		to_link_1 = to_link_1->next;
+	}
+	if (to_link_1 != NULL) {
+		ei_linked_point_t* next = to_link_1;
+		to_link_1->next = list2;
+		free_linked_point_list(next);
+	}
 }
 
 
@@ -425,13 +425,12 @@ ei_linked_point_t* rounded_frame(ei_rect_t* rect, int radius, int part)
 
         ei_linked_point_t *rounded_top_left = arc_point(center_top_left, radius, -3*M_PI/2, -M_PI);
         ei_linked_point_t *rounded_top_right = arc_point(center_top_right, radius, -2*M_PI, -3*M_PI/2);
-        ei_linked_point_t *rounded_bottom_left = arc_point(center_bottom_left, radius, -M_PI, -M_PI/2 );
-        ei_linked_point_t *rounded_bottom_right = arc_point(center_bottom_right, radius, (-M_PI) / 2,
-                                                            0);
+        ei_linked_point_t *rounded_bottom_left = arc_point(center_bottom_left, radius, -M_PI, -M_PI/2);
+        ei_linked_point_t *rounded_bottom_right = arc_point(center_bottom_right, radius, (-M_PI) / 2, 0);
         if (part == 0) {
-                rounded_top_left->next->next->next->next->next = rounded_bottom_left;
-                rounded_bottom_left->next->next->next->next->next = rounded_bottom_right;
-                rounded_bottom_right->next->next->next->next->next = rounded_top_right;
+		fusion_2_list(rounded_top_left, rounded_bottom_left, 5);
+		fusion_2_list(rounded_bottom_left, rounded_bottom_right, 5);
+		fusion_2_list(rounded_bottom_right, rounded_top_right, 5);
                 return rounded_top_left;
         }
         else{
