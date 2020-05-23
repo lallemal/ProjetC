@@ -75,9 +75,9 @@ void                    ei_toplevel_drawfunc                            (struct	
 
 
         ei_rect_t rectangle_to_fill = inter_rect(clipper, rect_to_fill);
-        draw_button(surface, &rect_tot, to_draw->border_width, k_default_button_corner_radius, ei_relief_none, to_draw->color);
-        //        ei_rect_t *new_one = ei_linked_point_t* rounded_frame(ei_rect_t* rect, int radius, int part);
-//        ei_fill(surface, &to_draw->color, &rectangle_to_fill);
+//        draw_button(surface, &rect_tot, to_draw->border_width, k_default_button_corner_radius, ei_relief_none, to_draw->color);
+//        ei_rect_t *new_one = ei_linked_point_t* rounded_frame(ei_rect_t* rect, int radius, int part);
+        ei_fill(surface, &to_draw->color, &rectangle_to_fill);
 
         //parameters of text location
         ei_point_t* point_text;

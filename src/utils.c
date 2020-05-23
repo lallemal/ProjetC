@@ -113,6 +113,12 @@ ei_rect_t* fusion_if(ei_rect_t* rect1, ei_rect_t* rect2)
 	int w1 = rect1->size.width;
 	int w2 = rect2->size.width;
 	int w3 = inter.size.width;
+	if (is_equal(rect1, &inter)) {
+		return copy_rect(rect2);
+	}
+	if (is_equal(rect2, &inter)) {
+		return copy_rect(rect1);
+	}
 	if ((h1*w1) + (h2*w2) > (h1 + h2 - h3) * (w1 + w2 - w3)) {
 		return NULL;
 	}
@@ -138,6 +144,9 @@ void destroy_linked_rect(ei_linked_rect_t* to_destroy, ei_linked_rect_t**  head_
 	while (element != NULL && element->next != to_destroy) {
 		element = element->next;
 	}
+	if (element == NULL) {
+		return;
+	}
 	if (to_destroy->next == NULL) {
 		element->next = NULL;
 		free(to_destroy);
@@ -160,9 +169,8 @@ void simplify_list(ei_linked_rect_t**  begin_pt)
 				to_try = to_try->next;
 			}
 			else {
-				ei_rect_t* old = &(element->rect);
 				element->rect = *fusionned;
-				free(old);
+				free(fusionned);
 				destroy_linked_rect(to_try, begin_pt);
 				b = 1;
 				break;

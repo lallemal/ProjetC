@@ -85,4 +85,17 @@ ei_rect_t* fusion_if(ei_rect_t* rect1, ei_rect_t* rect2);
  */
 void simplify_list(ei_linked_rect_t**  begin_pt);
 
+
+/**
+ * \brief	Converts a 32 bits integer into red, blue, green, alpha colors
+ *		using the order of the channels of the surface.
+ *
+ * @param	surface		The surface where to store this pixel.
+ * @param	rgba		The integer to convert.
+ *
+ * @return	ei_color_t : a color with the four channel.
+ *
+ */
+ei_color_t ei_map_color (ei_surface_t surface, const uint32_t rgba);
+
 #endif //PROJETC_IG_UTILS_H
