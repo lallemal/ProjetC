@@ -440,31 +440,30 @@ ei_linked_point_t* rounded_frame(ei_rect_t* rect, int radius, int part)
                 point_inter_haut.y = rect->top_left.y + min(rect->size.height/2, rect->size.width/2);
                 point_inter_bas.x =rect->top_left.x+ min(rect->size.height/2, rect->size.width/2);
                 point_inter_bas.y = rect->top_left.y + rect->size.height - min(rect->size.height/2, rect->size.width/2);
-                ei_linked_point_t* inter_bas = malloc(sizeof(ei_linked_point_t));
-                ei_linked_point_t* inter_haut = malloc(sizeof(ei_linked_point_t));
+                ei_linked_point_t* inter_list;
 
                 if (part == 1){
                         fusion_2_list(rounded_top_right, rounded_top_left, 5);
                         fusion_2_list(rounded_top_left, rounded_bottom_left, 5);
-                        fusion_2_list(rounded_bottom_left, inter_bas, 3);
-                        add_point_list(&inter_bas, point_inter_haut.x, point_inter_haut.y);
+                        add_point_list(&inter_list, point_inter_bas.x, point_inter_bas.y);
+                        add_point_list(&inter_list, point_inter_haut.x, point_inter_haut.y);
+                        fusion_2_list(rounded_bottom_left, inter_list, 3);
                         ei_linked_point_t* rounded_up = rounded_top_right->next->next;
                         rounded_top_right->next->next = NULL;
                         free_linked_point_list(rounded_top_right);
                         free_linked_point_list(rounded_bottom_right);
-                        free_linked_point_list(inter_haut);
                         return rounded_up;
                 }
                 else{
                         fusion_2_list(rounded_bottom_left, rounded_bottom_right, 5);
                         fusion_2_list(rounded_bottom_right, rounded_top_right, 5);
-                        fusion_2_list(rounded_top_right, inter_haut, 3);
-                        add_point_list(&inter_haut, point_inter_bas.x, point_inter_bas.y);
+                        add_point_list(&inter_list, point_inter_haut.x, point_inter_haut.y);
+                        add_point_list(&inter_list, point_inter_bas.x, point_inter_bas.y);
+                        fusion_2_list(rounded_top_right, inter_list, 3);
                         ei_linked_point_t* rounded_down = rounded_bottom_left->next->next;
                         rounded_bottom_left->next->next = NULL;
                         free_linked_point_list(rounded_bottom_left);
                         free_linked_point_list(rounded_top_left);
-                        free_linked_point_list(inter_bas);
                         return rounded_down;
                 }
         }
@@ -516,4 +515,28 @@ void draw_button(ei_surface_t surface, ei_rect_t* rect_button, ei_color_t color,
 
         //Surface de picking
         //ei_draw_polygon(pick_surface, rounded_frame(rect_button, corner_radius, 0), pick_color, rect_button);
+}
+
+ei_rect_t* draw_button_relief_up_down(ei_rect_t* rect_tot, int corner_radius, int border_width, int decalage_x, int decalage_y, int decalage_width, int decalage_height)
+{
+        ei_rect_t *rect_int = malloc(sizeof(ei_rect_t));
+        int center_x = rect_tot->top_left.x + corner_radius;
+        int center_y = rect_tot->top_left.y + corner_radius;
+        rect_int->top_left.x = (int) (center_x + (corner_radius - border_width) *
+                                                 cos(-5 * M_PI / 4)) + decalage_x;
+        rect_int->top_left.y = (int) (center_y + signe_inverse(sin(-5 * M_PI / 4)) *
+                                                 (corner_radius - border_width) *
+                                                 sin(-5 * M_PI / 4)) + decalage_y;
+        rect_int->size.width =
+                (int) (rect_tot->top_left.x + rect_tot->size.width - corner_radius +
+                       (corner_radius - border_width) * cos(-7 * M_PI / 4)) -
+                (int) (center_x + (corner_radius - border_width) * cos(-5 * M_PI / 4)) - decalage_width;
+        rect_int->size.height =
+                (int) (rect_tot->top_left.y + rect_tot->size.height - corner_radius -
+                       (corner_radius - border_width) * sin(-3 * M_PI / 4)) -
+                (int) (center_y + signe_inverse(sin(-5 * M_PI / 4)) *
+                                  (corner_radius - border_width) * sin(-5 * M_PI / 4)) - decalage_height;
+
+        return rect_int;
+
 }

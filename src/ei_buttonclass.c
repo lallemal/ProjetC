@@ -115,24 +115,7 @@ void ei_button_drawfunc(struct	ei_widget_t*	widget,
                 if (button->relief == ei_relief_raised) {
 
                         //On créé le rectangle 'intérieur' qui contiendra l'image ou le texte lorsque le bouton est relevé
-                        ei_rect_t *rect_int = malloc(sizeof(ei_rect_t));
-                        int center_x = rect_tot->top_left.x + button->corner_radius;
-                        int center_y = rect_tot->top_left.y + button->corner_radius;
-                        rect_int->top_left.x = (int) (center_x + (button->corner_radius - button->border_width) *
-                                                                 cos(-5 * M_PI / 4));
-                        rect_int->top_left.y = (int) (center_y + signe_inverse(sin(-5 * M_PI / 4)) *
-                                                                 (button->corner_radius - button->border_width) *
-                                                                 sin(-5 * M_PI / 4));
-                        rect_int->size.width =
-                                (int) (rect_tot->top_left.x + rect_tot->size.width - button->corner_radius +
-                                       (button->corner_radius - button->border_width) * cos(-7 * M_PI / 4)) -
-                                (int) (center_x + (button->corner_radius - button->border_width) * cos(-5 * M_PI / 4));
-                        rect_int->size.height =
-                                (int) (rect_tot->top_left.y + rect_tot->size.height - button->corner_radius -
-                                       (button->corner_radius - button->border_width) * sin(-3 * M_PI / 4)) -
-                                (int) (center_y + signe_inverse(sin(-5 * M_PI / 4)) *
-                                                  (button->corner_radius - button->border_width) * sin(-5 * M_PI / 4));
-
+                        ei_rect_t* rect_int = draw_button_relief_up_down(rect_tot, button->corner_radius, button->border_width, 0, 0, (int)((10/100)*button->border_width), (int)((10/100)*button->border_width));
 
                         //mise en place du texte
                         if (button->text != NULL) {
@@ -145,6 +128,37 @@ void ei_button_drawfunc(struct	ei_widget_t*	widget,
                                            surface);
                         }
                         free(rect_int);
+                }
+                if (button->relief == ei_relief_sunken){
+                        ei_rect_t* rect_int = draw_button_relief_up_down(rect_tot, button->corner_radius, button->border_width, (int)((10/100)*button->border_width),(int)((10/100)*button->border_width),(int)((10/100)*button->border_width),(int)((10/100)*button->border_width));
+
+                        //mise en place du texte
+                        if (button->text != NULL) {
+                                draw_text(button->text, button->text_font, rect_int, button->text_anchor, surface,
+                                          button->text_color, clipper);
+                        }
+                        //mise en place de l'image
+                        if (button->img != NULL) {
+                                draw_image(button->img, rect_int, button->img_anchor, button->img_rect, clipper,
+                                           surface);
+                        }
+                        free(rect_int);
+                }
+                if (button->relief ==  ei_relief_none){
+                        ei_rect_t* rect_int = draw_button_relief_up_down(rect_tot, button->corner_radius, button->border_width, 0, 0, 0, 0);
+
+                        //mise en place du texte
+                        if (button->text != NULL) {
+                                draw_text(button->text, button->text_font, rect_int, button->text_anchor, surface,
+                                          button->text_color, clipper);
+                        }
+                        //mise en place de l'image
+                        if (button->img != NULL) {
+                                draw_image(button->img, rect_int, button->img_anchor, button->img_rect, clipper,
+                                           surface);
+                        }
+                        free(rect_int);
+
                 }
         }
 

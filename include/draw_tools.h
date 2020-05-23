@@ -161,4 +161,7 @@ ei_linked_point_t* rounded_frame(ei_rect_t* rect, int radius, int part);
 void draw_button(ei_surface_t surface, ei_rect_t* rect_button, ei_color_t color, int border_width, int corner_radius, ei_relief_t relief, ei_rect_t* clipper);
 
 
+ei_rect_t* draw_button_relief_up_down(ei_rect_t* rect_tot, int corner_radius, int border_width, int decalage_x, int decalage_y, int decalage_width, int decalage_height);
+
+
 #endif /* ifndef DRAW_H */
