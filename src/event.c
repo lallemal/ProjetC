@@ -152,7 +152,7 @@ void			call(ei_event_t event, ei_linked_event_t list_todo, ei_surface_t pick_sur
 	while (tag_call != NULL) {
 		// if the tag is all : do the callback
 		if (strcmp(tag_call->tag, "all") == 0 ) {
-			not_continue = tag_call->callback(NULL, &event, tag_call->user_param);
+			not_continue = call_widgets(ei_app_root_widget(), tag_call->tag, &event, tag_call->callback, tag_call->user_param);
 		}
 		else {
 			int is_buttonup = event.type == ei_ev_mouse_buttonup;
@@ -167,9 +167,9 @@ void			call(ei_event_t event, ei_linked_event_t list_todo, ei_surface_t pick_sur
 
 				}
 			}
-			// if it can't be localized, call the function.
+			// if it can't be localized, call all the callback function.
 			else {
-				not_continue = tag_call->callback(NULL, &event, tag_call->user_param);
+				not_continue = call_widgets(ei_app_root_widget(), tag_call->tag, &event, tag_call->callback, tag_call->user_param);
 			}
 		}
 		// if the event is consumed
@@ -195,7 +195,7 @@ void			call(ei_event_t event, ei_linked_event_t list_todo, ei_surface_t pick_sur
 			}
 		}
 		else {
-			not_continue = widget_call->callback(NULL, &event, widget_call->user_param);
+			not_continue = widget_call->callback(widget_call->widget, &event, widget_call->user_param);
 		}
 		// if the event is consumed
 		if (not_continue) {

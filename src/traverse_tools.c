@@ -81,3 +81,22 @@ ei_widget_t* find_with_color(ei_widget_t* begin, uint32_t pick_color, ei_surface
 	}
 	return NULL;
 }
+
+
+ei_bool_t call_widgets(ei_widget_t* begin, ei_tag_t tag, ei_event_t* event, ei_callback_t callback, void* user_param)
+{
+	ei_widget_t* child = begin->children_head;
+	ei_bool_t not_continue;
+	if (strcmp(tag, "all") == 0 || strcmp(tag, begin->wclass->name) == 0) {
+		not_continue = callback(begin, event, user_param);
+	}
+	if (!not_continue) {
+		for (child; child!= NULL; next_sibling_widget(&child)) {
+			not_continue = call_widgets(child, tag, event, callback, user_param);
+			if (not_continue) {
+				break;
+			}
+		}
+	}
+	return not_continue;
+}
