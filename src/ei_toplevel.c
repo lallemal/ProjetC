@@ -175,8 +175,7 @@ void			ei_toplevel_configure		          (ei_widget_t*		widget,
         is_defined(resizable)           ? to_configure->resizable       = *resizable            : do_nothing();
         is_defined(border_width)        ? to_configure->border_width    = *border_width         : do_nothing();
 
-        //calculating the needed space for title
-        hw_text_compute_size(to_configure->title, ei_default_font, &to_configure->title_width, &to_configure->title_height);
+
 
         init_the_sub_tools(to_configure);
 
@@ -192,6 +191,9 @@ void			ei_toplevel_configure		          (ei_widget_t*		widget,
         if (requested_size->width < to_configure->min_size->width) {
                 to_configure->requested_size.width = to_configure->min_size->width;
         }
+
+        //calculating the needed space for title
+        hw_text_compute_size(to_configure->title, ei_default_font, &to_configure->title_width, &to_configure->title_height);
 
         if (requested_size->height < to_configure->min_size->height) {
                 to_configure->requested_size.height = to_configure->min_size->height;
