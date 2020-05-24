@@ -37,13 +37,6 @@ void                    ei_toplevel_setdefaultsfunc                     (ei_widg
         to_configure->min_size          = NULL;
         to_configure->title_width       = 0;
         to_configure->title_height      = 0;
-
-
-
-//        hw_text_compute_size(to_configure->title, ei_default_font, &taille_texte.width, &taille_texte.width);
-//        to_configure->requested_size.height += taille_texte.height;
-
-
 }
 
 
@@ -62,17 +55,18 @@ void                    ei_toplevel_drawfunc                            (struct	
         ei_rect_t   rect_tot;
 
         rect_tot = widget->screen_location;
+        //setting the rect height to the header height
         rect_tot.size.height = to_draw->title_height + 2 * margin_top;
 
-
+        //rounded top corner drawing
         ei_linked_point_t* rounded0 = rounded_top_level(&rect_tot, 20, 0);
         ei_draw_polygon(surface, rounded0, to_draw->color, clipper);
         free_linked_point_list(rounded0);
 
-
+        //dark title
         ei_color_t dark = {0, 0, 0};
         ei_rect_t text_placer = rect_tot;
-
+        //position of text
         text_placer.top_left.x = to_draw->close_button->screen_location.top_left.x + to_draw->close_button->screen_location.size.width * 2;
         text_placer.top_left.y += margin_top;
         text_placer.size.width = to_draw->title_width;
@@ -109,11 +103,11 @@ void                    configure_sub_part                           (ei_topleve
         //setting the ancher of resize tool
         ei_anchor_t anchor_rt = ei_anc_southeast;
 
-        //setting a darker color for resizetool
-        ei_color_t sub_color = {25, 25, 25};
-
         //setting red for the closing button
         ei_color_t cb_color = {255, 0,0, 255};
+
+        //darker color for the resize tool
+        ei_color_t rt_color = dark_color(to_configure->color);
 
         // setting the y axis of subframe in order to be under the header
         int y_subframe = margin_top * 2 + to_configure->title_height;
@@ -122,7 +116,7 @@ void                    configure_sub_part                           (ei_topleve
 
         //settings of the resize tools
         if (to_configure->resizable != ei_axis_none){
-                ei_frame_configure(to_configure->resize_tool, &default_rt_size, &sub_color, 0,
+                ei_frame_configure(to_configure->resize_tool, &default_rt_size, &rt_color, 0,
                                    NULL, NULL, NULL, NULL, NULL,
                                    NULL, NULL,  NULL);
                 ei_place(to_configure->resize_tool, &anchor_rt, NULL, NULL, NULL, NULL, &rel_x_rt, &rel_y_rt, NULL, NULL);
@@ -144,16 +138,12 @@ void                    configure_sub_part                           (ei_topleve
 
                 int             middle_text_pos         = to_configure->title_height/2 + margin_top;
                 int             middle_button_pos       = cb_size.height + margin_left;
+                int             radius                  = 6;
+                int             border_test             = 0;
                 ei_anchor_t     bc_anchor               = ei_anc_center;
-                int border_test = 0;
-                int     radius = 6;
-                // enable us to have a small button, never bigger than text height
-//                ei_frame_configure(to_configure->close_button, &cb_size, &cb_color, NULL,
-//                                   NULL, NULL, NULL, NULL, NULL,
-//                                   NULL, NULL,  NULL);
+
                 ei_button_configure(to_configure->close_button, &cb_size, &cb_color, &border_test, &radius, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
                 ei_place(to_configure->close_button, &bc_anchor, &middle_button_pos, &middle_text_pos, NULL, NULL, NULL, NULL, NULL, NULL);
-//                ei_place(to_configure->close_button, NULL, &margin_left, &margin_top, NULL, NULL, NULL, NULL, NULL, NULL);
 
         }
 

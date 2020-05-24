@@ -63,7 +63,7 @@ int main(int argc, char** argv)
         int		button_y		= 0;
 	ei_anchor_t     anchor                  = ei_anc_northwest;
 	ei_color_t	frame_color		= {250, 0, 0, 0xff};
-	ei_color_t	frame_color_2		= {200, 200, 200, 125};
+	ei_color_t	frame_color_2		= {100, 100, 100, 255};
 	ei_relief_t	frame_relief		= ei_relief_raised;
 	int		frame_border_width	= 6;
         ei_bool_t       closable = EI_TRUE;
