@@ -113,7 +113,7 @@ void                    configure_sub_part                           (ei_topleve
         ei_color_t sub_color = {25, 25, 25};
 
         //setting red for the closing button
-        ei_color_t cb_color = {250, 25, 25};
+        ei_color_t cb_color = {255, 0,0, 255};
 
         // setting the y axis of subframe in order to be under the header
         int y_subframe = margin_top * 2 + to_configure->title_height;
@@ -137,22 +137,24 @@ void                    configure_sub_part                           (ei_topleve
         ei_place(to_configure->sub_frame, NULL, NULL, &y_subframe, NULL, NULL, NULL, NULL, NULL, NULL);
 
         //settings of the close_button
-        if (to_configure->closable){
+        if (to_configure->closable == EI_TRUE){
 
-                cb_size.height = to_configure->title_height/2;
-                cb_size.width = to_configure->title_height/2;
+                cb_size.height = to_configure->title_height/1.5;
+                cb_size.width = to_configure->title_height/1.5;
 
                 int             middle_text_pos         = to_configure->title_height/2 + margin_top;
                 int             middle_button_pos       = cb_size.height + margin_left;
                 ei_anchor_t     bc_anchor               = ei_anc_center;
-
+                int border_test = 0;
+                int     radius = 6;
                 // enable us to have a small button, never bigger than text height
-                ei_frame_configure(to_configure->close_button, &cb_size, &cb_color, NULL,
-                                   NULL, NULL, NULL, NULL, NULL,
-                                   NULL, NULL,  NULL);
+//                ei_frame_configure(to_configure->close_button, &cb_size, &cb_color, NULL,
+//                                   NULL, NULL, NULL, NULL, NULL,
+//                                   NULL, NULL,  NULL);
+                ei_button_configure(to_configure->close_button, &cb_size, &cb_color, &border_test, &radius, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
                 ei_place(to_configure->close_button, &bc_anchor, &middle_button_pos, &middle_text_pos, NULL, NULL, NULL, NULL, NULL, NULL);
-                //                ei_button_configure(to_configure->close_button, &cb_size, &cb_color, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 //                ei_place(to_configure->close_button, NULL, &margin_left, &margin_top, NULL, NULL, NULL, NULL, NULL, NULL);
+
         }
 
 }
@@ -163,7 +165,7 @@ void                    init_the_sub_tools                       (ei_toplevel *t
                 toplevel->resize_tool = ei_widget_create("frame", toplevel->sub_frame, NULL, NULL);
         //malloc of the closing button
         if (toplevel->closable == EI_TRUE && toplevel->close_button == NULL)
-                toplevel->close_button = ei_widget_create("frame", toplevel, NULL, NULL);
+                toplevel->close_button = ei_widget_create("button", &toplevel->widget, NULL, NULL);
 }
 
 void			ei_toplevel_configure		          (ei_widget_t*		widget,
