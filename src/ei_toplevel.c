@@ -44,6 +44,41 @@ void                    ei_toplevel_geomnotifyfunc                      (struct 
         ei_app_invalidate_rect(&(widget->screen_location));
 }
 
+void                    compute_text_size                               (ei_toplevel *to_draw,
+                                                                        ei_rect_t *text_placer,
+                                                                        ei_color_t *color,
+                                                                        ei_surface_t *surface,
+                                                                        ei_rect_t *clipper){
+        char *etc = " ... ";
+        int width_of_etc;
+        int height_of_etc;
+        hw_text_compute_size(etc, ei_default_font, &width_of_etc, &height_of_etc);
+        text_placer->top_left.x = to_draw->close_button->screen_location.top_left.x + to_draw->close_button->screen_location.size.width * 2;
+        text_placer->top_left.y += margin_top;
+
+        int left_space = to_draw->widget.screen_location.size.width
+                          - (to_draw->close_button->screen_location.top_left.x + to_draw->close_button->screen_location.size.width * 2);
+        text_placer->size.width = left_space;
+        if (to_draw->title_width > left_space){
+                if (width_of_etc < left_space){
+
+                        ei_rect_t etc_placer;
+
+                        text_placer->size.width         -= width_of_etc;
+                        etc_placer.top_left             = text_placer->top_left;
+                        etc_placer.top_left.x           += text_placer->size.width;
+                        etc_placer.size.width           = width_of_etc;
+                        etc_placer.size.height          = height_of_etc;
+
+
+                        draw_text(etc, ei_default_font, &etc_placer, ei_anc_northwest, surface, *color, clipper);
+                }
+
+        }
+
+        text_placer->size.height = to_draw->title_height;
+
+}
 
 void                    ei_toplevel_drawfunc                            (struct	ei_widget_t*	widget,
                                                                                 ei_surface_t	surface,
@@ -66,11 +101,9 @@ void                    ei_toplevel_drawfunc                            (struct	
         //dark title
         ei_color_t dark = {0, 0, 0};
         ei_rect_t text_placer = rect_tot;
+
+        compute_text_size(to_draw, &text_placer, &dark, surface, clipper);
         //position of text
-        text_placer.top_left.x = to_draw->close_button->screen_location.top_left.x + to_draw->close_button->screen_location.size.width * 2;
-        text_placer.top_left.y += margin_top;
-        text_placer.size.width = to_draw->title_width;
-        text_placer.size.height = to_draw->title_height;
 
 
         draw_text(to_draw->title, ei_default_font, &text_placer, ei_anc_northwest, surface, dark, clipper);
