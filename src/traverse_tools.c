@@ -75,8 +75,9 @@ ei_widget_t* find_with_color(ei_widget_t* begin, uint32_t pick_color, ei_surface
 		return begin;
 	}
 	for (child; child != NULL; next_sibling_widget(&child)) {
-		if (find_with_color(child, pick_color, pick_surface) != NULL) {
-			return child;
+		ei_widget_t* widget_color = find_with_color(child, pick_color, pick_surface);
+		if ( widget_color != NULL) {
+			return widget_color;
 		}
 	}
 	return NULL;

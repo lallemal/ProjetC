@@ -299,12 +299,13 @@ ei_bool_t button_on_release(ei_widget_t* widget, ei_event_t* event, void* user_p
 	if (strcmp(widget->wclass->name, "button") == 0) {
 		ei_relief_t newRelief2 = ei_relief_raised;
 		ei_button_t* button = (ei_button_t *)widget;
-		ei_callback_t callback_button = *(button->callback);
-		callback_button(widget, event, user_param);
+		if (button->callback != NULL) {
+			ei_callback_t callback_button = *(button->callback);
+			callback_button(widget, event, user_param);
+		}
 		ei_button_configure(widget, NULL, NULL, NULL, NULL, &newRelief2, NULL, NULL,
 				NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 		ei_unbind(ei_ev_mouse_buttonup, widget, NULL, button_on_release, NULL);
-		ei_widget_destroy(widget);
 	}
 }
 
