@@ -56,8 +56,8 @@ int main(int argc, char** argv)
 	ei_anchor_t	text_anchor		= ei_anc_northwest;
 
 	ei_color_t      text_color              = {0, 0, 0, 0xff};
-	int		frame_x			= 15;
-	int		frame_y			= 15;
+	int		frame_x			= 400;
+	int		frame_y			= 150;
 
         int		button_x		= 50;
         int		button_y		= 50;

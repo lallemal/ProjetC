@@ -14,7 +14,7 @@
 #include "draw_tools.h"
 #include "ei_event.h"
 #include "callfunction.h"
-
+#include "ei_placer.h"
 ei_size_t       min_size_default        = {160, 120};
 ei_size_t       default_rt_size         = {16, 16};
 ei_size_t       default_cb_size         = {16, 16};
@@ -60,7 +60,7 @@ void                    compute_text_size                               (ei_topl
                                                                         ei_color_t *color,
                                                                         ei_surface_t *surface,
                                                                         ei_rect_t *clipper){
-        char *etc = " ... ";
+        char *etc = " ...  ";
         int width_of_etc;
         int height_of_etc;
         hw_text_compute_size(etc, ei_default_font, &width_of_etc, &height_of_etc);
@@ -68,7 +68,8 @@ void                    compute_text_size                               (ei_topl
         text_placer->top_left.y += margin_top;
 
         int left_space = to_draw->widget.screen_location.size.width
-                          - (to_draw->close_button->screen_location.top_left.x + to_draw->close_button->screen_location.size.width * 2);
+                                + to_draw->widget.screen_location.top_left.x
+                                - (to_draw->close_button->screen_location.top_left.x + to_draw->close_button->screen_location.size.width * 2);
         text_placer->size.width = left_space;
         if (to_draw->title_width > left_space){
                 if (width_of_etc < left_space){
@@ -105,15 +106,15 @@ void                    ei_toplevel_drawfunc                            (struct	
 
         ei_toplevel *to_draw            = (ei_toplevel *)widget;
         ei_rect_t   rect_tot;
-
+        ei_rect_t   rect_dessin;
         rect_tot = widget->screen_location;
         //setting the rect height to the header height
         rect_tot.size.height = to_draw->title_height + 2 * margin_top;
-        rect_tot = inter_rect(clipper, &rect_tot);
+        rect_dessin = inter_rect(clipper, &rect_tot);
         //rounded top corner drawing
         ei_linked_point_t* rounded0 = rounded_top_level(&rect_tot, 20, 0);
-        ei_draw_polygon(surface, rounded0, to_draw->color, &rect_tot);
-	ei_draw_polygon(pick_surface, rounded0, *(widget->pick_color), &rect_tot);
+        ei_draw_polygon(surface, rounded0, to_draw->color, &rect_dessin);
+	ei_draw_polygon(pick_surface, rounded0, *(widget->pick_color), &rect_dessin);
         free_linked_point_list(rounded0);
 
         //dark title
@@ -316,13 +317,22 @@ ei_bool_t move_top_down(ei_widget_t* widget, ei_event_t* event, void* user_param
 
 ei_bool_t move_top_onmove(ei_widget_t* widget, ei_event_t* event, void* user_param)
 {
-	ei_point_t* oldPoint = (ei_point_t *)user_param;
-	int x_mouse = event->param.mouse.where.x;
-	int y_mouse = event->param.mouse.where.y;
-	int ecart_x = x_mouse - oldPoint->x;
-	int ecart_y = y_mouse - oldPoint->y;
-	ei_place(widget, NULL, &ecart_x, &ecart_y, NULL, NULL, NULL, NULL, NULL, NULL);
-	return EI_TRUE;
+        if (widget->wclass == ei_widgetclass_from_name("toplevel")){
+                ei_point_t* oldPoint = (ei_point_t *)user_param;
+                ei_placer_t *w_placer = (ei_placer_t *)widget->geom_params;
+                int x_mouse = event->param.mouse.where.x;
+                int y_mouse = event->param.mouse.where.y;
+                int ecart_x = x_mouse - oldPoint->x;
+                printf("%d\n", w_placer->x);
+
+                ecart_x += w_placer->x;
+                int ecart_y = y_mouse - oldPoint->y + w_placer->y;
+                ei_place(widget, NULL, &ecart_x, &ecart_y, NULL, NULL, NULL, NULL, NULL, NULL);
+                oldPoint->x = x_mouse;
+                oldPoint->y = y_mouse;
+                return EI_TRUE;
+        }
+
 }
 
 ei_bool_t move_top_up(ei_widget_t* widget, ei_event_t* event, void* user_param)

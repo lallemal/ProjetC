@@ -75,7 +75,7 @@ void			ei_place			(ei_widget_t*		widget,
 
         ei_placer_t *to_configure;
         if (is_defined(widget->geom_params)){
-                if (!strcmp(widget->geom_params->manager->name, "placer")){
+                if (widget->geom_params->manager == ei_geometrymanager_from_name("placer")){
                         to_configure = (ei_placer_t *)(widget->geom_params);
                 } else {
                         ei_geometrymanager_unmap(widget);

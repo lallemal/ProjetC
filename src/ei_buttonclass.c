@@ -133,10 +133,7 @@ void ei_button_drawfunc(struct	ei_widget_t*	widget,
                         if (button->text != NULL) {
                                 draw_text(button->text, button->text_font, rect_int, button->text_anchor, surface,
                                           button->text_color, clipper);
-                                printf("Clipper location x : %d\n", clipper->top_left.x);
-                                printf("Clipper location y : %d\n", clipper->top_left.y);
-                                printf("Clipper width  : %d\n", clipper->size.width);
-                                printf("Clipper height  : %d\n", clipper->size.height);
+                                
                         }
                         //mise en place de l'image
                         if (button->img != NULL) {

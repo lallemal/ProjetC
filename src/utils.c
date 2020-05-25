@@ -11,12 +11,6 @@
 
 #define min(a,b) (a<=b?a:b)
 
-
-int                     is_name_equal(ei_geometrymanager_name_t actual_name, ei_geometrymanager_name_t name){
-        return strcmp(actual_name, name);
-}
-
-
 void                    do_nothing(){
 }
 
