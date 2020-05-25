@@ -61,9 +61,12 @@ void ei_button_releasefunc(ei_widget_t*	widget)
 	//free(&(button->text_anchor));
 	//free(&(button->text_color));
 	//free(&(button->img));
-	//if (button->text != NULL) {
-	//	free(button->text);
-	//}
+	if (button->img_rect != NULL) {
+		free(button->img_rect);
+	}
+	if (button->text != NULL) {
+		free(button->text);
+	}
 	//if (button->user_param != NULL) {
 	//	free(button->user_param);
 	//}
@@ -124,7 +127,7 @@ void ei_button_drawfunc(struct	ei_widget_t*	widget,
                 if (button->relief == ei_relief_raised) {
 
                         //On créé le rectangle 'intérieur' qui contiendra l'image ou le texte lorsque le bouton est relevé
-                        ei_rect_t* rect_int = draw_button_relief_up_down(rect_tot, button->corner_radius, button->border_width, 0, 0, (int)((10/100)*button->border_width), (int)((10/100)*button->border_width));
+                        ei_rect_t* rect_int = draw_button_relief_up_down(rect_tot, button->corner_radius, button->border_width, 0, 0, round(0.1*button->border_width), round(0.1*button->border_width));
 
                         //mise en place du texte
                         if (button->text != NULL) {
@@ -143,7 +146,7 @@ void ei_button_drawfunc(struct	ei_widget_t*	widget,
                         free(rect_int);
                 }
                 if (button->relief == ei_relief_sunken){
-                        ei_rect_t* rect_int = draw_button_relief_up_down(rect_tot, button->corner_radius, button->border_width, (int)((10/100)*button->border_width),(int)((10/100)*button->border_width),(int)((10/100)*button->border_width),(int)((10/100)*button->border_width));
+                        ei_rect_t* rect_int = draw_button_relief_up_down(rect_tot, button->corner_radius, button->border_width, round(0.1*button->border_width),round(0.1*button->border_width),round(0.1*button->border_width),round(0.1*button->border_width));
 
                         //mise en place du texte
                         if (button->text != NULL) {
@@ -230,9 +233,6 @@ void ei_button_configure	(ei_widget_t*		widget,
 	if (relief != NULL) {
 		button->relief = *relief;
 	}
-	if (text != NULL) {
-		button->text = *text;
-	}
 	if (text_font != NULL) {
 		button->text_font = *text_font;
 	}
@@ -243,7 +243,10 @@ void ei_button_configure	(ei_widget_t*		widget,
 		button->text_anchor = *text_anchor;
 	}
 	if (img_rect != NULL) {
-		button->img_rect = *img_rect;
+		if (button->img_rect) {
+			free(button->img_rect);
+		}
+		button->img_rect =copy_rect(*img_rect);
 	}
 	if (img_anchor != NULL) {
 		button->img_anchor = *img_anchor;
@@ -275,7 +278,11 @@ void ei_button_configure	(ei_widget_t*		widget,
 		widget->requested_size.width = max(width, widget->requested_size.width);
 	}
 	if (text != NULL) {
-		button->text = *text;
+		if (button->text != NULL) {
+			free(button->text);
+		}
+		button->text = malloc((strlen(*text) + 1) * sizeof(char));
+		button->text = strcpy(button->text, *text);
 		int height_text;
 		int width_text;
 		hw_text_compute_size(button->text, button->text_font, &width_text, &height_text);
@@ -303,10 +310,12 @@ void ei_button_configure	(ei_widget_t*		widget,
 ei_bool_t button_on_release(ei_widget_t* widget, ei_event_t* event, void* user_param)
 {
 	if (strcmp(widget->wclass->name, "button") == 0) {
-		ei_relief_t newRelief2 = ei_relief_raised;
 		ei_button_t* button = (ei_button_t *)widget;
-		ei_button_configure(widget, NULL, NULL, NULL, NULL, &newRelief2, NULL, NULL,
-				NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+		if (button->relief != ei_relief_sunken) {
+			ei_relief_t newRelief2 = ei_relief_raised;
+			ei_button_configure(widget, NULL, NULL, NULL, NULL, &newRelief2, NULL, NULL,
+					NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+		}
 		ei_unbind(ei_ev_mouse_buttonup, widget, NULL, button_on_release, NULL);
 		if (button->callback != NULL) {
 			ei_callback_t callback_button = button->callback;
@@ -319,9 +328,12 @@ ei_bool_t button_on_release(ei_widget_t* widget, ei_event_t* event, void* user_p
 ei_bool_t button_on_press(ei_widget_t* widget, ei_event_t* event, void* user_param)
 {
 	if (strcmp(widget->wclass->name, "button") == 0) {
-		ei_relief_t newRelief = ei_relief_sunken;
-		ei_button_configure(widget, NULL, NULL, NULL, NULL, &newRelief, NULL, NULL,
-				NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+		ei_button_t* button = (ei_button_t *) widget;
+		if (button->relief != ei_relief_raised) {
+			ei_relief_t newRelief = ei_relief_sunken;
+			ei_button_configure(widget, NULL, NULL, NULL, NULL, &newRelief, NULL, NULL,
+					NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+		}
 		ei_bind(ei_ev_mouse_buttonup, widget, NULL, button_on_release, NULL);
 	}
 }
