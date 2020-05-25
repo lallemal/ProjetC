@@ -139,7 +139,6 @@ void ei_button_drawfunc(struct	ei_widget_t*	widget,
                         free(rect_int);
                 }
                 if (button->relief == ei_relief_sunken){
-                        int a = (int)((0.1)*button->border_width);
                         ei_rect_t* rect_int = draw_button_relief_up_down(rect_tot, button->corner_radius, button->border_width, round((0.1)*button->border_width),round((0.1)*button->border_width),round((0.1)*button->border_width),round((0.1)*button->border_width));
 
                         //mise en place du texte
