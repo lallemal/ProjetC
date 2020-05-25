@@ -100,12 +100,14 @@ void                    ei_toplevel_drawfunc                            (struct	
         ei_toplevel *toplevel = (ei_toplevel *)widget;
 	if (widget->pick_color == NULL) {
 		ei_color_t* pick_color = malloc(sizeof(ei_color_t));
-		ei_color_t* pick_color_rt = malloc(sizeof(ei_color_t));
 		*pick_color = ei_map_color(pick_surface, widget->pick_id);
-		*pick_color_rt = ei_map_color(pick_surface, widget->pick_id);
 		widget->pick_color = pick_color;
-		toplevel->resize_tool->pick_color = pick_color_rt;
-//		toplevel->close_button->pick_color = pick_color;
+		if (toplevel->resizable != ei_axis_none){
+                        ei_color_t* pick_color_rt = malloc(sizeof(ei_color_t));
+                        *pick_color_rt = ei_map_color(pick_surface, widget->pick_id);
+                        toplevel->resize_tool->pick_color = pick_color_rt;
+		}
+
 
 	}
         ei_toplevel *to_draw            = (ei_toplevel *)widget;
