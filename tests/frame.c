@@ -52,15 +52,15 @@ int main(int argc, char** argv)
 	ei_widget_t*	button;
 	ei_widget_t*	toplevel;
 	ei_size_t	frame_size		= {300,200};
-	char*           text_frame              = "Salut";
+	char*           text_frame              = "looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooog";
 	ei_anchor_t	text_anchor		= ei_anc_northwest;
 
 	ei_color_t      text_color              = {0, 0, 0, 0xff};
 	int		frame_x			= 15;
 	int		frame_y			= 15;
 
-        int		button_x		= 0;
-        int		button_y		= 0;
+        int		button_x		= 50;
+        int		button_y		= 50;
 	ei_anchor_t     anchor                  = ei_anc_northwest;
 	ei_color_t	frame_color		= {250, 0, 0, 0xff};
 	ei_color_t	frame_color_2		= {100, 100, 100, 255};
@@ -82,8 +82,7 @@ int main(int argc, char** argv)
         ei_toplevel_configure(toplevel, &top_level_size, &frame_color_2, NULL, &text_frame, &closable, &axis, NULL);
         ei_place(toplevel, &anchor, &frame_x, &frame_y, NULL, NULL, NULL, NULL, NULL, NULL );
 
-//        ei_button_configure(button, &top_level_size, &frame_color, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
-//        toplevel->content_rect = &toplevel->screen_location;
+//        ei_button_configure(button, &top_level_size, &frame_color, NULL, NULL, NULL, &text_frame, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 //        ei_place(button, &anchor, &button_x, &button_y, NULL, NULL, NULL, NULL, NULL, NULL );
 
 	ei_app_run();

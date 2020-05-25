@@ -21,7 +21,7 @@ int  are_old_and_new_diff (ei_rect_t r1, ei_rect_t r2){
 int  special_case(struct ei_widget_t*	widget){
         if (widget->parent != NULL){
                 if (widget->parent->wclass == ei_widgetclass_from_name("toplevel")){
-                        ei_toplevel * parent = widget->parent;
+                        ei_toplevel * parent = (ei_toplevel *)widget->parent;
                         if (widget->parent->content_rect == &widget->screen_location){
                                 return EI_TRUE;
                         }

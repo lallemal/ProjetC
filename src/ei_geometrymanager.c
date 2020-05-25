@@ -25,7 +25,8 @@ void	                ei_geometrymanager_register	(ei_geometrymanager_t* geometry
 ei_geometrymanager_t*	ei_geometrymanager_from_name	(ei_geometrymanager_name_t name){
         ei_geometrymanager_t *choice = actual;
         while (choice != NULL){
-                if(is_name_equal(choice->name, name)){
+                int b = strcmp(name, choice->name);
+                if(!strcmp(name, choice->name)){
                         return choice;
                 }
                 choice = choice->next;
@@ -51,7 +52,7 @@ void			ei_geometrymanager_unmap	(ei_widget_t*		widget){
 }
 
 void 			ei_register_placer_manager 	(void){
-        ei_geometrymanager_t *new_geomanager = malloc(sizeof(ei_geometrymanager_t));
+        ei_geometrymanager_t *new_geomanager = safe_malloc(sizeof(ei_geometrymanager_t));
         //        setting parameters
         strcpy(new_geomanager->name, "placer");
         new_geomanager->runfunc = &ei_run_func;
