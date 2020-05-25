@@ -255,7 +255,12 @@ void ei_button_configure	(ei_widget_t*		widget,
 		button->user_param = *user_param;
 	}
 	if (img != NULL) {
-		button->img = *img;
+		if (button->img != NULL) {
+			hw_surface_free(button->img);
+		}
+		button->img = hw_surface_create(ei_app_root_surface(), hw_surface_get_size(*img), EI_FALSE);
+		ei_copy_surface(button->img, NULL, *img, NULL, EI_FALSE);
+		
 		int height = 0;
 		int width = 0;
 		if (button->img_rect != NULL) {
@@ -278,8 +283,14 @@ void ei_button_configure	(ei_widget_t*		widget,
 		if (button->text != NULL) {
 			free(button->text);
 		}
-		button->text = malloc((strlen(*text) + 1) * sizeof(char));
-		button->text = strcpy(button->text, *text);
+		if (*text != NULL) {
+			button->text = malloc((strlen(*text) + 1) * sizeof(char));
+			button->text = strcpy(button->text, *text);
+		}
+		else {
+			button->text = NULL;
+		}
+
 		int height_text;
 		int width_text;
 		hw_text_compute_size(button->text, button->text_font, &width_text, &height_text);

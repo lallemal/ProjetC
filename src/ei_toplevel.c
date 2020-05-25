@@ -97,11 +97,16 @@ void                    ei_toplevel_drawfunc                            (struct	
                                                                                 ei_surface_t	pick_surface,
                                                                                 ei_rect_t*	clipper){
         hw_surface_lock(surface);
-
+        ei_toplevel *toplevel = (ei_toplevel *)widget;
 	if (widget->pick_color == NULL) {
 		ei_color_t* pick_color = malloc(sizeof(ei_color_t));
+		ei_color_t* pick_color_rt = malloc(sizeof(ei_color_t));
 		*pick_color = ei_map_color(pick_surface, widget->pick_id);
+		*pick_color_rt = ei_map_color(pick_surface, widget->pick_id);
 		widget->pick_color = pick_color;
+		toplevel->resize_tool->pick_color = pick_color_rt;
+//		toplevel->close_button->pick_color = pick_color;
+
 	}
         ei_toplevel *to_draw            = (ei_toplevel *)widget;
         ei_rect_t   rect_tot;
@@ -115,10 +120,6 @@ void                    ei_toplevel_drawfunc                            (struct	
                 allow_rec.size.width = (widget->parent->screen_location.size.width + widget->parent->screen_location.top_left.x) - allow_rec.top_left.x;
         }
 
-        printf("Clipper x : %d \n", allow_rec.top_left.x);
-        printf("Clipper y : %d \n", allow_rec.top_left.y);
-        printf("Clipper width : %d \n", allow_rec.size.width);
-        printf("Clipper height : %d \n", allow_rec.size.height);
         //rounded top corner drawing
         ei_linked_point_t* rounded0 = rounded_top_level(&rect_tot, 20, 0);
         ei_draw_polygon(surface, rounded0, to_draw->color, &allow_rec);
@@ -302,11 +303,12 @@ ei_bool_t dispatch_event(ei_widget_t* widget, ei_event_t* event, void* user_para
 	int h_widget = widget->screen_location.size.height;
 	int w_widget = widget->screen_location.size.width;
 	if (y_mouse > y_widget && y_mouse < y_widget + 25) {
-		return move_top_down(widget, event, user_param);
+                return move_top_down(widget, event, user_param);
+        }
+        if (x_mouse > x_widget + w_widget - 16 && y_mouse > y_widget + h_widget - 16) {
+                printf("Hello");
+//		return resize_top_down(widget, event, user_param);
 	}
-	//if (x_mouse > x_widget + w_widget - 16 && y_mouse > y_widget + h_widget - 16) {
-	//	return resize_top_down(widget, event, user_param);
-	//}
 	return EI_FALSE;
 }
 

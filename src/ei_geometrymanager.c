@@ -23,7 +23,7 @@ void	                ei_geometrymanager_register	(ei_geometrymanager_t* geometry
 
 
 ei_geometrymanager_t*	ei_geometrymanager_from_name	(ei_geometrymanager_name_t name){
-        ei_geometrymanager_t *choice = actual;
+        ei_geometrymanager_t *choice = &sentinel_geo;
         while (choice != NULL){
                 if(!strcmp(name, choice->name)){
                         return choice;
