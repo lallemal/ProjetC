@@ -308,7 +308,7 @@ ei_bool_t button_on_release(ei_widget_t* widget, ei_event_t* event, void* user_p
 {
 	if (strcmp(widget->wclass->name, "button") == 0) {
 		ei_button_t* button = (ei_button_t *)widget;
-		if (button->relief != ei_relief_sunken) {
+		if (button->relief == ei_relief_sunken) {
 			ei_relief_t newRelief2 = ei_relief_raised;
 			ei_button_configure(widget, NULL, NULL, NULL, NULL, &newRelief2, NULL, NULL,
 					NULL, NULL, NULL, NULL, NULL, NULL, NULL);
@@ -326,7 +326,7 @@ ei_bool_t button_on_press(ei_widget_t* widget, ei_event_t* event, void* user_par
 {
 	if (strcmp(widget->wclass->name, "button") == 0) {
 		ei_button_t* button = (ei_button_t *) widget;
-		if (button->relief != ei_relief_raised) {
+		if (button->relief == ei_relief_raised) {
 			ei_relief_t newRelief = ei_relief_sunken;
 			ei_button_configure(widget, NULL, NULL, NULL, NULL, &newRelief, NULL, NULL,
 					NULL, NULL, NULL, NULL, NULL, NULL, NULL);
