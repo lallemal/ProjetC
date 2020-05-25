@@ -99,7 +99,7 @@ void ei_app_invalidate_rect(ei_rect_t* rect)
 				list_rect_tail->next = newElement;
 				list_rect_tail = newElement;
 			}
-			simplify_list(&list_rect_head);
+			simplify_list(&list_rect_head, &list_rect_tail);
 		}
 	}
 }

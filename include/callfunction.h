@@ -16,6 +16,8 @@ ei_bool_t button_on_release(ei_widget_t* widget, ei_event_t* event, void* user_p
 
 ei_bool_t button_on_press(ei_widget_t* widget, ei_event_t* event, void* user_param);
 
+ei_bool_t close_toplevel(ei_widget_t* widget, ei_event_t* event, void* user_param);
+
 
 
 

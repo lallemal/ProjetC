@@ -38,7 +38,7 @@ typedef struct ei_button {
 	ei_rect_t*	img_rect;
 	ei_anchor_t	img_anchor;
 
-	ei_callback_t*	callback;
+	ei_callback_t	callback;
 	void*		user_param;
 } ei_button_t;
 
@@ -245,7 +245,7 @@ void ei_button_configure	(ei_widget_t*		widget,
 		button->img_anchor = *img_anchor;
 	}
 	if (callback != NULL) {
-		button->callback = callback;
+		button->callback = *callback;
 	}
 	if (user_param != NULL) {
 		button->user_param = *user_param;
@@ -299,13 +299,13 @@ ei_bool_t button_on_release(ei_widget_t* widget, ei_event_t* event, void* user_p
 	if (strcmp(widget->wclass->name, "button") == 0) {
 		ei_relief_t newRelief2 = ei_relief_raised;
 		ei_button_t* button = (ei_button_t *)widget;
-		if (button->callback != NULL) {
-			ei_callback_t callback_button = *(button->callback);
-			callback_button(widget, event, user_param);
-		}
 		ei_button_configure(widget, NULL, NULL, NULL, NULL, &newRelief2, NULL, NULL,
 				NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 		ei_unbind(ei_ev_mouse_buttonup, widget, NULL, button_on_release, NULL);
+		if (button->callback != NULL) {
+			ei_callback_t callback_button = button->callback;
+			callback_button(widget, event, user_param);
+		}
 	}
 }
 

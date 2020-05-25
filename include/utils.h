@@ -83,7 +83,7 @@ ei_rect_t* fusion_if(ei_rect_t* rect1, ei_rect_t* rect2);
  *
  * @param begin_pt	Pointer to the head of the rectangle linked list.
  */
-void simplify_list(ei_linked_rect_t**  begin_pt);
+void simplify_list(ei_linked_rect_t**  begin_pt, ei_linked_rect_t** tail_pt);
 
 
 /**

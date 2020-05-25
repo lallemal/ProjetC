@@ -1,6 +1,9 @@
 //
 // Created by aymeric on 19/05/2020.
 //
+#include <stdlib.h>
+#include <string.h>
+
 #include "ei_toplevel.h"
 #include "utils.h"
 #include "ei_utils.h"
@@ -9,15 +12,20 @@
 #include "ei_application.h"
 #include "ei_types.h"
 #include "draw_tools.h"
+#include "ei_event.h"
+#include "callfunction.h"
+
 ei_size_t       min_size_default        = {160, 120};
 ei_size_t       default_rt_size         = {16, 16};
 ei_size_t       default_cb_size         = {16, 16};
 int             margin_top              = 5;
 int             margin_left             = 10;
 
+
+
 void*                    ei_toplevel_allofunc                            (void){
         ei_toplevel *new_top_level = safe_malloc(sizeof(ei_toplevel));
-        new_top_level->sub_frame = ei_widget_create("frame", new_top_level, NULL, NULL);
+        new_top_level->sub_frame = ei_widget_create("frame", (ei_widget_t *)new_top_level, NULL, NULL);
         return new_top_level;
 }
 
@@ -175,7 +183,8 @@ void                    configure_sub_part                           (ei_topleve
                 int             border_test             = 0;
                 ei_anchor_t     bc_anchor               = ei_anc_center;
 
-                ei_button_configure(to_configure->close_button, &cb_size, &cb_color, &border_test, &radius, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+		ei_callback_t button_close_top = close_toplevel;
+                ei_button_configure(to_configure->close_button, &cb_size, &cb_color, &border_test, &radius, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, &button_close_top, NULL);
                 ei_place(to_configure->close_button, &bc_anchor, &middle_button_pos, &middle_text_pos, NULL, NULL, NULL, NULL, NULL, NULL);
 
         }
@@ -251,4 +260,15 @@ void			ei_toplevel_configure		          (ei_widget_t*		widget,
         widget->requested_size.height   += marging_height;
 
 
+}
+
+
+ei_bool_t close_toplevel(ei_widget_t* widget, ei_event_t* event, void* user_param)
+{
+	ei_widget_t* parent = widget->parent;
+	if (strcmp(parent->wclass->name, "toplevel") == 0) {
+		ei_widget_destroy(parent);
+		return EI_TRUE;
+	}
+	return EI_FALSE;
 }
