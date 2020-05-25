@@ -425,7 +425,7 @@ ei_linked_point_t*  rounded_top_level(ei_rect_t* rect, int radius, int part){
         ei_linked_point_t *rounded_top_right = arc_point(center_top_right, radius, -2*M_PI, -3*M_PI/2);
         add_point_list(&rounded_top_left, center_bottom_left.x, center_bottom_right.y);
         add_point_list(&rounded_top_left, center_bottom_right.x, center_bottom_right.y);
-        fusion_2_list(rounded_top_left, rounded_top_right, 7);
+        fusion_2_list(rounded_top_left, rounded_top_right, 14);
 
 
         return rounded_top_left;
