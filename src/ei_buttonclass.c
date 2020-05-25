@@ -124,7 +124,7 @@ void ei_button_drawfunc(struct	ei_widget_t*	widget,
                 if (button->relief == ei_relief_raised) {
 
                         //On créé le rectangle 'intérieur' qui contiendra l'image ou le texte lorsque le bouton est relevé
-                        ei_rect_t* rect_int = draw_button_relief_up_down(rect_tot, button->corner_radius, button->border_width, 0, 0, (int)((10/100)*button->border_width), (int)((10/100)*button->border_width));
+                        ei_rect_t* rect_int = draw_button_relief_up_down(rect_tot, button->corner_radius, button->border_width, 0, 0, round((0.1)*button->border_width), round((0.1)*button->border_width));
 
                         //mise en place du texte
                         if (button->text != NULL) {
@@ -139,7 +139,8 @@ void ei_button_drawfunc(struct	ei_widget_t*	widget,
                         free(rect_int);
                 }
                 if (button->relief == ei_relief_sunken){
-                        ei_rect_t* rect_int = draw_button_relief_up_down(rect_tot, button->corner_radius, button->border_width, (int)((10/100)*button->border_width),(int)((10/100)*button->border_width),(int)((10/100)*button->border_width),(int)((10/100)*button->border_width));
+                        int a = (int)((0.1)*button->border_width);
+                        ei_rect_t* rect_int = draw_button_relief_up_down(rect_tot, button->corner_radius, button->border_width, round((0.1)*button->border_width),round((0.1)*button->border_width),round((0.1)*button->border_width),round((0.1)*button->border_width));
 
                         //mise en place du texte
                         if (button->text != NULL) {
