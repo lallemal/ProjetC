@@ -11,6 +11,7 @@
 #include "traverse_tools.h"
 #include "ei_types.h"
 #include "utils.h"
+
 #include "callfunction.h"
 #include "event.h"
 
@@ -38,7 +39,9 @@ void ei_app_create(ei_size_t main_window_size, ei_bool_t fullscreen)
 	create_base_eventlist();
 	ei_register_placer_manager();
 	ei_frame_register_class();
+	ei_toplevel_register_class();
 	ei_button_register_class();
+
 	// Binding of internal comportments
 	ei_bind(ei_ev_mouse_buttondown, NULL, "button", button_on_press, NULL);
 	// Creation of the root Widget
@@ -96,7 +99,7 @@ void ei_app_invalidate_rect(ei_rect_t* rect)
 				list_rect_tail->next = newElement;
 				list_rect_tail = newElement;
 			}
-			simplify_list(&list_rect_head);
+			simplify_list(&list_rect_head, &list_rect_tail);
 		}
 	}
 }

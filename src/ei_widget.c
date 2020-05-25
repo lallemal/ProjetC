@@ -73,6 +73,7 @@ ei_widget_t*	ei_widget_create	(ei_widgetclass_name_t	class_name,
 		newWidget->wclass = widgetclass;
 		newWidget->user_data = user_data;
 		newWidget->destructor = destructor;
+
 		newWidget->wclass->setdefaultsfunc(newWidget);
 		newWidget->pick_id = next_pick_id;
 		next_pick_id++;

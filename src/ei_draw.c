@@ -3,7 +3,7 @@
 *
 * Author:           Robin BERTIN (Nunwan)
 * Created:          05/14/20
-* Description:      
+* Description:
 *****************************************************************************/
 #include <stdlib.h>
 
@@ -95,22 +95,22 @@ void ei_draw_text       (ei_surface_t		surface,
 	ei_surface_t text_surface = hw_text_create_surface(text, font, color);
 	// Create the destination rectangle to fit with clipper & text
 	ei_size_t text_size = hw_surface_get_size(text_surface);
-	ei_rect_t text_rect = {*where, text_size};
-	ei_rect_t destRect = inter_rect(clipper, &text_rect);
-	// Lock the surface and copy it on the destination surface
-	hw_surface_lock(text_surface);
-	ei_rect_t* srcRect = copy_rect(&destRect);
-	srcRect->top_left.x = 0;
-	srcRect->top_left.y = 0;
-	if (where->x < 0) {
-		srcRect->top_left.x = -where->x;
-	}
-	if (where->y < 0) {
-		srcRect->top_left.y = -where->y;
-	}
-	ei_copy_surface(surface, &destRect, text_surface, srcRect, EI_TRUE);
-	free(srcRect);
-	// Release the text_surface no longer needed
+        ei_rect_t text_rect = {*where, text_size};
+        ei_rect_t destRect = inter_rect(clipper, &text_rect);
+        // Lock the surface and copy it on the destination surface
+        hw_surface_lock(text_surface);
+        ei_rect_t* srcRect = copy_rect(&destRect);
+        srcRect->top_left.x = 0;
+        srcRect->top_left.y = 0;
+        if (where->x < 0) {
+                srcRect->top_left.x = -where->x;
+        }
+        if (where->y < 0) {
+                srcRect->top_left.y = -where->y;
+        }
+        ei_copy_surface(surface, &destRect, text_surface, srcRect, EI_TRUE);
+        free(srcRect);
+        // Release the text_surface no longer needed
 	hw_surface_unlock(text_surface);
 	hw_surface_free(text_surface);
 }

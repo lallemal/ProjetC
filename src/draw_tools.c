@@ -41,6 +41,7 @@ ei_point_t* anchor_point( ei_rect_t* rect, ei_anchor_t anchor, int width_text, i
         y_rect=rect->top_left.y;
         width=rect->size.width;
         height=rect->size.height;
+
         if (anchor == ei_anc_center){
                 point->x=(x_rect+x_rect+width)/2 - width_text/2;
                 point->y=(y_rect+y_rect+height)/2 - height_text/2;
@@ -406,6 +407,30 @@ void fusion_2_list(ei_linked_point_t* list1, ei_linked_point_t* list2, int tokee
 	}
 }
 
+ei_linked_point_t*  rounded_top_level(ei_rect_t* rect, int radius, int part){
+        ei_point_t center_top_left;
+        center_top_left.x = rect->top_left.x + radius;
+        center_top_left.y = rect->top_left.y + radius;
+        ei_point_t center_top_right;
+        center_top_right.x = rect->top_left.x + rect->size.width - radius;
+        center_top_right.y = rect->top_left.y + radius;
+
+        ei_point_t center_bottom_left;
+        center_bottom_left.x = rect->top_left.x ;
+        center_bottom_left.y = rect->top_left.y + rect->size.height;
+        ei_point_t center_bottom_right;
+        center_bottom_right.x = rect->top_left.x + rect->size.width ;
+        center_bottom_right.y = rect->top_left.y + rect->size.height;
+        ei_linked_point_t *rounded_top_left = arc_point(center_top_left, radius, -3*M_PI/2, -M_PI);
+        ei_linked_point_t *rounded_top_right = arc_point(center_top_right, radius, -2*M_PI, -3*M_PI/2);
+        add_point_list(&rounded_top_left, center_bottom_left.x, center_bottom_right.y);
+        add_point_list(&rounded_top_left, center_bottom_right.x, center_bottom_right.y);
+        fusion_2_list(rounded_top_left, rounded_top_right, 7);
+
+
+        return rounded_top_left;
+
+}
 
 ei_linked_point_t* rounded_frame(ei_rect_t* rect, int radius, int part)
 {

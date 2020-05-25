@@ -119,6 +119,9 @@ ei_rect_t* fusion_if(ei_rect_t* rect1, ei_rect_t* rect2)
 	if (is_equal(rect2, &inter)) {
 		return copy_rect(rect1);
 	}
+	if (h3 == 0 && w3 == 0) {
+		return NULL;
+	}
 	if ((h1*w1) + (h2*w2) > (h1 + h2 - h3) * (w1 + w2 - w3)) {
 		return NULL;
 	}
@@ -133,7 +136,7 @@ ei_rect_t* fusion_if(ei_rect_t* rect1, ei_rect_t* rect2)
 }
 
 
-void destroy_linked_rect(ei_linked_rect_t* to_destroy, ei_linked_rect_t**  head_pt)
+void destroy_linked_rect(ei_linked_rect_t* to_destroy, ei_linked_rect_t**  head_pt, ei_linked_rect_t** tail_pt)
 {
 	ei_linked_rect_t* element = *head_pt;
 	if (element == to_destroy) {
@@ -149,6 +152,7 @@ void destroy_linked_rect(ei_linked_rect_t* to_destroy, ei_linked_rect_t**  head_
 	}
 	if (to_destroy->next == NULL) {
 		element->next = NULL;
+		*tail_pt = element;
 		free(to_destroy);
 		return;
 	}
@@ -157,7 +161,7 @@ void destroy_linked_rect(ei_linked_rect_t* to_destroy, ei_linked_rect_t**  head_
 }
 
 
-void simplify_list(ei_linked_rect_t**  begin_pt)
+void simplify_list(ei_linked_rect_t**  begin_pt, ei_linked_rect_t** tail_pt)
 {
 	ei_linked_rect_t* element = *begin_pt;
 	int b = 0;
@@ -171,7 +175,7 @@ void simplify_list(ei_linked_rect_t**  begin_pt)
 			else {
 				element->rect = *fusionned;
 				free(fusionned);
-				destroy_linked_rect(to_try, begin_pt);
+				destroy_linked_rect(to_try, begin_pt, tail_pt);
 				b = 1;
 				break;
 
@@ -185,6 +189,6 @@ void simplify_list(ei_linked_rect_t**  begin_pt)
 		}
 	}
 	if (b == 1) {
-		simplify_list(begin_pt);
+		simplify_list(begin_pt, tail_pt);
 	}
 }
