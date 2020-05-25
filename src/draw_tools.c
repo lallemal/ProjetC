@@ -244,6 +244,9 @@ void draw_text(char* text, ei_font_t text_font, ei_rect_t* rect_to_fill, ei_anch
 void draw_image(ei_surface_t image, ei_rect_t* rect_to_fill, ei_anchor_t img_anchor, ei_rect_t* img_rect, ei_rect_t* clipper, ei_surface_t surface)
 {
         ei_point_t* point_img;
+        if (img_rect == NULL){
+               *img_rect = hw_surface_get_rect(image);
+        }
         point_img = anchor_point(rect_to_fill, img_anchor, img_rect->size.width, img_rect->size.height);
         hw_surface_lock(image);
         ei_rect_t *source_rectangle = img_rect;
