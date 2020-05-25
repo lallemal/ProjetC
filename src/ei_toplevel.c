@@ -103,7 +103,7 @@ void                    ei_toplevel_drawfunc                            (struct	
 
         //rounded top corner drawing
         ei_linked_point_t* rounded0 = rounded_top_level(&rect_tot, 20, 0);
-        ei_draw_polygon(surface, rounded0, to_draw->color, clipper);
+        ei_draw_polygon(surface, rounded0, to_draw->color, &rect_tot);
         free_linked_point_list(rounded0);
 
         //dark title
