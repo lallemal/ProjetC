@@ -138,9 +138,9 @@ void add_points_coin	(ei_linked_point_t**	begin_pt,
                              int 			x_center,
                              int			y_center,
                              int			radius,
-                             float			angle1,
-                             float			angle2,
-                             float			angle3);
+                             float			sub_length,
+                             float                      corner_begin);
+
 
 /**
  * @brief	Fonction which create an arc of circle.
@@ -151,6 +151,7 @@ void add_points_coin	(ei_linked_point_t**	begin_pt,
  * @param       corner_end     corner of the end of the arc
  *
  * @return		       a linked point list which represents the arc
+ *
  */
 
 ei_linked_point_t* arc_point(ei_point_t center, int radius, float corner_begin, float corner_end);
