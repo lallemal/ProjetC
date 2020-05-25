@@ -90,7 +90,7 @@ int main(int argc, char** argv)
         rect_img->top_left.y = rect.top_left.y;
 	ei_button_configure	(button, &button_size, &button_color,
 				 &button_border_width, &button_corner_radius, &button_relief, &button_title, NULL, &button_text_color, &button_text_anchor,
-				 NULL, &rect_img, &anchor_image, &button_callback, NULL);
+				 &image, &rect_img, &anchor_image, &button_callback, NULL);
 	ei_place(button, &button_anchor, &button_x, &button_y, NULL, NULL, NULL, NULL, NULL, NULL );
 
 	/* Hook the keypress callback to the event. */

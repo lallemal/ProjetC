@@ -57,9 +57,9 @@ void ei_frame_releasefunc(ei_widget_t*	widget)
 	if (frame->img != NULL) {
 		hw_surface_free(frame->img);
 	}
-	//if (frame->img_rect != NULL) {
-	//	free(frame->img_rect);
-	//}
+	if (frame->img_rect != NULL) {
+		free(frame->img_rect);
+	}
 	//if (frame->text != NULL) {
 	//	free(frame->text);
 	//}
@@ -230,7 +230,10 @@ void ei_frame_configure(ei_widget_t*		widget,
 		frame->text_color = *text_color;
 	}
 	if (img_rect != NULL) {
-		frame->img_rect = *img_rect;
+		if (frame->img_rect != NULL) {
+			free(frame->img_rect);
+		}
+		frame->img_rect = copy_rect(*img_rect);
 	}
 	if (img_anchor != NULL) {
 		frame->img_anchor = *img_anchor;

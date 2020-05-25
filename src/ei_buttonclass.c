@@ -61,9 +61,9 @@ void ei_button_releasefunc(ei_widget_t*	widget)
 	//free(&(button->text_anchor));
 	//free(&(button->text_color));
 	//free(&(button->img));
-	//if (button->text != NULL) {
-	//	free(button->text);
-	//}
+	if (button->img_rect != NULL) {
+		free(button->img_rect);
+	}
 	//if (button->user_param != NULL) {
 	//	free(button->user_param);
 	//}
@@ -239,7 +239,10 @@ void ei_button_configure	(ei_widget_t*		widget,
 		button->text_anchor = *text_anchor;
 	}
 	if (img_rect != NULL) {
-		button->img_rect = *img_rect;
+		if (button->img_rect) {
+			free(button->img_rect);
+		}
+		button->img_rect =copy_rect(*img_rect);
 	}
 	if (img_anchor != NULL) {
 		button->img_anchor = *img_anchor;
