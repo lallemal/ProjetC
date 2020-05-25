@@ -279,12 +279,15 @@ void ei_button_configure	(ei_widget_t*		widget,
 		widget->requested_size.width = max(width, widget->requested_size.width);
 	}
 	if (text != NULL) {
+		if (button->text != NULL) {
+			free(button->text);
+		}
 		if (*text != NULL) {
-			if (button->text != NULL) {
-				free(button->text);
-			}
 			button->text = malloc((strlen(*text) + 1) * sizeof(char));
 			button->text = strcpy(button->text, *text);
+		}
+		else {
+			button->text = NULL;
 		}
 
 		int height_text;

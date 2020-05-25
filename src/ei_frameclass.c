@@ -259,12 +259,15 @@ void ei_frame_configure(ei_widget_t*		widget,
 		widget->requested_size.width = max(width, widget->requested_size.width);
 	}
 	if (text != NULL) {
+		if (frame->text != NULL) {
+			free(frame->text);
+		}
 		if (*text != NULL) {
-			if (frame->text != NULL) {
-				free(frame->text);
-			}
 			frame->text = malloc((strlen(*text) + 1) * sizeof(char));
 			frame->text = strcpy(frame->text, *text);
+		}
+		else {
+			frame->text = NULL;
 		}
 		int height_text;
 		int width_text;
