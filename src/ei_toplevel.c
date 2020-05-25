@@ -323,7 +323,6 @@ ei_bool_t move_top_onmove(ei_widget_t* widget, ei_event_t* event, void* user_par
                 int x_mouse = event->param.mouse.where.x;
                 int y_mouse = event->param.mouse.where.y;
                 int ecart_x = x_mouse - oldPoint->x;
-                printf("%d\n", w_placer->x);
 
                 ecart_x += w_placer->x;
                 int ecart_y = y_mouse - oldPoint->y + w_placer->y;
