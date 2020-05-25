@@ -355,8 +355,6 @@ ei_linked_point_t* arc_point(ei_point_t center, int radius, float corner_begin, 
         ei_linked_point_t* list_head = NULL;
 
 
-
-
         if ((float)cos(corner_begin)==1 || (float)cos(corner_end)==1){
                 if ((float)sin(corner_end)==1 || (float)sin(corner_begin)==1){
                         float length = (corner_end - corner_begin)*radius;
@@ -493,55 +491,86 @@ ei_linked_point_t* rounded_frame(ei_rect_t* rect, int radius, int part)
         }
 
 
+
 }
 
 void draw_button(ei_surface_t surface, ei_rect_t* rect_button, ei_color_t color, int border_width, int corner_radius, ei_relief_t relief, ei_rect_t* clipper)
 {
-
-        if ( border_width== 0){
-		ei_linked_point_t* rounded0 = rounded_frame(rect_button, corner_radius, 0);
-                ei_draw_polygon(surface, rounded0, color, clipper);
-		free_linked_point_list(rounded0);
+        if (corner_radius != 0) {
+                if (border_width == 0) {
+                        ei_linked_point_t *rounded0 = rounded_frame(rect_button, corner_radius, 0);
+                        ei_draw_polygon(surface, rounded0, color, clipper);
+                        free_linked_point_list(rounded0);
+                } else {
+                        ei_rect_t *rect_surface_with_border = malloc(sizeof(ei_rect_t));
+                        rect_surface_with_border->size.height = rect_button->size.height - 2 * border_width;
+                        rect_surface_with_border->size.width = rect_button->size.width - 2 * border_width;
+                        rect_surface_with_border->top_left.x = rect_button->top_left.x + border_width;
+                        rect_surface_with_border->top_left.y = rect_button->top_left.y + border_width;
+                        if (relief == ei_relief_none) {
+                                ei_linked_point_t *rounded_frame_button = rounded_frame(rect_button, corner_radius, 0);
+                                ei_draw_polygon(surface, rounded_frame_button, dark_color(color),
+                                                rect_button);
+                                free_linked_point_list(rounded_frame_button);
+                        }
+                        if (relief == ei_relief_raised) {
+                                ei_linked_point_t *rounded_frame_up = rounded_frame(rect_button, corner_radius, 1);
+                                ei_linked_point_t *rounded_frame_down = rounded_frame(rect_button, corner_radius, 2);
+                                ei_draw_polygon(surface, rounded_frame_up, clear_color(color), rect_button);
+                                ei_draw_polygon(surface, rounded_frame_down, dark_color(color), rect_button);
+                                free_linked_point_list(rounded_frame_up);
+                                free_linked_point_list(rounded_frame_down);
+                        }
+                        if (relief == ei_relief_sunken) {
+                                ei_linked_point_t *rounded_frame_up = rounded_frame(rect_button, corner_radius, 1);
+                                ei_linked_point_t *rounded_frame_down = rounded_frame(rect_button, corner_radius, 2);
+                                ei_draw_polygon(surface, rounded_frame_up, dark_color(color), rect_button);
+                                ei_draw_polygon(surface, rounded_frame_down, clear_color(color), rect_button);
+                                free_linked_point_list(rounded_frame_up);
+                                free_linked_point_list(rounded_frame_down);
+                        }
+                        ei_linked_point_t *rounded_frame_int = rounded_frame(rect_surface_with_border,
+                                                                             corner_radius - border_width, 0);
+                        ei_draw_polygon(surface, rounded_frame_int, color,
+                                        rect_button);
+                        free_linked_point_list(rounded_frame_int);
+                        free(rect_surface_with_border);
+                }
         }
         else{
-                ei_rect_t *rect_surface_with_border = malloc(sizeof(ei_rect_t));
-                rect_surface_with_border->size.height = rect_button->size.height - 2 * border_width;
-                rect_surface_with_border->size.width = rect_button->size.width - 2 * border_width;
-                rect_surface_with_border->top_left.x = rect_button->top_left.x + border_width;
-                rect_surface_with_border->top_left.y = rect_button->top_left.y + border_width;
-                if (relief == ei_relief_none){
-                        ei_linked_point_t* rounded_frame_button = rounded_frame(rect_button, corner_radius, 0);
-                        ei_draw_polygon(surface, rounded_frame_button, dark_color(color),
-                                        rect_button);
-                        free_linked_point_list(rounded_frame_button);
+                if (border_width>0) {
+                        ei_rect_t* rect_button_on_screen = malloc(sizeof(ei_rect_t));
+                        *rect_button_on_screen = inter_rect(clipper, rect_button);
+
+                        if (relief == ei_relief_raised) {
+                                draw_down_relief(rect_button, surface, color, EI_TRUE, rect_button_on_screen);
+
+                                draw_up_relief(rect_button, surface, color, EI_TRUE, rect_button_on_screen);
+
+
+                        }
+                        if (relief == ei_relief_sunken) {
+                                draw_up_relief(rect_button, surface, color, EI_FALSE, rect_button_on_screen);
+                                draw_down_relief(rect_button, surface, color, EI_FALSE, rect_button_on_screen);
+
+                        }
+                        if (relief == ei_relief_none){
+                                ei_color_t color_to_fill;
+                                color_to_fill = dark_color(color);
+                                ei_fill(surface, &color_to_fill, rect_button_on_screen);
+
+                        }
+                        free(rect_button_on_screen);
+
                 }
-                if (relief == ei_relief_raised){
-                        ei_linked_point_t* rounded_frame_up = rounded_frame(rect_button, corner_radius, 1);
-                        ei_linked_point_t* rounded_frame_down = rounded_frame(rect_button, corner_radius, 2);
-                        ei_draw_polygon(surface, rounded_frame_up, clear_color(color), rect_button);
-                        ei_draw_polygon(surface, rounded_frame_down, dark_color(color), rect_button);
-                        free_linked_point_list(rounded_frame_up);
-                        free_linked_point_list(rounded_frame_down);
-                }
-                if (relief == ei_relief_sunken){
-                        ei_linked_point_t* rounded_frame_up = rounded_frame(rect_button, corner_radius, 1);
-                        ei_linked_point_t* rounded_frame_down = rounded_frame(rect_button, corner_radius, 2);
-                        ei_draw_polygon(surface, rounded_frame_up, dark_color(color), rect_button);
-                        ei_draw_polygon(surface, rounded_frame_down, clear_color(color), rect_button);
-                        free_linked_point_list(rounded_frame_up);
-                        free_linked_point_list(rounded_frame_down);
-                }
-                ei_linked_point_t* rounded_frame_int = rounded_frame(rect_surface_with_border, corner_radius-border_width, 0);
-                ei_draw_polygon(surface, rounded_frame_int, color,
-                                rect_button);
-                free_linked_point_list(rounded_frame_int);
-                free(rect_surface_with_border);
+                rect_button->top_left.x = rect_button->top_left.x + border_width;
+                rect_button->top_left.y = rect_button->top_left.y + border_width;
+                rect_button->size.width = rect_button->size.width - 2*border_width;
+                rect_button->size.height = rect_button->size.height - 2*border_width;
+                ei_fill(surface, &color, rect_button);
         }
-
-
-        //Surface de picking
-        //ei_draw_polygon(pick_surface, rounded_frame(rect_button, corner_radius, 0), pick_color, rect_button);
 }
+
 
 ei_rect_t* draw_button_relief_up_down(ei_rect_t* rect_tot, int corner_radius, int border_width, int decalage_x, int decalage_y, int decalage_width, int decalage_height)
 {

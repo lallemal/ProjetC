@@ -128,9 +128,8 @@ void add_point_list(ei_linked_point_t** begin_pt, int x, int y);
  * @param       x_center        coordinate x of the center of the circle for the rounded corner
  * @param       y_center        coordinate y of the center of the circle for the rounded corner
  * @param       radius          radius of the center of the circle for the rounded corner
- * @param       angle1          first angle => first point added
- * @param       angle2          second angle => second point added
- * @param       angle3          third angle => third point added
+ * @param       sub_length      length of the arc divide by 10
+ * @param       corner_begin    angle of the beginning of the arc
  *
  */
 
@@ -210,6 +209,8 @@ void draw_button(ei_surface_t surface, ei_rect_t* rect_button, ei_color_t color,
 
 
 ei_rect_t* draw_button_relief_up_down(ei_rect_t* rect_tot, int corner_radius, int border_width, int decalage_x, int decalage_y, int decalage_width, int decalage_height);
+
+
 ei_linked_point_t*  rounded_top_level(ei_rect_t* rect, int radius, int part);
 
 #endif /* ifndef DRAW_H */
