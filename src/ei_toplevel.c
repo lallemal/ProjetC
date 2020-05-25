@@ -103,18 +103,26 @@ void                    ei_toplevel_drawfunc                            (struct	
 		*pick_color = ei_map_color(pick_surface, widget->pick_id);
 		widget->pick_color = pick_color;
 	}
-
         ei_toplevel *to_draw            = (ei_toplevel *)widget;
         ei_rect_t   rect_tot;
-        ei_rect_t   rect_dessin;
+        ei_rect_t   allow_rec;
         rect_tot = widget->screen_location;
         //setting the rect height to the header height
         rect_tot.size.height = to_draw->title_height + 2 * margin_top;
-        rect_dessin = inter_rect(clipper, &rect_tot);
+        allow_rec = inter_rect(clipper, &rect_tot);
+
+        if ((allow_rec.top_left.x + allow_rec.size.width) > (widget->parent->screen_location.size.width + widget->parent->screen_location.top_left.x)){
+                allow_rec.size.width = (widget->parent->screen_location.size.width + widget->parent->screen_location.top_left.x) - allow_rec.top_left.x;
+        }
+
+        printf("Clipper x : %d \n", allow_rec.top_left.x);
+        printf("Clipper y : %d \n", allow_rec.top_left.y);
+        printf("Clipper width : %d \n", allow_rec.size.width);
+        printf("Clipper height : %d \n", allow_rec.size.height);
         //rounded top corner drawing
         ei_linked_point_t* rounded0 = rounded_top_level(&rect_tot, 20, 0);
-        ei_draw_polygon(surface, rounded0, to_draw->color, &rect_dessin);
-	ei_draw_polygon(pick_surface, rounded0, *(widget->pick_color), &rect_dessin);
+        ei_draw_polygon(surface, rounded0, to_draw->color, &allow_rec);
+	ei_draw_polygon(pick_surface, rounded0, *(widget->pick_color), &allow_rec);
         free_linked_point_list(rounded0);
 
         //dark title
