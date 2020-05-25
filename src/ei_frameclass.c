@@ -60,9 +60,9 @@ void ei_frame_releasefunc(ei_widget_t*	widget)
 	if (frame->img_rect != NULL) {
 		free(frame->img_rect);
 	}
-	//if (frame->text != NULL) {
-	//	free(frame->text);
-	//}
+	if (frame->text != NULL) {
+		free(frame->text);
+	}
 	// free(&(frame->img_anchor));
 	if (widget->pick_color != NULL) {
 		free(widget->pick_color);
@@ -259,7 +259,11 @@ void ei_frame_configure(ei_widget_t*		widget,
 		widget->requested_size.width = max(width, widget->requested_size.width);
 	}
 	if (text != NULL) {
-		frame->text = *text;
+		if (frame->text != NULL) {
+			free(frame->text);
+		}
+		frame->text = malloc((strlen(*text) + 1) * sizeof(char));
+		frame->text = strcpy(frame->text, *text);
 		int height_text;
 		int width_text;
 		hw_text_compute_size(frame->text, frame->text_font, &width_text, &height_text);
