@@ -134,6 +134,7 @@ void ei_app_free(void)
 	ei_widget_destroy(rootWidget);
 	// Unbind internal comportments
 	ei_unbind(ei_ev_mouse_buttondown, NULL, "button", button_on_press, NULL);
+	ei_unbind(ei_ev_mouse_buttondown, NULL, "toplevel", dispatch_event, NULL);
 	// Destruction of core variables
 	destroy_base_eventlist();
 
