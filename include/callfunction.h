@@ -26,5 +26,11 @@ ei_bool_t move_top_down(ei_widget_t* widget, ei_event_t* event, void* user_param
 
 ei_bool_t dispatch_event(ei_widget_t* widget, ei_event_t* event, void* user_param);
 
+ei_bool_t resize_top_onmove(ei_widget_t* widget, ei_event_t* event, void* user_param);
+
+ei_bool_t resize_top_down(ei_widget_t* widget, ei_event_t* event, void* user_param);
+
+ei_bool_t resize_top_up(ei_widget_t* widget, ei_event_t* event, void* user_param);
+
 #endif /* ifndef CALLFUNCTION_H */
 
