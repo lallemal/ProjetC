@@ -44,6 +44,7 @@ void ei_app_create(ei_size_t main_window_size, ei_bool_t fullscreen)
 
 	// Binding of internal comportments
 	ei_bind(ei_ev_mouse_buttondown, NULL, "button", button_on_press, NULL);
+	ei_bind(ei_ev_mouse_buttondown, NULL, "toplevel", dispatch_event, NULL);
 	// Creation of the root Widget
 	rootWidget = ei_widget_create("frame", NULL, NULL, NULL);
 	rootWidget->screen_location.size.width = main_window_size.width;
