@@ -100,7 +100,7 @@ void                    ei_toplevel_drawfunc                            (struct	
         rect_tot = widget->screen_location;
         //setting the rect height to the header height
         rect_tot.size.height = to_draw->title_height + 2 * margin_top;
-
+        rect_tot = inter_rect(clipper, &rect_tot);
         //rounded top corner drawing
         ei_linked_point_t* rounded0 = rounded_top_level(&rect_tot, 20, 0);
         ei_draw_polygon(surface, rounded0, to_draw->color, &rect_tot);

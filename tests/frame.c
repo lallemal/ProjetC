@@ -81,6 +81,7 @@ int main(int argc, char** argv)
 //
         ei_toplevel_configure(toplevel, &top_level_size, &frame_color_2, NULL, &text_frame, &closable, &axis, NULL);
         ei_place(toplevel, &anchor, &frame_x, &frame_y, NULL, NULL, NULL, NULL, NULL, NULL );
+        ei_place(toplevel, &anchor, &frame_x, &frame_y, NULL, NULL, NULL, NULL, NULL, NULL );
 
 //        ei_button_configure(button, &top_level_size, &frame_color, NULL, NULL, NULL, &text_frame, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 //        ei_place(button, &anchor, &button_x, &button_y, NULL, NULL, NULL, NULL, NULL, NULL );

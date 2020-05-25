@@ -25,7 +25,6 @@ void	                ei_geometrymanager_register	(ei_geometrymanager_t* geometry
 ei_geometrymanager_t*	ei_geometrymanager_from_name	(ei_geometrymanager_name_t name){
         ei_geometrymanager_t *choice = actual;
         while (choice != NULL){
-                int b = strcmp(name, choice->name);
                 if(!strcmp(name, choice->name)){
                         return choice;
                 }
@@ -76,7 +75,7 @@ void			ei_place			(ei_widget_t*		widget,
 
         ei_placer_t *to_configure;
         if (is_defined(widget->geom_params)){
-                if (strcmp(widget->geom_params->manager->name, "placer")){
+                if (!strcmp(widget->geom_params->manager->name, "placer")){
                         to_configure = (ei_placer_t *)(widget->geom_params);
                 } else {
                         ei_geometrymanager_unmap(widget);
