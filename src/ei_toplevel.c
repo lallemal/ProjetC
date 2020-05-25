@@ -31,6 +31,9 @@ void*                    ei_toplevel_allofunc                            (void){
 
 void                    ei_toplevel_releasefunc                         (ei_widget_t*	widget){
         //nothing to do here, everything is released when the children are released
+	if (widget->pick_color) {
+		free(widget->pick_color);
+	}
 }
 
 void                    ei_toplevel_setdefaultsfunc                     (ei_widget_t* widget){
@@ -94,6 +97,12 @@ void                    ei_toplevel_drawfunc                            (struct	
                                                                                 ei_rect_t*	clipper){
         hw_surface_lock(surface);
 
+	if (widget->pick_color == NULL) {
+		ei_color_t* pick_color = malloc(sizeof(ei_color_t));
+		*pick_color = ei_map_color(pick_surface, widget->pick_id);
+		widget->pick_color = pick_color;
+	}
+
         ei_toplevel *to_draw            = (ei_toplevel *)widget;
         ei_rect_t   rect_tot;
 
@@ -104,6 +113,7 @@ void                    ei_toplevel_drawfunc                            (struct	
         //rounded top corner drawing
         ei_linked_point_t* rounded0 = rounded_top_level(&rect_tot, 20, 0);
         ei_draw_polygon(surface, rounded0, to_draw->color, &rect_tot);
+	ei_draw_polygon(pick_surface, rounded0, *(widget->pick_color), &rect_tot);
         free_linked_point_list(rounded0);
 
         //dark title
@@ -271,4 +281,54 @@ ei_bool_t close_toplevel(ei_widget_t* widget, ei_event_t* event, void* user_para
 		return EI_TRUE;
 	}
 	return EI_FALSE;
+}
+
+
+ei_bool_t dispatch_event(ei_widget_t* widget, ei_event_t* event, void* user_param)
+{
+	int x_mouse = event->param.mouse.where.x;
+	int y_mouse = event->param.mouse.where.y;
+	int x_widget = widget->screen_location.top_left.x;
+	int y_widget = widget->screen_location.top_left.y;
+	int h_widget = widget->screen_location.size.height;
+	int w_widget = widget->screen_location.size.width;
+	if (y_mouse > y_widget && y_mouse < y_widget + 25) {
+		return move_top_down(widget, event, user_param);
+	}
+	//if (x_mouse > x_widget + w_widget - 16 && y_mouse > y_widget + h_widget - 16) {
+	//	return resize_top_down(widget, event, user_param);
+	//}
+	return EI_FALSE;
+}
+
+
+ei_bool_t move_top_down(ei_widget_t* widget, ei_event_t* event, void* user_param)
+{
+	ei_point_t* oldPoint = malloc(sizeof(ei_point_t));
+	oldPoint->x = event->param.mouse.where.x;
+	oldPoint->y = event->param.mouse.where.y;
+	ei_bind(ei_ev_mouse_move, NULL, "all", move_top_onmove, (void *)oldPoint);
+	ei_bind(ei_ev_mouse_buttonup, NULL, "all", move_top_up, NULL);
+	return EI_TRUE;
+
+}
+
+
+ei_bool_t move_top_onmove(ei_widget_t* widget, ei_event_t* event, void* user_param)
+{
+	ei_point_t* oldPoint = (ei_point_t *)user_param;
+	int x_mouse = event->param.mouse.where.x;
+	int y_mouse = event->param.mouse.where.y;
+	int ecart_x = x_mouse - oldPoint->x;
+	int ecart_y = y_mouse - oldPoint->y;
+	ei_place(widget, NULL, &ecart_x, &ecart_y, NULL, NULL, NULL, NULL, NULL, NULL);
+	return EI_TRUE;
+}
+
+ei_bool_t move_top_up(ei_widget_t* widget, ei_event_t* event, void* user_param)
+{
+	ei_unbind(ei_ev_mouse_move, NULL, "all", move_top_onmove, user_param);
+	ei_unbind(ei_ev_mouse_buttonup, NULL, "all", move_top_up, user_param);
+	free(user_param);
+	return EI_TRUE;
 }

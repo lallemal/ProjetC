@@ -136,7 +136,7 @@ ei_widget_t*		on_widget	(ei_event_t		event,
 		uint32_t pick_color = retrieve_color(pick_surface, x_mouse, y_mouse);
 		// If the event is linked to a tag
 		ei_widget_t* widget_with_color = find_with_color(ei_app_root_widget(), pick_color, pick_surface);
-		if (widget_with_color != NULL && strcmp(tag, widget_with_color->wclass->name) == 0) {
+		if (widget_with_color != NULL && (strcmp(tag, widget_with_color->wclass->name) == 0 || strcmp(tag, "all") == 0)) {
 			return widget_with_color;
 		}
 	}
@@ -150,27 +150,21 @@ void			call(ei_event_t event, ei_linked_event_t list_todo, ei_surface_t pick_sur
 	ei_linked_tagcall_t* tag_call = list_todo.tagcall_list;
 	ei_bool_t not_continue = EI_FALSE;
 	while (tag_call != NULL) {
-		// if the tag is all : do the callback
-		if (strcmp(tag_call->tag, "all") == 0 ) {
-			not_continue = call_widgets(ei_app_root_widget(), tag_call->tag, &event, tag_call->callback, tag_call->user_param);
-		}
-		else {
-			int is_buttonup = event.type == ei_ev_mouse_buttonup;
-			int is_buttondown = event.type == ei_ev_mouse_buttondown;
-			int is_move = event.type == ei_ev_mouse_move;
-			// Verify if the event has location attributes.
-			if (is_move || is_buttonup || is_buttondown) {
-				ei_widget_t* widget_cursor = on_widget(event, pick_surface, tag_call->tag);
-				// if there is a widget of class _tag_ under cursor
-				if (widget_cursor != NULL) {
-					not_continue = tag_call->callback(widget_cursor, &event, tag_call->user_param);
+		int is_buttonup = event.type == ei_ev_mouse_buttonup;
+		int is_buttondown = event.type == ei_ev_mouse_buttondown;
+		int is_move = event.type == ei_ev_mouse_move;
+		// Verify if the event has location attributes.
+		if (is_move || is_buttonup || is_buttondown) {
+			ei_widget_t* widget_cursor = on_widget(event, pick_surface, tag_call->tag);
+			// if there is a widget of class _tag_ under cursor
+			if (widget_cursor != NULL) {
+				not_continue = tag_call->callback(widget_cursor, &event, tag_call->user_param);
 
-				}
 			}
-			// if it can't be localized, call all the callback function.
-			else {
-				not_continue = call_widgets(ei_app_root_widget(), tag_call->tag, &event, tag_call->callback, tag_call->user_param);
-			}
+		}
+		// if it can't be localized, call all the callback function.
+		else {
+			not_continue = call_widgets(ei_app_root_widget(), tag_call->tag, &event, tag_call->callback, tag_call->user_param);
 		}
 		// if the event is consumed
 		if (not_continue) {
@@ -277,7 +271,7 @@ void			del_to_listcall	(ei_linked_event_t*	list,
 		ei_linked_tagcall_t* to_destroy = cel->next;
 		cel->next = cel->next->next;
 		free(to_destroy->tag);
-		free(to_destroy->user_param);
+		// free(to_destroy->user_param);
 		free(to_destroy);
 		return;
 	}
