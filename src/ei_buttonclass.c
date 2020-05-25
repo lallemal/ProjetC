@@ -259,9 +259,11 @@ void ei_button_configure	(ei_widget_t*		widget,
 			width = button->img_rect->size.width;
 		}
 		else {
-			ei_size_t img_size = hw_surface_get_size(button->img);
-			height = img_size.height;
-			width = img_size.width;
+			if (button->img != NULL) {
+				ei_size_t img_size = hw_surface_get_size(button->img);
+				height = img_size.height;
+				width = img_size.width;
+			}
 		}
 		height += 2* ancient_border_width;
 		width += 2 * ancient_border_width;
@@ -304,7 +306,7 @@ ei_bool_t button_on_release(ei_widget_t* widget, ei_event_t* event, void* user_p
 		ei_unbind(ei_ev_mouse_buttonup, widget, NULL, button_on_release, NULL);
 		if (button->callback != NULL) {
 			ei_callback_t callback_button = button->callback;
-			callback_button(widget, event, user_param);
+			callback_button(widget, event, button->user_param);
 		}
 	}
 }

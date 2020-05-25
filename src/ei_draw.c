@@ -6,6 +6,7 @@
 * Description:
 *****************************************************************************/
 #include <stdlib.h>
+#include <string.h>
 
 #include "ei_draw.h"
 #include "hw_interface.h"
@@ -92,6 +93,9 @@ void ei_draw_text       (ei_surface_t		surface,
 			ei_color_t		color,
 			const ei_rect_t*	clipper)
 {
+	if (strlen(text) == 0) {
+		return;
+	}
 	ei_surface_t text_surface = hw_text_create_surface(text, font, color);
 	// Create the destination rectangle to fit with clipper & text
 	ei_size_t text_size = hw_surface_get_size(text_surface);

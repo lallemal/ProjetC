@@ -244,9 +244,11 @@ void ei_frame_configure(ei_widget_t*		widget,
 			width = frame->img_rect->size.width;
 		}
 		else {
-			ei_size_t img_size = hw_surface_get_size(frame->img);
-			height = img_size.height;
-			width = img_size.width;
+			if (frame->img != NULL) {
+				ei_size_t img_size = hw_surface_get_size(frame->img);
+				height = img_size.height;
+				width = img_size.width;
+			}
 		}
 		height += 2* ancient_border_width;
 		width += 2 * ancient_border_width;
