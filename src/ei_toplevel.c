@@ -288,7 +288,9 @@ void			ei_toplevel_configure		          (ei_widget_t*		widget,
 
         widget->requested_size.height   += marging_height;
 
-
+        if (border_width != NULL){
+                ei_place(widget, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+        }
 }
 
 
