@@ -122,10 +122,6 @@ void                    ei_toplevel_drawfunc                            (struct	
 
         //rounded top corner drawing
         ei_linked_point_t* rounded0 = rounded_top_level(&rect_tot, 20, 0);
-        printf("Allow_rect x : %d \n", allow_rec.top_left.x);
-        printf("Allow_rect y : %d \n", allow_rec.top_left.y);
-        printf("Allow_rect width : %d \n", allow_rec.size.width);
-        printf("Allow_rect height : %d \n", allow_rec.size.height);
         ei_draw_polygon(surface, rounded0, to_draw->color, &allow_rec);
 	ei_draw_polygon(pick_surface, rounded0, *(widget->pick_color), &allow_rec);
         free_linked_point_list(rounded0);
