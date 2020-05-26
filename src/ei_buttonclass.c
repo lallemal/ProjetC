@@ -106,36 +106,42 @@ void ei_button_drawfunc(struct	ei_widget_t*	widget,
                        ei_surface_t	pick_surface,
                        ei_rect_t*	clipper)
 {
+        //set up of the pick color for the button
 	if (widget->pick_color == NULL) {
 		ei_color_t* pick_color = malloc(sizeof(ei_color_t));
 		*pick_color = ei_map_color(pick_surface, widget->pick_id);
 		widget->pick_color = pick_color;
 	}
+
+
         ei_button_t* button=(ei_button_t*)widget;
         hw_surface_lock(surface);
         hw_surface_lock(pick_surface);
         ei_rect_t* rect_tot = malloc(sizeof(ei_rect_t));
 
+        //rect_tot is the rectangle representating the entire button
         *rect_tot = widget->screen_location;
 
-        //on trace le bouton (avec ses reliefs et bordures)
+        //drawing of the button in the surface (relief and border_width included)
         draw_button(surface, rect_tot,  button->color, button->border_width, button->corner_radius, button->relief, clipper);
+        //drawing of the button in the pick surface (only one color for the entire button)
         draw_button(pick_surface, rect_tot, *(widget->pick_color), 0, button->corner_radius, button->relief, clipper);
 
-
+        //set up of the image or the text of the button
         if (button->img != NULL || button->text != NULL){
+                //rect_int = the interior of the button where the text or the image will be draw
+                //diférent decalages is for the move of the text or the image when the button passed from raised to sunken
                 if (button->relief == ei_relief_raised) {
-
-                        //On créé le rectangle 'intérieur' qui contiendra l'image ou le texte lorsque le bouton est relevé
+                        //rect_int from the top left with a width and height reduce
                         ei_rect_t* rect_int = draw_button_relief_up_down(rect_tot, button->corner_radius, button->border_width, 0, 0, round(0.1*button->border_width), round(0.1*button->border_width));
 
-                        //mise en place du texte
+                        //set up of the text
                         if (button->text != NULL) {
                                 draw_text(button->text, button->text_font, rect_int, button->text_anchor, surface,
                                           button->text_color, clipper);
 
                         }
-                        //mise en place de l'image
+                        //set up of the image
                         if (button->img != NULL) {
                                 draw_image(button->img, rect_int, button->img_anchor, button->img_rect, clipper,
                                            surface);
@@ -143,14 +149,15 @@ void ei_button_drawfunc(struct	ei_widget_t*	widget,
                         free(rect_int);
                 }
                 if (button->relief == ei_relief_sunken){
+                        //rect_int from the top left  with a width and height reduce
                         ei_rect_t* rect_int = draw_button_relief_up_down(rect_tot, button->corner_radius, button->border_width, round(0.1*button->border_width),round(0.1*button->border_width),round(0.1*button->border_width),round(0.1*button->border_width));
 
-                        //mise en place du texte
+                        //set up of the text
                         if (button->text != NULL) {
                                 draw_text(button->text, button->text_font, rect_int, button->text_anchor, surface,
                                           button->text_color, clipper);
                         }
-                        //mise en place de l'image
+                        //set up of the image
                         if (button->img != NULL) {
                                 draw_image(button->img, rect_int, button->img_anchor, button->img_rect, clipper,
                                            surface);
@@ -158,14 +165,15 @@ void ei_button_drawfunc(struct	ei_widget_t*	widget,
                         free(rect_int);
                 }
                 if (button->relief ==  ei_relief_none){
+                        // no decalage due to the absnece of relief
                         ei_rect_t* rect_int = draw_button_relief_up_down(rect_tot, button->corner_radius, button->border_width, 0, 0, 0, 0);
 
-                        //mise en place du texte
+                        //set up of the text
                         if (button->text != NULL) {
                                 draw_text(button->text, button->text_font, rect_int, button->text_anchor, surface,
                                           button->text_color, clipper);
                         }
-                        //mise en place de l'image
+                        //set u of the image
                         if (button->img != NULL) {
                                 draw_image(button->img, rect_int, button->img_anchor, button->img_rect, clipper,
                                            surface);
