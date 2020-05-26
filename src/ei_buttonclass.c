@@ -220,6 +220,7 @@ void ei_button_configure	(ei_widget_t*		widget,
 
 {
 	ei_button_t* button = (ei_button_t *) widget;
+	int requested_size_updated = 0;
 	int ancient_border_width = button->border_width;
 	if (color != NULL) {
 		button->color = *color;
@@ -281,6 +282,7 @@ void ei_button_configure	(ei_widget_t*		widget,
 		width += 2 * ancient_border_width;
 		widget->requested_size.height = max(height, widget->requested_size.height);
 		widget->requested_size.width = max(width, widget->requested_size.width);
+		requested_size_updated = 1;
 	}
 	if (text != NULL) {
 		if (button->text != NULL) {
@@ -301,6 +303,7 @@ void ei_button_configure	(ei_widget_t*		widget,
 		width_text += 2 * ancient_border_width;
 		widget->requested_size.height = max(height_text, widget->requested_size.height);
 		widget->requested_size.width = max(width_text, widget->requested_size.width);
+		requested_size_updated = 1;
 
 	}
 	if (border_width != NULL) {
@@ -309,10 +312,12 @@ void ei_button_configure	(ei_widget_t*		widget,
 		widget->requested_size.height += 2 * button->border_width;
 		widget->requested_size.width -= 2 * ancient_border_width;
 		widget->requested_size.width += 2 * button->border_width;
+		requested_size_updated = 1;
 	}
 	if (requested_size != NULL) {
 		widget->requested_size.height = requested_size->height;
 		widget->requested_size.width = requested_size->width;
+		requested_size_updated = 1;
 	}
 	ei_app_invalidate_rect(&(widget->screen_location));
 }
