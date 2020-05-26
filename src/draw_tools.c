@@ -244,28 +244,32 @@ void draw_text(char* text, ei_font_t text_font, ei_rect_t* rect_to_fill, ei_anch
 void draw_image(ei_surface_t image, ei_rect_t* rect_to_fill, ei_anchor_t img_anchor, ei_rect_t* img_rect, ei_rect_t* clipper, ei_surface_t surface)
 {
         ei_point_t* point_img;
+        ei_rect_t* rectangle = malloc(sizeof(ei_rect_t));
         if (img_rect == NULL){
-               *img_rect = hw_surface_get_rect(image);
+               *rectangle = hw_surface_get_rect(image);
         }
-        point_img = anchor_point(rect_to_fill, img_anchor, img_rect->size.width, img_rect->size.height);
+        else{
+                rectangle = img_rect;
+        }
+        point_img = anchor_point(rect_to_fill, img_anchor, rectangle->size.width, rectangle->size.height);
         hw_surface_lock(image);
-        ei_rect_t* source_rectangle = copy_rect(img_rect);
+        ei_rect_t* source_rectangle = copy_rect(rectangle);
         ei_rect_t* rect_img = malloc(sizeof(ei_rect_t));
         ei_rect_t* rect_to_fill_on_screen = malloc(sizeof(ei_rect_t));
         *rect_to_fill_on_screen = inter_rect(rect_to_fill, clipper);
 
-        if (img_rect->size.height < rect_to_fill->size.height && img_rect->size.width < rect_to_fill->size.width){
+        if (rectangle->size.height < rect_to_fill->size.height && rectangle->size.width < rect_to_fill->size.width){
                 rect_img->top_left.x = max(0, point_img->x);
                 rect_img->top_left.y = max(0,point_img->y);
-                rect_img->size.width = img_rect->size.width;
-                rect_img->size.height = img_rect->size.height;
+                rect_img->size.width = rectangle->size.width;
+                rect_img->size.height = rectangle->size.height;
                 if (point_img->x < 0) {
-                        source_rectangle->top_left.x = img_rect->top_left.x + abs(point_img->x);
+                        source_rectangle->top_left.x = rectangle->top_left.x + abs(point_img->x);
                         source_rectangle->size.width = source_rectangle->size.width - source_rectangle->top_left.x;
                         rect_img->size.width = source_rectangle->size.width;
                 }
                 if (point_img->y < 0) {
-                        source_rectangle->top_left.y = img_rect->top_left.y + abs(point_img->y);
+                        source_rectangle->top_left.y = rectangle->top_left.y + abs(point_img->y);
                         source_rectangle->size.height = source_rectangle->size.height - source_rectangle->top_left.y;
                         rect_img->size.height = source_rectangle->size.height;
                 }
@@ -281,13 +285,13 @@ void draw_image(ei_surface_t image, ei_rect_t* rect_to_fill, ei_anchor_t img_anc
                 rect_img->size.width = rect_to_fill_on_screen->size.width;
                 rect_img->size.height = rect_to_fill_on_screen->size.height;
                 if (point_img->x < 0) {
-                        source_rectangle->top_left.x = img_rect->top_left.x + abs(point_img->x);
+                        source_rectangle->top_left.x = rectangle->top_left.x + abs(point_img->x);
                         source_rectangle->size.width = rect_img->size.width - source_rectangle->top_left.x;
 
 
                 }
                 if (point_img->y < 0) {
-                        source_rectangle->top_left.y = img_rect->top_left.y + abs(point_img->y);
+                        source_rectangle->top_left.y = rectangle->top_left.y + abs(point_img->y);
                         source_rectangle->size.height = rect_img->size.height - source_rectangle->top_left.y;
                 }
 
@@ -305,6 +309,7 @@ void draw_image(ei_surface_t image, ei_rect_t* rect_to_fill, ei_anchor_t img_anc
 
         hw_surface_unlock(image);
         free(point_img);
+        free(rectangle);
         free(source_rectangle);
         free(rect_to_fill_on_screen);
         free(rect_img);
