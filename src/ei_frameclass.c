@@ -16,6 +16,7 @@
 #include "ei_application.h"
 #include "draw_tools.h"
 #include "utils.h"
+#include "ei_geometrymanager.h"
 
 
 #define max(a,b) (a>=b?a:b)
@@ -303,6 +304,11 @@ void ei_frame_configure(ei_widget_t*		widget,
 		widget->requested_size.height = requested_size->height;
 		widget->requested_size.width = requested_size->width;
 		requested_size_updated = 1;
+	}
+	if (requested_size_updated) {
+		if (widget->parent != NULL) {
+			ei_place(widget, NULL, NULL, NULL, &(requested_size->width), &(requested_size->width), NULL, NULL, NULL, NULL);
+		}
 	}
 	ei_app_invalidate_rect(&(widget->screen_location));
 }

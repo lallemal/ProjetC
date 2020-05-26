@@ -319,6 +319,11 @@ void ei_button_configure	(ei_widget_t*		widget,
 		widget->requested_size.width = requested_size->width;
 		requested_size_updated = 1;
 	}
+	if (requested_size_updated) {
+		if (widget->parent != NULL) {
+			ei_place(widget, NULL, NULL, NULL, &(requested_size->width), &(requested_size->width), NULL, NULL, NULL, NULL);
+		}
+	}
 	ei_app_invalidate_rect(&(widget->screen_location));
 }
 
