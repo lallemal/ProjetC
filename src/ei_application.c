@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-
 #include "ei_application.h"
 #include "ei_event.h"
 #include "ei_widgetclass.h"
@@ -11,11 +10,10 @@
 #include "traverse_tools.h"
 #include "ei_types.h"
 #include "utils.h"
-
 #include "callfunction.h"
 #include "event.h"
 
-// Variables & definitions for linked list of rects
+// Variables & definitions for linked list of rects to update
 #define LIST_RECT_PENDING 0
 #define LIST_RECT_NULL 1
 #define LIST_RECT_QUITTING 2
@@ -59,8 +57,10 @@ void ei_app_create(ei_size_t main_window_size, ei_bool_t fullscreen)
 
 void ei_app_invalidate_rect(ei_rect_t* rect)
 {
+	// Verification if the all screen has to be update or if the app is quitting
 	if (rect_status != LIST_RECT_NULL && rect_status != LIST_RECT_QUITTING) {
 		ei_linked_rect_t* newElement = malloc(sizeof(ei_linked_rect_t));
+		// Calculate the rectangle of the main window
 		ei_rect_t surface_rect = hw_surface_get_rect(main_window);
 		int surface_width = surface_rect.size.width;
 		int surface_height = surface_rect.size.height;
@@ -68,6 +68,7 @@ void ei_app_invalidate_rect(ei_rect_t* rect)
 			fprintf(stderr, "Out of Memory, Malloc failed \n");
 			return;
 		}
+		// if the whole surface has to be updated.
 		if (rect == NULL || is_equal(rect, &surface_rect)) {
 			ei_rect_t* copy = copy_rect(&surface_rect);
 			newElement->rect = *copy;
@@ -97,6 +98,7 @@ void ei_app_invalidate_rect(ei_rect_t* rect)
 				newElement->rect.size.height = max(newElement->rect.size.height, 0);
 				newElement->rect.top_left.y = 0;
 			}
+			// truncate the rect to the screen
 			if (x_element + w_element > surface_width) {
 				newElement->rect.size.width = surface_width - x_element;
 				newElement->rect.top_left.x = min(surface_width, x_element);
@@ -106,10 +108,12 @@ void ei_app_invalidate_rect(ei_rect_t* rect)
 				newElement->rect.top_left.y = min(surface_height, y_element);
 			}
 			newElement->next = NULL;
+			// Undo the operation if the rectangle is empty
 			if (newElement->rect.size.height == 0 && newElement->rect.size.width == 0) {
 				free(newElement);
 				return;
 			}
+			// Link the element
 			if (list_rect_head == NULL) {
 				list_rect_head = newElement;
 				list_rect_tail = newElement;
@@ -118,6 +122,7 @@ void ei_app_invalidate_rect(ei_rect_t* rect)
 				list_rect_tail->next = newElement;
 				list_rect_tail = newElement;
 			}
+			// Simplify the list to optimize performance
 			simplify_list(&list_rect_head, &list_rect_tail);
 		}
 	}
@@ -163,6 +168,9 @@ void ei_app_quit_request(void)
 	rect_status = LIST_RECT_QUITTING;
 }
 
+/**
+ * @brief	Traverse all the widget and draw them for each rectangle to update
+ */
 void draw(void)
 {
 	ei_linked_rect_t* rectList = list_rect_head;
@@ -180,6 +188,7 @@ void ei_app_run(void)
 	while (running) {
 		draw();
 		hw_surface_update_rects(main_window, list_rect_head);
+		// Reset the linked list of rectangle
 		free_linked_rect(list_rect_head);
 		list_rect_head = NULL;
 		list_rect_tail = NULL;
