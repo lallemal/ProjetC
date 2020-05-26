@@ -47,7 +47,7 @@ int main(int argc, char** argv)
         float           button_rel_y    = 1.0;
         int		button_x	= -16;
         int		button_y	= -16;
-        float           button_rel_size_x = 0.5;
+        float           button_rel_size_x = 0.2;
 	
         ei_size_t       window_size     = {400,400};
         char*           window_title    = "Hello World";

@@ -375,8 +375,8 @@ ei_bool_t move_top_down(ei_widget_t* widget, ei_event_t* event, void* user_param
         oldPoint->y = event->param.mouse.where.y;
 //        tampon = widget->children_head;
 //        widget->children_head = NULL;
-	ei_bind(ei_ev_mouse_move, NULL, "all", move_top_onmove, (void *)oldPoint);
-	ei_bind(ei_ev_mouse_buttonup, NULL, "all", move_top_up, NULL);
+	ei_bind(ei_ev_mouse_move, widget, NULL, move_top_onmove, (void *)oldPoint);
+	ei_bind(ei_ev_mouse_buttonup, widget, NULL, move_top_up, NULL);
 	return EI_TRUE;
 
 }
@@ -414,8 +414,8 @@ ei_bool_t move_top_up(ei_widget_t* widget, ei_event_t* event, void* user_param)
 //        widget->children_head = tampon;
 //        force_run(widget);
 
-        ei_unbind(ei_ev_mouse_move, NULL, "all", move_top_onmove, user_param);
-	ei_unbind(ei_ev_mouse_buttonup, NULL, "all", move_top_up, user_param);
+        ei_unbind(ei_ev_mouse_move, widget, NULL, move_top_onmove, user_param);
+	ei_unbind(ei_ev_mouse_buttonup, widget, NULL, move_top_up, user_param);
 	free(user_param);
 	return EI_TRUE;
 }
