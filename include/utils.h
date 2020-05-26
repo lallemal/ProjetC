@@ -1,6 +1,11 @@
-//
-// Created by devri on 15/05/2020.
-//
+/******************************************************************************
+* File:             utils.h
+*
+* Author:           Robin Bertin, Aymeric Devriésère, Louise Lallemand
+* Created:          05/26/20
+* Description:      Utils little functions which are essentials
+*****************************************************************************/
+
 
 #ifndef PROJETC_IG_UTILS_H
 #define PROJETC_IG_UTILS_H

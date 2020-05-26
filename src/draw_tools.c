@@ -1,9 +1,9 @@
 /******************************************************************************
 * File:             draw_tools.c
 *
-* Author:           Robin BERTIN (Nunwan)
+* Author:           Robin Bertin, Aymeric Devriésère, Louise Lallemand
 * Created:          05/15/20
-* Description:
+* Description:	    Tools for drawing widget : text, img, color.
 *****************************************************************************/
 #include <stdlib.h>
 #include <string.h>

@@ -1,7 +1,7 @@
 /******************************************************************************
 * File:             ei_event.c
 *
-* Author:           Robin BERTIN (Nunwan)
+* Author:           Robin Bertin, Aymeric Devriésère, Louise Lallemand
 * Created:          05/20/20
 * Description:
 *****************************************************************************/

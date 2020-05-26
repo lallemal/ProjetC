@@ -1,9 +1,9 @@
 /******************************************************************************
 * File:             traverse_tools.h
 *
-* Author:           Robin BERTIN (Nunwan)
+* Author:           Robin Bertin, Aymeric Devriésère, Louise Lallemand
 * Created:          05/15/20
-* Description:      
+* Description:      Tools functions to traverse structure and do things
 *****************************************************************************/
 #ifndef TRAVERSE_H
 #define TRAVERSE_H

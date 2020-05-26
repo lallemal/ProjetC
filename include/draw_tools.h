@@ -1,7 +1,7 @@
 /******************************************************************************
 * File:             draw_tools.h
 *
-* Author:           Robin BERTIN (Nunwan)
+* Author:           Robin Bertin, Aymeric Devriésère, Louise Lallemand
 * Created:          05/15/20
 * Description:
 *****************************************************************************/

@@ -1,7 +1,7 @@
 /******************************************************************************
 * File:             ei_widget.c
 *
-* Author:           Robin BERTIN (Nunwan)
+* Author:           Robin Bertin, Aymeric Devriésère, Louise Lallemand
 * Created:          05/12/20
 * Description:      Implementation for widgets management.
 *****************************************************************************/
@@ -15,6 +15,12 @@
 static uint32_t next_pick_id = 0;
 
 
+/**
+ * @brief		Add a widget to the hierarchy of widget
+ *
+ * @param child		The widget to add
+ * @param parent	Its parent to link to
+ */
 void update_widget_list(ei_widget_t* child, ei_widget_t* parent)
 {
 	child->parent = parent;
@@ -32,6 +38,7 @@ void update_widget_list(ei_widget_t* child, ei_widget_t* parent)
 
 void ei_widget_destroy(ei_widget_t* widget)
 {
+	// update the hierarchy without this widget
 	if (widget->parent != NULL) {
 		ei_widget_t* parent_child = widget->parent->children_head;
 		if (parent_child == widget) {
@@ -51,10 +58,12 @@ void ei_widget_destroy(ei_widget_t* widget)
 			}
 		}
 	}
+	// Destroy all children of the widget
 	destroy_widgets(widget);
 	if (widget->destructor != NULL) {
 		widget->destructor(widget);
 	}
+	// Invalidate the rectangle to update screen with the widget destroyed
 	ei_app_invalidate_rect(&(widget->screen_location));
 	widget->wclass->releasefunc(widget);
 	free(widget->geom_params);

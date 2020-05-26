@@ -1,11 +1,13 @@
 /******************************************************************************
 * File:             traverse_tools.c
 *
-* Author:           Robin BERTIN (Nunwan)
+* Author:           Robin Bertin, Aymeric Devriésère, Louise Lallemand
 * Created:          05/15/20
 * Description:      
 *****************************************************************************/
 #include <stdlib.h>
+#include <string.h>
+
 #include "traverse_tools.h"
 #include "ei_geometrymanager.h"
 #include "ei_widget.h"

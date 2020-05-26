@@ -1,3 +1,11 @@
+/******************************************************************************
+* File:             ei_application.c
+*
+* Author:           Robin Bertin, Aymeric Devriésère, Louise Lallemand
+* Created:          05/26/20
+* Description:      Functions for core function of applications
+*****************************************************************************/
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
