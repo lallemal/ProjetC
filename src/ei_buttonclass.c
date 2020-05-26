@@ -296,14 +296,16 @@ void ei_button_configure	(ei_widget_t*		widget,
 			button->text = NULL;
 		}
 
-		int height_text;
-		int width_text;
-		hw_text_compute_size(button->text, button->text_font, &width_text, &height_text);
-		height_text += 2 * ancient_border_width;
-		width_text += 2 * ancient_border_width;
-		widget->requested_size.height = max(height_text, widget->requested_size.height);
-		widget->requested_size.width = max(width_text, widget->requested_size.width);
-		requested_size_updated = 1;
+		if (button->text != NULL) {
+			int height_text;
+			int width_text;
+			hw_text_compute_size(button->text, button->text_font, &width_text, &height_text);
+			height_text += 2 * ancient_border_width;
+			width_text += 2 * ancient_border_width;
+			widget->requested_size.height = max(height_text, widget->requested_size.height);
+			widget->requested_size.width = max(width_text, widget->requested_size.width);
+			requested_size_updated = 1;
+		}
 
 	}
 	if (border_width != NULL) {
@@ -321,7 +323,7 @@ void ei_button_configure	(ei_widget_t*		widget,
 	}
 	if (requested_size_updated) {
 		if (widget->parent != NULL) {
-			ei_place(widget, NULL, NULL, NULL, &(requested_size->width), &(requested_size->width), NULL, NULL, NULL, NULL);
+			 ei_place(widget, NULL, NULL, NULL, &(widget->requested_size.width), &(widget->requested_size.height), NULL, NULL, NULL, NULL);
 		}
 	}
 	ei_app_invalidate_rect(&(widget->screen_location));
