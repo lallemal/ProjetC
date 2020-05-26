@@ -257,10 +257,13 @@ void ei_button_configure	(ei_widget_t*		widget,
 	if (img != NULL) {
 		if (button->img != NULL) {
 			hw_surface_free(button->img);
+			button->img = NULL;
 		}
-		button->img = hw_surface_create(ei_app_root_surface(), hw_surface_get_size(*img), EI_FALSE);
-		ei_copy_surface(button->img, NULL, *img, NULL, EI_FALSE);
-		
+		if (*img != NULL) {
+			button->img = hw_surface_create(ei_app_root_surface(), hw_surface_get_size(*img), EI_FALSE);
+			ei_copy_surface(button->img, NULL, *img, NULL, EI_FALSE);
+		}
+
 		int height = 0;
 		int width = 0;
 		if (button->img_rect != NULL) {

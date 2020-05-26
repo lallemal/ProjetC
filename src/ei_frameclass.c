@@ -232,6 +232,7 @@ void ei_frame_configure(ei_widget_t*		widget,
 	if (img_rect != NULL) {
 		if (frame->img_rect != NULL) {
 			free(frame->img_rect);
+			frame->img_rect = NULL;
 		}
 		frame->img_rect = copy_rect(*img_rect);
 	}
@@ -239,7 +240,14 @@ void ei_frame_configure(ei_widget_t*		widget,
 		frame->img_anchor = *img_anchor;
 	}
 	if (img != NULL) {
-		frame->img = *img;
+		if (frame->img != NULL) {
+			hw_surface_free(frame->img);
+			frame->img = NULL;
+		}
+		if (*img != NULL) {
+			frame->img = hw_surface_create(ei_app_root_surface(), hw_surface_get_size(*img), EI_FALSE);
+			ei_copy_surface(frame->img, NULL, *img, NULL, EI_FALSE);
+		}
 		int height = 0;
 		int width = 0;
 		if (frame->img_rect != NULL) {
@@ -261,6 +269,7 @@ void ei_frame_configure(ei_widget_t*		widget,
 	if (text != NULL) {
 		if (frame->text != NULL) {
 			free(frame->text);
+			frame->text = NULL;
 		}
 		if (*text != NULL) {
 			frame->text = malloc((strlen(*text) + 1) * sizeof(char));
