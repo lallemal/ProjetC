@@ -8,6 +8,7 @@
 #include "ei_widget.h"
 #define MARGIN_TOP 5
 #define MARGIN_LEFT 10
+#define LOW_PROC 0
 typedef struct ei_toplevel {
         ei_widget_t		        widget;
         ei_size_t		        requested_size;
