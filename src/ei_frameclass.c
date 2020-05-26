@@ -214,6 +214,7 @@ void ei_frame_configure(ei_widget_t*		widget,
 
 {
 	ei_frame_t* frame = (ei_frame_t *) widget;
+	int requested_size_updated = 0;
 	int ancient_border_width = frame->border_width;
 	if (color != NULL) {
 		frame->color = *color;
@@ -266,6 +267,7 @@ void ei_frame_configure(ei_widget_t*		widget,
 		width += 2 * ancient_border_width;
 		widget->requested_size.height = max(height, widget->requested_size.height);
 		widget->requested_size.width = max(width, widget->requested_size.width);
+		requested_size_updated = 1;
 	}
 	if (text != NULL) {
 		if (frame->text != NULL) {
@@ -286,6 +288,7 @@ void ei_frame_configure(ei_widget_t*		widget,
 		width_text += 2 * ancient_border_width;
 		widget->requested_size.height = max(height_text, widget->requested_size.height);
 		widget->requested_size.width = max(width_text, widget->requested_size.width);
+		requested_size_updated = 1;
 
 	}
 	if (border_width != NULL) {
@@ -294,10 +297,12 @@ void ei_frame_configure(ei_widget_t*		widget,
 		widget->requested_size.height += 2 * frame->border_width;
 		widget->requested_size.width -= 2 * ancient_border_width;
 		widget->requested_size.width += 2 * frame->border_width;
+		requested_size_updated = 1;
 	}
 	if (requested_size != NULL) {
 		widget->requested_size.height = requested_size->height;
 		widget->requested_size.width = requested_size->width;
+		requested_size_updated = 1;
 	}
 	ei_app_invalidate_rect(&(widget->screen_location));
 }
