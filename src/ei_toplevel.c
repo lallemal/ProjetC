@@ -24,7 +24,7 @@ ei_size_t       default_cb_size         = {16, 16};
 void*                    ei_toplevel_allofunc                            (void){
         ei_toplevel *new_top_level = safe_malloc(sizeof(ei_toplevel));
         new_top_level->sub_frame = ei_widget_create("frame", (ei_widget_t *)new_top_level, NULL, NULL);
-        new_top_level->widget.content_rect = safe_malloc(sizeof(ei_rect));
+        new_top_level->widget.content_rect = safe_malloc(sizeof(ei_rect_t));
         return new_top_level;
 }
 
