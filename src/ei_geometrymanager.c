@@ -1,6 +1,11 @@
-//
-// Created by devri on 13/05/2020.
-//
+/******************************************************************************
+* File:             ei_geometrymanager.c
+*
+* Author:           Robin Bertin, Aymeric Devriésère, Louise Lallemand
+* Created:          05/26/20
+* Description:      
+*****************************************************************************/
+
 #include "ei_placer.h"
 #include "ei_utils.h"
 #include "utils.h"

@@ -1,3 +1,11 @@
+/******************************************************************************
+* File:             ei_placer.c
+*
+* Author:           Robin Bertin, Aymeric Devriésère, Louise Lallemand
+* Created:          05/26/20
+* Description:      
+*****************************************************************************/
+
 //
 // Created by devri on 13/05/2020.
 //

@@ -1,7 +1,7 @@
 /******************************************************************************
 * File:             event.c
 *
-* Author:           Robin BERTIN (Nunwan)
+* Author:           Robin Bertin, Aymeric Devriésère, Louise Lallemand
 * Created:          05/20/20
 * Description:      
 *****************************************************************************/
@@ -65,6 +65,7 @@ int	isequal_widgetcall(ei_linked_widgetcall_t*	element,
 
 void			create_base_eventlist()
 {
+	// Lout method to create the list with the five interesting event
 	ei_linked_event_t* for_keydown = calloc(1,sizeof(ei_linked_event_t));
 	for_keydown->eventtype = ei_ev_keydown;
 	ei_linked_event_t* for_keyup = calloc(1,sizeof(ei_linked_event_t));
@@ -115,6 +116,7 @@ uint32_t retrieve_color(ei_surface_t pick_surface, int x, int y)
 	hw_surface_lock(pick_surface);
 	uint32_t *color_rgba = (uint32_t *)hw_surface_get_buffer(pick_surface);
 	ei_size_t size_pick = hw_surface_get_size(pick_surface);
+	// Move the pointer to the selected pixel
 	color_rgba += y * size_pick.width + x;
 	uint32_t pick_color = *color_rgba;
 	hw_surface_unlock(pick_surface);
@@ -256,12 +258,12 @@ void			del_to_listcall	(ei_linked_event_t*	list,
 		// If it is the first element
 		if (isequal_tagcall(cel, tag, callback)) {
 			ei_linked_tagcall_t* next = cel->next;
-			free(cel->user_param);
+			// free(cel->user_param);
 			free(cel);
 			list->tagcall_list = next;
 			return;
 		}
-		while (cel->next != NULL && isequal_tagcall(cel->next, tag, callback)) {
+		while (cel->next != NULL && !isequal_tagcall(cel->next, tag, callback)) {
 			cel = cel->next;
 		}
 		// If the tag,callback is not in the list
@@ -270,7 +272,7 @@ void			del_to_listcall	(ei_linked_event_t*	list,
 		}
 		ei_linked_tagcall_t* to_destroy = cel->next;
 		cel->next = cel->next->next;
-		free(to_destroy->tag);
+		//free(to_destroy->tag);
 		// free(to_destroy->user_param);
 		free(to_destroy);
 		return;
@@ -282,20 +284,20 @@ void			del_to_listcall	(ei_linked_event_t*	list,
 	}
 	if (isequal_widgetcall(cel, widget, callback)) {
 		ei_linked_widgetcall_t* next = cel->next;
-		free(cel->user_param);
+		// free(cel->user_param);
 		free(cel);
 		list->widgetcall_list = next;
 		return;
 	}
-	while (cel != NULL && isequal_widgetcall(cel->next, widget, callback)) {
+	while (cel->next != NULL && !isequal_widgetcall(cel->next, widget, callback)) {
 		cel = cel->next;
 	}
-	if (cel == NULL) {
+	if (cel->next == NULL) {
 		return;
 	}
 	ei_linked_widgetcall_t* to_destroy = cel->next;
 	cel->next = cel->next->next;
-	free(to_destroy->user_param);
+	// free(to_destroy->user_param);
 	free(to_destroy);
 	return;
 }

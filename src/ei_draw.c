@@ -1,9 +1,9 @@
 /******************************************************************************
 * File:             ei_draw.c
 *
-* Author:           Robin BERTIN (Nunwan)
+* Author:           Robin Bertin, Aymeric Devriésère, Louise Lallemand
 * Created:          05/14/20
-* Description:
+* Description:	    Tools functions for drawing surface and text
 *****************************************************************************/
 #include <stdlib.h>
 #include <string.h>

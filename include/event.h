@@ -1,9 +1,9 @@
 /******************************************************************************
 * File:             event.h
 *
-* Author:           Robin BERTIN (Nunwan)
+* Author:           Robin Bertin, Aymeric Devriésère, Louise Lallemand
 * Created:          05/20/20
-* Description:      
+* Description:      Subfunction to event system : binding, unbinding and call 
 *****************************************************************************/
 #ifndef EVENT_H
 #define EVENT_H
@@ -41,6 +41,7 @@ void			create_base_eventlist(void);
  * @brief		Free all the eventtype list
  */
 void			destroy_base_eventlist(void);
+
 /**
  * @brief		Retrieve the tag, widget and callback bind to the type
  *

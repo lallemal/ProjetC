@@ -1,9 +1,9 @@
 /******************************************************************************
 * File:             ei_widgetclass.c
 *
-* Author:           Robin BERTIN (Nunwan)
+* Author:           Robin Bertin, Aymeric Devriésère, Louise Lallemand
 * Created:          05/12/20
-* Description: 
+* Description:	    All functions and structure for frame type widget
 *****************************************************************************/
 #include <stdlib.h>
 #include <string.h>
@@ -209,6 +209,7 @@ void ei_frame_configure(ei_widget_t*		widget,
 			ei_anchor_t*		img_anchor)
 
 {
+	// For explication, see button_configure
 	ei_frame_t* frame = (ei_frame_t *) widget;
 	int requested_size_updated = 0;
 	int ancient_border_width = frame->border_width;

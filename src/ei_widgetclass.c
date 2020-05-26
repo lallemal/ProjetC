@@ -1,7 +1,7 @@
 /******************************************************************************
 * File:             ei_widgetclass.c
 *
-* Author:           Robin BERTIN (Nunwan)
+* Author:           Robin Bertin, Aymeric Devriésère, Louise Lallemand
 * Created:          05/13/20
 * Description:      
 *****************************************************************************/

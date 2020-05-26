@@ -1,6 +1,10 @@
-//
-// Created by devri on 15/05/2020.
-//
+/******************************************************************************
+* File:             utils.c
+*
+* Author:           Robin Bertin, Aymeric Devriésère, Louise Lallemand
+* Created:          05/26/20
+* Description:      
+*****************************************************************************/
 #include <stdbool.h>
 
 #include "string.h"
@@ -116,6 +120,8 @@ ei_rect_t* fusion_if(ei_rect_t* rect1, ei_rect_t* rect2)
 	if (h3 == 0 && w3 == 0) {
 		return NULL;
 	}
+	// Verify if there are more pixel in the two rect than in a rectangle that
+	// surround them : Can be improved
 	if ((h1*w1) + (h2*w2) > (h1 + h2 - h3) * (w1 + w2 - w3)) {
 		return NULL;
 	}
@@ -159,9 +165,11 @@ void simplify_list(ei_linked_rect_t**  begin_pt, ei_linked_rect_t** tail_pt)
 {
 	ei_linked_rect_t* element = *begin_pt;
 	int b = 0;
+	// Double traverse of the list with a element and the other following it
 	while (element != NULL) {
 		ei_linked_rect_t* to_try = element->next;
 		while (to_try != NULL) {
+			// If a fusion is needed : fusion else continue
 			ei_rect_t* fusionned = fusion_if(&(element->rect), &(to_try->rect));
 			if (fusionned == NULL) {
 				to_try = to_try->next;
@@ -175,6 +183,7 @@ void simplify_list(ei_linked_rect_t**  begin_pt, ei_linked_rect_t** tail_pt)
 
 			}
 		}
+		// If a fusion was done, stop and redo
 		if (b == 1) {
 			break;
 		}
@@ -182,6 +191,7 @@ void simplify_list(ei_linked_rect_t**  begin_pt, ei_linked_rect_t** tail_pt)
 			element = element->next;
 		}
 	}
+	// Redo the simplification with the new list.
 	if (b == 1) {
 		simplify_list(begin_pt, tail_pt);
 	}

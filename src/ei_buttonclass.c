@@ -1,9 +1,9 @@
 /******************************************************************************
 * File:             ei_widgetclass.c
 *
-* Author:           Robin BERTIN (Nunwan)
+* Author:           Robin Bertin, Aymeric Devriésère, Louise Lallemand
 * Created:          05/12/20
-* Description:      
+* Description:      All functions and structure for button type widget
 *****************************************************************************/
 #include <stdlib.h>
 #include <string.h>
@@ -54,23 +54,12 @@ void* ei_button_allocfunc(void)
 void ei_button_releasefunc(ei_widget_t*	widget)
 {
 	ei_button_t *button = (ei_button_t *) widget;
-	//free(&(button->color));
-	//free(&(button->border_width));
-	//free(&(button->relief));
-	//free(&(button->text_font));
-	//free(&(button->text_anchor));
-	//free(&(button->text_color));
-	//free(&(button->img));
 	if (button->img_rect != NULL) {
 		free(button->img_rect);
 	}
 	if (button->text != NULL) {
 		free(button->text);
 	}
-	//if (button->user_param != NULL) {
-	//	free(button->user_param);
-	//}
-	//free(&(button->img_anchor));
 	if (button->img != NULL) {
 		hw_surface_free(button->img);
 	}
@@ -228,8 +217,10 @@ void ei_button_configure	(ei_widget_t*		widget,
 
 {
 	ei_button_t* button = (ei_button_t *) widget;
+	// Booleen to call ei_place if requested_size is changed.
 	int requested_size_updated = 0;
 	int ancient_border_width = button->border_width;
+	// Simple changement
 	if (color != NULL) {
 		button->color = *color;
 	}
@@ -252,6 +243,7 @@ void ei_button_configure	(ei_widget_t*		widget,
 		if (button->img_rect) {
 			free(button->img_rect);
 		}
+		// Hard copy to enable a free of img_rect
 		button->img_rect =copy_rect(*img_rect);
 	}
 	if (img_anchor != NULL) {
@@ -268,11 +260,13 @@ void ei_button_configure	(ei_widget_t*		widget,
 			hw_surface_free(button->img);
 			button->img = NULL;
 		}
+		// Hard copy to enable a hw_surface_free of *img
 		if (*img != NULL) {
 			button->img = hw_surface_create(ei_app_root_surface(), hw_surface_get_size(*img), EI_FALSE);
 			ei_copy_surface(button->img, NULL, *img, NULL, EI_FALSE);
 		}
 
+		// Calcul of the requested size for the new img
 		int height = 0;
 		int width = 0;
 		if (button->img_rect != NULL) {
@@ -296,6 +290,7 @@ void ei_button_configure	(ei_widget_t*		widget,
 		if (button->text != NULL) {
 			free(button->text);
 		}
+		// Hard copy to enable a free of text
 		if (*text != NULL) {
 			button->text = malloc((strlen(*text) + 1) * sizeof(char));
 			button->text = strcpy(button->text, *text);
@@ -303,7 +298,8 @@ void ei_button_configure	(ei_widget_t*		widget,
 		else {
 			button->text = NULL;
 		}
-
+		
+		// Update the requested to fit with the text
 		if (button->text != NULL) {
 			int height_text;
 			int width_text;
@@ -334,6 +330,7 @@ void ei_button_configure	(ei_widget_t*		widget,
 			 ei_place(widget, NULL, NULL, NULL, &(widget->requested_size.width), &(widget->requested_size.height), NULL, NULL, NULL, NULL);
 		}
 	}
+	// The button has changed so it has to be redrawn
 	ei_app_invalidate_rect(&(widget->screen_location));
 }
 
