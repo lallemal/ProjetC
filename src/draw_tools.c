@@ -249,11 +249,11 @@ void draw_image(ei_surface_t image, ei_rect_t* rect_to_fill, ei_anchor_t img_anc
                *rectangle = hw_surface_get_rect(image);
         }
         else{
-                rectangle = img_rect;
+                rectangle = copy_rect(img_rect);
         }
         point_img = anchor_point(rect_to_fill, img_anchor, rectangle->size.width, rectangle->size.height);
         hw_surface_lock(image);
-        ei_rect_t* source_rectangle = copy_rect(rectangle);
+        ei_rect_t* source_rectangle = copy_rect(img_rect);
         ei_rect_t* rect_img = malloc(sizeof(ei_rect_t));
         ei_rect_t* rect_to_fill_on_screen = malloc(sizeof(ei_rect_t));
         *rect_to_fill_on_screen = inter_rect(rect_to_fill, clipper);
@@ -297,11 +297,11 @@ void draw_image(ei_surface_t image, ei_rect_t* rect_to_fill, ei_anchor_t img_anc
 
 
                 if (point_img->x >= 0) {
-                        source_rectangle->top_left.x = point_img->x;
+                        source_rectangle->top_left.x = img_rect->top_left.x;
                         source_rectangle->size.width = rect_img->size.width;
                 }
                 if (point_img->y >= 0){
-                        source_rectangle->top_left.y = point_img->y;
+                        source_rectangle->top_left.y = img_rect->top_left.y;
                         source_rectangle->size.height = rect_img->size.height;
                 }
         }
@@ -309,6 +309,7 @@ void draw_image(ei_surface_t image, ei_rect_t* rect_to_fill, ei_anchor_t img_anc
 
         hw_surface_unlock(image);
         free(point_img);
+
         free(rectangle);
         free(source_rectangle);
         free(rect_to_fill_on_screen);
