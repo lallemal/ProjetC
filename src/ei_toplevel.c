@@ -17,7 +17,7 @@
 #include "ei_placer.h"
 ei_size_t       min_size_default        = {160, 120};
 ei_size_t       default_rt_size         = {16, 16};
-ei_size_t       default_cb_size         = {16, 16};
+ei_widget_t     *first_child_opti;
 
 
 
@@ -64,12 +64,12 @@ void                    compute_text_size                               (ei_topl
         int width_of_etc;
         int height_of_etc;
         hw_text_compute_size(etc, ei_default_font, &width_of_etc, &height_of_etc);
-        text_placer->top_left.x = to_draw->close_button->screen_location.top_left.x + to_draw->close_button->screen_location.size.width * 2;
+        text_placer->top_left.x += 2 * MARGIN_LEFT + to_draw->close_button->requested_size.width * 2;
         text_placer->top_left.y += MARGIN_TOP;
 
         int left_space = to_draw->widget.screen_location.size.width
                                 + to_draw->widget.screen_location.top_left.x
-                                - (to_draw->close_button->screen_location.top_left.x + to_draw->close_button->screen_location.size.width * 2);
+                                - (2 * MARGIN_LEFT + to_draw->close_button->requested_size.width * 2);
         text_placer->size.width = left_space;
         if (to_draw->title_width > left_space){
                 if (width_of_etc < left_space){
@@ -132,7 +132,6 @@ void                    ei_toplevel_drawfunc                            (struct	
 
         compute_text_size(to_draw, &text_placer, &dark, surface, clipper);
         //position of text
-
 
         draw_text(to_draw->title, ei_default_font, &text_placer, ei_anc_northwest, surface, dark, clipper);
 
@@ -332,33 +331,32 @@ ei_bool_t resize_top_down(ei_widget_t* widget, ei_event_t* event, void* user_par
 }
 
 ei_bool_t resize_top_onmove(ei_widget_t* widget, ei_event_t* event, void* user_param){
-        if (widget->wclass == ei_widgetclass_from_name("toplevel")){
-                ei_toplevel *toplvel = (ei_toplevel *)widget;
-                ei_point_t* oldPoint = (ei_point_t *)user_param;
-                int x_mouse = event->param.mouse.where.x;
-                int y_mouse = event->param.mouse.where.y;
-                int ecart_width;
-                int ecart_height;
-                if (toplvel->resizable == ei_axis_x){
-                        ecart_width = x_mouse - oldPoint->x + widget->screen_location.size.width;
-                        ecart_height = widget->screen_location.size.height;
-                }
-                else if (toplvel->resizable == ei_axis_y){
-                        ecart_height = y_mouse - oldPoint->y + widget->screen_location.size.height;
-                        ecart_width = widget->screen_location.size.width;
-
-                } else {
-                        ecart_height = y_mouse - oldPoint->y + widget->screen_location.size.height;
-                        ecart_width = x_mouse - oldPoint->x + widget->screen_location.size.width;
-                }
-
-                if (ecart_height >= toplvel->min_size->height && ecart_width >= toplvel->min_size->width)
-                        ei_place(widget, NULL, NULL, NULL, &ecart_width, &ecart_height, NULL, NULL, NULL, NULL);
-
-                oldPoint->x = x_mouse;
-                oldPoint->y = y_mouse;
-                return EI_TRUE;
+        ei_toplevel *toplvel = (ei_toplevel *)widget;
+        ei_point_t* oldPoint = (ei_point_t *)user_param;
+        int x_mouse = event->param.mouse.where.x;
+        int y_mouse = event->param.mouse.where.y;
+        int ecart_width;
+        int ecart_height;
+        if (toplvel->resizable == ei_axis_x){
+                ecart_width = x_mouse - oldPoint->x + widget->screen_location.size.width;
+                ecart_height = widget->screen_location.size.height;
         }
+        else if (toplvel->resizable == ei_axis_y){
+                ecart_height = y_mouse - oldPoint->y + widget->screen_location.size.height;
+                ecart_width = widget->screen_location.size.width;
+
+        } else {
+                ecart_height = y_mouse - oldPoint->y + widget->screen_location.size.height;
+                ecart_width = x_mouse - oldPoint->x + widget->screen_location.size.width;
+        }
+
+        if (ecart_height >= toplvel->min_size->height && ecart_width >= toplvel->min_size->width)
+                ei_place(widget, NULL, NULL, NULL, &ecart_width, &ecart_height, NULL, NULL, NULL, NULL);
+
+        oldPoint->x = x_mouse;
+        oldPoint->y = y_mouse;
+        return EI_TRUE;
+
 }
 
 ei_bool_t resize_top_up(ei_widget_t* widget, ei_event_t* event, void* user_param){
@@ -367,7 +365,6 @@ ei_bool_t resize_top_up(ei_widget_t* widget, ei_event_t* event, void* user_param
         free(user_param);
         return EI_TRUE;
 }
-ei_widget_t *tampon;
 ei_bool_t move_top_down(ei_widget_t* widget, ei_event_t* event, void* user_param)
 {
 	ei_point_t* oldPoint = malloc(sizeof(ei_point_t));
@@ -375,6 +372,11 @@ ei_bool_t move_top_down(ei_widget_t* widget, ei_event_t* event, void* user_param
         oldPoint->y = event->param.mouse.where.y;
 //        tampon = widget->children_head;
 //        widget->children_head = NULL;
+        if (widget->wclass == ei_widgetclass_from_name("toplevel") && LOW_PROC){
+
+                first_child_opti = widget->children_head;
+                widget->children_head = NULL;
+        }
 	ei_bind(ei_ev_mouse_move, widget, NULL, move_top_onmove, (void *)oldPoint);
 	ei_bind(ei_ev_mouse_buttonup, widget, NULL, move_top_up, NULL);
 	return EI_TRUE;
@@ -387,9 +389,7 @@ ei_bool_t move_top_onmove(ei_widget_t* widget, ei_event_t* event, void* user_par
                 ei_placer_t *w_placer = (ei_placer_t *)widget->geom_params;
                 int x_mouse = event->param.mouse.where.x;
                 int y_mouse = event->param.mouse.where.y;
-                int ecart_x = x_mouse - oldPoint->x;
-
-                ecart_x += w_placer->x;
+                int ecart_x = x_mouse - oldPoint->x + w_placer->x;
                 int ecart_y = y_mouse - oldPoint->y + w_placer->y;
                 ei_place(widget, NULL, &ecart_x, &ecart_y, NULL, NULL, NULL, NULL, NULL, NULL);
                 oldPoint->x = x_mouse;
@@ -411,9 +411,12 @@ void force_run(ei_widget_t* widget){
 
 ei_bool_t move_top_up(ei_widget_t* widget, ei_event_t* event, void* user_param)
 {
-//        widget->children_head = tampon;
-//        force_run(widget);
 
+        if (widget->wclass == ei_widgetclass_from_name("toplevel") && LOW_PROC){
+
+                widget->children_head = first_child_opti;
+                force_run(widget);
+        }
         ei_unbind(ei_ev_mouse_move, widget, NULL, move_top_onmove, user_param);
 	ei_unbind(ei_ev_mouse_buttonup, widget, NULL, move_top_up, user_param);
 	free(user_param);
