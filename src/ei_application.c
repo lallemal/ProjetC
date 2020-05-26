@@ -87,26 +87,8 @@ void ei_app_invalidate_rect(ei_rect_t* rect)
 			int y_element = newElement->rect.top_left.y;
 			int h_element = newElement->rect.size.height;
 			int w_element = newElement->rect.size.width;
-			// truncate the rect to the positive values.
-			if (newElement->rect.top_left.x < 0) {
-				newElement->rect.size.width += newElement->rect.top_left.x;
-				newElement->rect.size.width = max(newElement->rect.size.width, 0);
-				newElement->rect.top_left.x = 0;
-			}
-			if (newElement->rect.top_left.y < 0) {
-				newElement->rect.size.height += newElement->rect.top_left.y;
-				newElement->rect.size.height = max(newElement->rect.size.height, 0);
-				newElement->rect.top_left.y = 0;
-			}
-			// truncate the rect to the screen
-			if (x_element + w_element > surface_width) {
-				newElement->rect.size.width = surface_width - x_element;
-				newElement->rect.top_left.x = min(surface_width, x_element);
-			}
-			if (y_element + h_element > surface_height)  {
-				newElement->rect.size.height = surface_height - y_element;
-				newElement->rect.top_left.y = min(surface_height, y_element);
-			}
+			ei_rect_t newElement_screen = inter_rect(&(newElement->rect), &surface_rect);
+			newElement->rect = newElement_screen;
 			newElement->next = NULL;
 			// Undo the operation if the rectangle is empty
 			if (newElement->rect.size.height == 0 && newElement->rect.size.width == 0) {
