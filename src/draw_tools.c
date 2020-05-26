@@ -297,11 +297,11 @@ void draw_image(ei_surface_t image, ei_rect_t* rect_to_fill, ei_anchor_t img_anc
 
 
                 if (point_img->x >= 0) {
-                        source_rectangle->top_left.x = point_img->x;
+                        source_rectangle->top_left.x = img_rect->top_left.x;
                         source_rectangle->size.width = rect_img->size.width;
                 }
                 if (point_img->y >= 0){
-                        source_rectangle->top_left.y = point_img->y;
+                        source_rectangle->top_left.y = img_rect->top_left.y;
                         source_rectangle->size.height = rect_img->size.height;
                 }
         }
