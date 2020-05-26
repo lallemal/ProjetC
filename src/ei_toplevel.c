@@ -18,14 +18,13 @@
 ei_size_t       min_size_default        = {160, 120};
 ei_size_t       default_rt_size         = {16, 16};
 ei_size_t       default_cb_size         = {16, 16};
-int             margin_top              = 5;
-int             margin_left             = 10;
 
 
 
 void*                    ei_toplevel_allofunc                            (void){
         ei_toplevel *new_top_level = safe_malloc(sizeof(ei_toplevel));
         new_top_level->sub_frame = ei_widget_create("frame", (ei_widget_t *)new_top_level, NULL, NULL);
+        new_top_level->widget.content_rect = safe_malloc(sizeof(ei_rect));
         return new_top_level;
 }
 
@@ -34,6 +33,7 @@ void                    ei_toplevel_releasefunc                         (ei_widg
 	if (widget->pick_color) {
 		free(widget->pick_color);
 	}
+	free(widget->content_rect);
 }
 
 void                    ei_toplevel_setdefaultsfunc                     (ei_widget_t* widget){
@@ -65,7 +65,7 @@ void                    compute_text_size                               (ei_topl
         int height_of_etc;
         hw_text_compute_size(etc, ei_default_font, &width_of_etc, &height_of_etc);
         text_placer->top_left.x = to_draw->close_button->screen_location.top_left.x + to_draw->close_button->screen_location.size.width * 2;
-        text_placer->top_left.y += margin_top;
+        text_placer->top_left.y += MARGIN_TOP;
 
         int left_space = to_draw->widget.screen_location.size.width
                                 + to_draw->widget.screen_location.top_left.x
@@ -97,24 +97,35 @@ void                    ei_toplevel_drawfunc                            (struct	
                                                                                 ei_surface_t	pick_surface,
                                                                                 ei_rect_t*	clipper){
         hw_surface_lock(surface);
-
+        ei_toplevel *toplevel = (ei_toplevel *)widget;
 	if (widget->pick_color == NULL) {
 		ei_color_t* pick_color = malloc(sizeof(ei_color_t));
 		*pick_color = ei_map_color(pick_surface, widget->pick_id);
 		widget->pick_color = pick_color;
-	}
+		if (toplevel->resizable != ei_axis_none){
+                        ei_color_t* pick_color_rt = malloc(sizeof(ei_color_t));
+                        *pick_color_rt = ei_map_color(pick_surface, widget->pick_id);
+                        toplevel->resize_tool->pick_color = pick_color_rt;
+		}
 
+
+	}
         ei_toplevel *to_draw            = (ei_toplevel *)widget;
         ei_rect_t   rect_tot;
-        ei_rect_t   rect_dessin;
+        ei_rect_t   allow_rec;
         rect_tot = widget->screen_location;
         //setting the rect height to the header height
-        rect_tot.size.height = to_draw->title_height + 2 * margin_top;
-        rect_dessin = inter_rect(clipper, &rect_tot);
+        rect_tot.size.height = to_draw->title_height + 2 * MARGIN_TOP;
+        allow_rec = inter_rect(clipper, &rect_tot);
+
+        if ((allow_rec.top_left.x + allow_rec.size.width) > (widget->parent->screen_location.size.width + widget->parent->screen_location.top_left.x)){
+                allow_rec.size.width = (widget->parent->screen_location.size.width + widget->parent->screen_location.top_left.x) - allow_rec.top_left.x;
+        }
+
         //rounded top corner drawing
         ei_linked_point_t* rounded0 = rounded_top_level(&rect_tot, 20, 0);
-        ei_draw_polygon(surface, rounded0, to_draw->color, &rect_dessin);
-	ei_draw_polygon(pick_surface, rounded0, *(widget->pick_color), &rect_dessin);
+        ei_draw_polygon(surface, rounded0, to_draw->color, &allow_rec);
+	ei_draw_polygon(pick_surface, rounded0, *(widget->pick_color), &allow_rec);
         free_linked_point_list(rounded0);
 
         //dark title
@@ -162,7 +173,7 @@ void                    configure_sub_part                           (ei_topleve
         ei_color_t rt_color = dark_color(to_configure->color);
 
         // setting the y axis of subframe in order to be under the header
-        int y_subframe = margin_top * 2 + to_configure->title_height;
+        int y_subframe = MARGIN_TOP * 2 + to_configure->title_height;
 
         ei_size_t cb_size;
 
@@ -174,13 +185,17 @@ void                    configure_sub_part                           (ei_topleve
                 ei_place(to_configure->resize_tool, &anchor_rt, NULL, NULL, NULL, NULL, &rel_x_rt, &rel_y_rt, NULL, NULL);
 
         }
-        
         //settings of the subframe
-        ei_frame_configure(to_configure->sub_frame, &to_configure->widget.requested_size, &to_configure->color, &to_configure->border_width,
+        int rel_x = 0;
+        int rel_y = 0;
+        float rel_width = 1;
+        float rel_height = 1;
+        ei_frame_configure(to_configure->sub_frame, NULL, &to_configure->color, &to_configure->border_width,
                            NULL, NULL, NULL, NULL, NULL,
                            NULL, NULL,  NULL);
-        to_configure->widget.content_rect       = to_configure->sub_frame->content_rect;
-        ei_place(to_configure->sub_frame, NULL, NULL, &y_subframe, NULL, NULL, NULL, NULL, NULL, NULL);
+//        to_configure->widget.content_rect       = to_configure->sub_frame->content_rect;
+        ei_place(to_configure->sub_frame, NULL, NULL, NULL, NULL
+                , NULL, &rel_x, &rel_y, &rel_width, &rel_height);
 
         //settings of the close_button
         if (to_configure->closable == EI_TRUE){
@@ -188,8 +203,8 @@ void                    configure_sub_part                           (ei_topleve
                 cb_size.height = to_configure->title_height/1.5;
                 cb_size.width = to_configure->title_height/1.5;
 
-                int             middle_text_pos         = to_configure->title_height/2 + margin_top;
-                int             middle_button_pos       = cb_size.height + margin_left;
+                int             middle_text_pos         = to_configure->title_height/2 + MARGIN_TOP;
+                int             middle_button_pos       = cb_size.height + MARGIN_LEFT;
                 int             radius                  = 6;
                 int             border_test             = 0;
                 ei_anchor_t     bc_anchor               = ei_anc_center;
@@ -252,7 +267,7 @@ void			ei_toplevel_configure		          (ei_widget_t*		widget,
                 to_configure->requested_size.height = to_configure->min_size->height;
         }
 
-        int marging_height = margin_top * 2 + to_configure->title_height;
+        int marging_height = MARGIN_TOP * 2 + to_configure->title_height;
 
         widget->requested_size.height   = max(to_configure->min_size->height, to_configure->requested_size.height);
         widget->requested_size.width    = max(to_configure->min_size->width, to_configure->requested_size.width);
@@ -261,12 +276,17 @@ void			ei_toplevel_configure		          (ei_widget_t*		widget,
         widget->requested_size.height   += to_configure->border_width * 2;
         widget->requested_size.width    += to_configure->border_width * 2;
 
-        //configuration of closing button, resize_tool and subframe
+        widget->content_rect->top_left.x = to_configure->widget.screen_location.top_left.x ;
+        widget->content_rect->top_left.y = to_configure->widget.screen_location.top_left.y + MARGIN_TOP * 2 + to_configure->title_height;
+        widget->content_rect->size.width = widget->screen_location.size.width;
+        widget->content_rect->size.height = widget->screen_location.size.height;
+
+                //configuration of closing button, resize_tool and subframe
         configure_sub_part(to_configure);
 
 
         //the content rect is now the subframe (all the widget exept the header)
-        widget->content_rect = to_configure->sub_frame->content_rect;
+//        widget->content_rect = to_configure->sub_frame->content_rect;
 
         widget->requested_size.height   += marging_height;
 
@@ -294,15 +314,59 @@ ei_bool_t dispatch_event(ei_widget_t* widget, ei_event_t* event, void* user_para
 	int h_widget = widget->screen_location.size.height;
 	int w_widget = widget->screen_location.size.width;
 	if (y_mouse > y_widget && y_mouse < y_widget + 25) {
-		return move_top_down(widget, event, user_param);
+                return move_top_down(widget, event, user_param);
+        }
+        if (x_mouse > x_widget + w_widget - default_rt_size.width && y_mouse > y_widget + h_widget - default_rt_size.width) {
+		return resize_top_down(widget, event, user_param);
 	}
-	//if (x_mouse > x_widget + w_widget - 16 && y_mouse > y_widget + h_widget - 16) {
-	//	return resize_top_down(widget, event, user_param);
-	//}
 	return EI_FALSE;
 }
 
+ei_bool_t resize_top_down(ei_widget_t* widget, ei_event_t* event, void* user_param){
+        ei_point_t* oldPoint = malloc(sizeof(ei_point_t));
+        oldPoint->x = event->param.mouse.where.x;
+        oldPoint->y = event->param.mouse.where.y;
+        ei_bind(ei_ev_mouse_move, NULL, "all", resize_top_onmove, (void *)oldPoint);
+        ei_bind(ei_ev_mouse_buttonup, NULL, "all", resize_top_up, NULL);
+        return EI_TRUE;
+}
 
+ei_bool_t resize_top_onmove(ei_widget_t* widget, ei_event_t* event, void* user_param){
+        if (widget->wclass == ei_widgetclass_from_name("toplevel")){
+                ei_toplevel *toplvel = (ei_toplevel *)widget;
+                ei_point_t* oldPoint = (ei_point_t *)user_param;
+                int x_mouse = event->param.mouse.where.x;
+                int y_mouse = event->param.mouse.where.y;
+                int ecart_width;
+                int ecart_height;
+                if (toplvel->resizable == ei_axis_x){
+                        ecart_width = x_mouse - oldPoint->x + widget->screen_location.size.width;
+                        ecart_height = widget->screen_location.size.height;
+                }
+                else if (toplvel->resizable == ei_axis_y){
+                        ecart_height = y_mouse - oldPoint->y + widget->screen_location.size.height;
+                        ecart_width = widget->screen_location.size.width;
+
+                } else {
+                        ecart_height = y_mouse - oldPoint->y + widget->screen_location.size.height;
+                        ecart_width = x_mouse - oldPoint->x + widget->screen_location.size.width;
+                }
+
+                if (ecart_height >= toplvel->min_size->height && ecart_width >= toplvel->min_size->width)
+                        ei_place(widget, NULL, NULL, NULL, &ecart_width, &ecart_height, NULL, NULL, NULL, NULL);
+
+                oldPoint->x = x_mouse;
+                oldPoint->y = y_mouse;
+                return EI_TRUE;
+        }
+}
+
+ei_bool_t resize_top_up(ei_widget_t* widget, ei_event_t* event, void* user_param){
+        ei_unbind(ei_ev_mouse_move, NULL, "all", resize_top_onmove, user_param);
+        ei_unbind(ei_ev_mouse_buttonup, NULL, "all", resize_top_up, user_param);
+        free(user_param);
+        return EI_TRUE;
+}
 ei_bool_t move_top_down(ei_widget_t* widget, ei_event_t* event, void* user_param)
 {
 	ei_point_t* oldPoint = malloc(sizeof(ei_point_t));
@@ -323,7 +387,6 @@ ei_bool_t move_top_onmove(ei_widget_t* widget, ei_event_t* event, void* user_par
                 int x_mouse = event->param.mouse.where.x;
                 int y_mouse = event->param.mouse.where.y;
                 int ecart_x = x_mouse - oldPoint->x;
-                printf("%d\n", w_placer->x);
 
                 ecart_x += w_placer->x;
                 int ecart_y = y_mouse - oldPoint->y + w_placer->y;

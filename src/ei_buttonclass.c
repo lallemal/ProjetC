@@ -133,7 +133,7 @@ void ei_button_drawfunc(struct	ei_widget_t*	widget,
                         if (button->text != NULL) {
                                 draw_text(button->text, button->text_font, rect_int, button->text_anchor, surface,
                                           button->text_color, clipper);
-                                
+
                         }
                         //mise en place de l'image
                         if (button->img != NULL) {
@@ -255,7 +255,12 @@ void ei_button_configure	(ei_widget_t*		widget,
 		button->user_param = *user_param;
 	}
 	if (img != NULL) {
-		button->img = *img;
+		if (button->img != NULL) {
+			hw_surface_free(button->img);
+		}
+		button->img = hw_surface_create(ei_app_root_surface(), hw_surface_get_size(*img), EI_FALSE);
+		ei_copy_surface(button->img, NULL, *img, NULL, EI_FALSE);
+		
 		int height = 0;
 		int width = 0;
 		if (button->img_rect != NULL) {
@@ -278,8 +283,14 @@ void ei_button_configure	(ei_widget_t*		widget,
 		if (button->text != NULL) {
 			free(button->text);
 		}
-		button->text = malloc((strlen(*text) + 1) * sizeof(char));
-		button->text = strcpy(button->text, *text);
+		if (*text != NULL) {
+			button->text = malloc((strlen(*text) + 1) * sizeof(char));
+			button->text = strcpy(button->text, *text);
+		}
+		else {
+			button->text = NULL;
+		}
+
 		int height_text;
 		int width_text;
 		hw_text_compute_size(button->text, button->text_font, &width_text, &height_text);
@@ -308,7 +319,7 @@ ei_bool_t button_on_release(ei_widget_t* widget, ei_event_t* event, void* user_p
 {
 	if (strcmp(widget->wclass->name, "button") == 0) {
 		ei_button_t* button = (ei_button_t *)widget;
-		if (button->relief != ei_relief_sunken) {
+		if (button->relief == ei_relief_sunken) {
 			ei_relief_t newRelief2 = ei_relief_raised;
 			ei_button_configure(widget, NULL, NULL, NULL, NULL, &newRelief2, NULL, NULL,
 					NULL, NULL, NULL, NULL, NULL, NULL, NULL);
@@ -326,7 +337,7 @@ ei_bool_t button_on_press(ei_widget_t* widget, ei_event_t* event, void* user_par
 {
 	if (strcmp(widget->wclass->name, "button") == 0) {
 		ei_button_t* button = (ei_button_t *) widget;
-		if (button->relief != ei_relief_raised) {
+		if (button->relief == ei_relief_raised) {
 			ei_relief_t newRelief = ei_relief_sunken;
 			ei_button_configure(widget, NULL, NULL, NULL, NULL, &newRelief, NULL, NULL,
 					NULL, NULL, NULL, NULL, NULL, NULL, NULL);

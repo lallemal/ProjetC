@@ -29,6 +29,8 @@ ei_surface_t pick_surface;
 ei_widget_t* rootWidget;
 bool running = true;
 
+#define min(a,b) (a<=b?a:b)
+
 void ei_app_create(ei_size_t main_window_size, ei_bool_t fullscreen)
 {
 	// Initialize hardware and different surfaces.
@@ -60,6 +62,8 @@ void ei_app_invalidate_rect(ei_rect_t* rect)
 	if (rect_status != LIST_RECT_NULL && rect_status != LIST_RECT_QUITTING) {
 		ei_linked_rect_t* newElement = malloc(sizeof(ei_linked_rect_t));
 		ei_rect_t surface_rect = hw_surface_get_rect(main_window);
+		int surface_width = surface_rect.size.width;
+		int surface_height = surface_rect.size.height;
 		if (newElement == NULL) {
 			fprintf(stderr, "Out of Memory, Malloc failed \n");
 			return;
@@ -78,6 +82,10 @@ void ei_app_invalidate_rect(ei_rect_t* rect)
 			ei_rect_t* copy = copy_rect(rect);
 			newElement->rect = *copy;
 			free(copy);
+			int x_element = newElement->rect.top_left.x;
+			int y_element = newElement->rect.top_left.y;
+			int h_element = newElement->rect.size.height;
+			int w_element = newElement->rect.size.width;
 			// truncate the rect to the positive values.
 			if (newElement->rect.top_left.x < 0) {
 				newElement->rect.size.width += newElement->rect.top_left.x;
@@ -88,6 +96,14 @@ void ei_app_invalidate_rect(ei_rect_t* rect)
 				newElement->rect.size.height += newElement->rect.top_left.y;
 				newElement->rect.size.height = max(newElement->rect.size.height, 0);
 				newElement->rect.top_left.y = 0;
+			}
+			if (x_element + w_element > surface_width) {
+				newElement->rect.size.width = surface_width - x_element;
+				newElement->rect.top_left.x = min(surface_width, x_element);
+			}
+			if (y_element + h_element > surface_height)  {
+				newElement->rect.size.height = surface_height - y_element;
+				newElement->rect.top_left.y = min(surface_height, y_element);
 			}
 			newElement->next = NULL;
 			if (newElement->rect.size.height == 0 && newElement->rect.size.width == 0) {
@@ -118,6 +134,7 @@ void ei_app_free(void)
 	ei_widget_destroy(rootWidget);
 	// Unbind internal comportments
 	ei_unbind(ei_ev_mouse_buttondown, NULL, "button", button_on_press, NULL);
+	ei_unbind(ei_ev_mouse_buttondown, NULL, "toplevel", dispatch_event, NULL);
 	// Destruction of core variables
 	destroy_base_eventlist();
 

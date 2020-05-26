@@ -6,7 +6,8 @@
 #define PROJETC_IG_EI_TOPLEVEL_H
 #include "ei_types.h"
 #include "ei_widget.h"
-
+#define MARGIN_TOP 5
+#define MARGIN_LEFT 10
 typedef struct ei_toplevel {
         ei_widget_t		        widget;
         ei_size_t		        requested_size;

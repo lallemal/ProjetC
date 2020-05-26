@@ -18,17 +18,26 @@ int  are_old_and_new_diff (ei_rect_t r1, ei_rect_t r2){
                r1.top_left.y != r2.top_left.y;
 
 }
-int  special_case(struct ei_widget_t*	widget){
+int  button_case(struct ei_widget_t*	widget){
         if (widget->parent != NULL){
                 if (widget->parent->wclass == ei_widgetclass_from_name("toplevel")){
                         ei_toplevel * parent = (ei_toplevel *)widget->parent;
-                        if (widget->parent->content_rect == &widget->screen_location){
-                                return EI_TRUE;
-                        }
                         if (parent->close_button == widget){
                                 return EI_TRUE;
                         }
                 }
+        }
+        return EI_FALSE;
+}
+int  special_case(struct ei_widget_t*	widget){
+
+        if (widget->wclass == ei_widgetclass_from_name("toplevel")){
+                ei_toplevel *to_configure = (ei_toplevel *)widget;
+                widget->content_rect->top_left.x = to_configure->widget.screen_location.top_left.x ;
+                widget->content_rect->top_left.y = to_configure->widget.screen_location.top_left.y + MARGIN_TOP * 2 + to_configure->title_height;
+                widget->content_rect->size.width = widget->screen_location.size.width;
+                widget->content_rect->size.height = widget->screen_location.size.height - to_configure->title_height - 2 * MARGIN_TOP;
+
         }
         return EI_FALSE;
 }
@@ -37,12 +46,13 @@ void ei_run_func(struct ei_widget_t*	widget){
         ei_rect_t       *container;
 
 
-        if (special_case(widget)){
+        if (button_case(widget)){
                 container      = &widget->parent->screen_location;
 
         } else {
                 container      = widget->parent->content_rect;
         }
+
 
         ei_rect_t       new_screen_loc  = ei_rect_zero();
         if (widget->parent != NULL){
@@ -100,9 +110,11 @@ void ei_run_func(struct ei_widget_t*	widget){
                 }
                 // to avoid computation of children if geometry is the same
                 if (are_old_and_new_diff(new_screen_loc, widget->screen_location)){
+                        special_case(widget);
                         ei_app_invalidate_rect(&(widget->screen_location));
                         ei_widget_t *child = widget->children_head;
                         widget->screen_location = new_screen_loc;
+                        special_case(widget);
                         widget->wclass->geomnotifyfunc(widget);
                         while(child){
                                 if (is_defined(child->geom_params))

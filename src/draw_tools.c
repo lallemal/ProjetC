@@ -510,6 +510,7 @@ void draw_button(ei_surface_t surface, ei_rect_t* rect_button, ei_color_t color,
                         ei_draw_polygon(surface, rounded0, color, clipper);
                         free_linked_point_list(rounded0);
                 } else {
+			ei_rect_t rect_button_on_screen = inter_rect(rect_button, clipper);
                         ei_rect_t *rect_surface_with_border = malloc(sizeof(ei_rect_t));
                         rect_surface_with_border->size.height = rect_button->size.height - 2 * border_width;
                         rect_surface_with_border->size.width = rect_button->size.width - 2 * border_width;
@@ -518,29 +519,29 @@ void draw_button(ei_surface_t surface, ei_rect_t* rect_button, ei_color_t color,
                         if (relief == ei_relief_none) {
                                 ei_linked_point_t *rounded_frame_button = rounded_frame(rect_button, corner_radius, 0);
                                 ei_draw_polygon(surface, rounded_frame_button, dark_color(color),
-                                                rect_button);
+                                                &rect_button_on_screen);
                                 free_linked_point_list(rounded_frame_button);
                         }
                         if (relief == ei_relief_raised) {
                                 ei_linked_point_t *rounded_frame_up = rounded_frame(rect_button, corner_radius, 1);
                                 ei_linked_point_t *rounded_frame_down = rounded_frame(rect_button, corner_radius, 2);
-                                ei_draw_polygon(surface, rounded_frame_up, clear_color(color), rect_button);
-                                ei_draw_polygon(surface, rounded_frame_down, dark_color(color), rect_button);
+                                ei_draw_polygon(surface, rounded_frame_up, clear_color(color), &rect_button_on_screen);
+                                ei_draw_polygon(surface, rounded_frame_down, dark_color(color), &rect_button_on_screen);
                                 free_linked_point_list(rounded_frame_up);
                                 free_linked_point_list(rounded_frame_down);
                         }
                         if (relief == ei_relief_sunken) {
                                 ei_linked_point_t *rounded_frame_up = rounded_frame(rect_button, corner_radius, 1);
                                 ei_linked_point_t *rounded_frame_down = rounded_frame(rect_button, corner_radius, 2);
-                                ei_draw_polygon(surface, rounded_frame_up, dark_color(color), rect_button);
-                                ei_draw_polygon(surface, rounded_frame_down, clear_color(color), rect_button);
+                                ei_draw_polygon(surface, rounded_frame_up, dark_color(color), &rect_button_on_screen);
+                                ei_draw_polygon(surface, rounded_frame_down, clear_color(color), &rect_button_on_screen);
                                 free_linked_point_list(rounded_frame_up);
                                 free_linked_point_list(rounded_frame_down);
                         }
                         ei_linked_point_t *rounded_frame_int = rounded_frame(rect_surface_with_border,
                                                                              corner_radius - border_width, 0);
                         ei_draw_polygon(surface, rounded_frame_int, color,
-                                        rect_button);
+                                        &rect_button_on_screen);
                         free_linked_point_list(rounded_frame_int);
                         free(rect_surface_with_border);
                 }
@@ -575,7 +576,8 @@ void draw_button(ei_surface_t surface, ei_rect_t* rect_button, ei_color_t color,
                 rect_button->top_left.y = rect_button->top_left.y + border_width;
                 rect_button->size.width = rect_button->size.width - 2*border_width;
                 rect_button->size.height = rect_button->size.height - 2*border_width;
-                ei_fill(surface, &color, rect_button);
+		ei_rect_t rect_button_clipper = inter_rect(rect_button, clipper);
+                ei_fill(surface, &color, &rect_button_clipper);
         }
 }
 

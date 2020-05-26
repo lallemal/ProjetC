@@ -23,7 +23,7 @@ void	                ei_geometrymanager_register	(ei_geometrymanager_t* geometry
 
 
 ei_geometrymanager_t*	ei_geometrymanager_from_name	(ei_geometrymanager_name_t name){
-        ei_geometrymanager_t *choice = actual;
+        ei_geometrymanager_t *choice = &sentinel_geo;
         while (choice != NULL){
                 if(!strcmp(name, choice->name)){
                         return choice;
@@ -72,11 +72,12 @@ void			ei_place			(ei_widget_t*		widget,
                                                              float*			rel_y,
                                                              float*			rel_width,
                                                              float*			rel_height){
-
+        ei_bool_t already_defined = 0;
         ei_placer_t *to_configure;
         if (is_defined(widget->geom_params)){
                 if (widget->geom_params->manager == ei_geometrymanager_from_name("placer")){
                         to_configure = (ei_placer_t *)(widget->geom_params);
+                        already_defined = 1;
                 } else {
                         ei_geometrymanager_unmap(widget);
                 }
@@ -90,15 +91,28 @@ void			ei_place			(ei_widget_t*		widget,
                 to_configure->manager = (ei_geometry_param_t *)ei_geometrymanager_from_name("placer");
                 widget->geom_params = (ei_geometry_param_t *)to_configure;
         }
-        to_configure->anchor            = is_defined(anchor)    ? *anchor       : ei_anc_northwest;
-        to_configure->x                 = is_defined(x)         ? *x            : 0;
-        to_configure->y                 = is_defined(y)         ? *y            : 0;
-        to_configure->height            = is_defined(height)    ? *height       : widget->requested_size.height;
-        to_configure->width             = is_defined(width)     ? *width        : widget->requested_size.width;
-        to_configure->rel_x             = is_defined(rel_x)     ? *rel_x        : 0.0;
-        to_configure->rel_y             = is_defined(rel_y)     ? *rel_y        : 0.0;
-        to_configure->rel_width         = is_defined(rel_width) ? *rel_width    : -1.0;
-        to_configure->rel_height        = is_defined(rel_height)? *rel_height   : -1.0;
+        if (already_defined){
+                to_configure->anchor            = is_defined(anchor)    ? *anchor       : to_configure->anchor ;
+                to_configure->x                 = is_defined(x)         ? *x            : to_configure->x;
+                to_configure->y                 = is_defined(y)         ? *y            : to_configure->y;
+                to_configure->height            = is_defined(height)    ? *height       : to_configure->height;
+                to_configure->width             = is_defined(width)     ? *width        : to_configure->width;
+                to_configure->rel_x             = is_defined(rel_x)     ? *rel_x        : to_configure->rel_x;
+                to_configure->rel_y             = is_defined(rel_y)     ? *rel_y        : to_configure->rel_y;
+                to_configure->rel_width         = is_defined(rel_width) ? *rel_width    : to_configure->rel_width ;
+                to_configure->rel_height        = is_defined(rel_height)? *rel_height   : to_configure->rel_width ;
+        } else{
+                to_configure->anchor            = is_defined(anchor)    ? *anchor       : ei_anc_northwest;
+                to_configure->x                 = is_defined(x)         ? *x            : 0;
+                to_configure->y                 = is_defined(y)         ? *y            : 0;
+                to_configure->height            = is_defined(height)    ? *height       : widget->requested_size.height;
+                to_configure->width             = is_defined(width)     ? *width        : widget->requested_size.width;
+                to_configure->rel_x             = is_defined(rel_x)     ? *rel_x        : 0.0;
+                to_configure->rel_y             = is_defined(rel_y)     ? *rel_y        : 0.0;
+                to_configure->rel_width         = is_defined(rel_width) ? *rel_width    : -1.0;
+                to_configure->rel_height        = is_defined(rel_height)? *rel_height   : -1.0;
+
+        }
 
         ei_run_func(widget);
 }
