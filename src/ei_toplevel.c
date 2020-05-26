@@ -118,9 +118,7 @@ void                    ei_toplevel_drawfunc                            (struct	
         rect_tot.size.height = to_draw->title_height + 2 * MARGIN_TOP;
         allow_rec = inter_rect(clipper, &rect_tot);
 
-        if ((allow_rec.top_left.x + allow_rec.size.width) > (widget->parent->screen_location.size.width + widget->parent->screen_location.top_left.x)){
-                allow_rec.size.width = (widget->parent->screen_location.size.width + widget->parent->screen_location.top_left.x) - allow_rec.top_left.x;
-        }
+
 
         //rounded top corner drawing
         ei_linked_point_t* rounded0 = rounded_top_level(&rect_tot, 20, 0);
@@ -290,7 +288,9 @@ void			ei_toplevel_configure		          (ei_widget_t*		widget,
 
         widget->requested_size.height   += marging_height;
 
-
+        if (border_width != NULL){
+                ei_place(widget, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+        }
 }
 
 
@@ -367,12 +367,14 @@ ei_bool_t resize_top_up(ei_widget_t* widget, ei_event_t* event, void* user_param
         free(user_param);
         return EI_TRUE;
 }
-
+ei_widget_t *tampon;
 ei_bool_t move_top_down(ei_widget_t* widget, ei_event_t* event, void* user_param)
 {
 	ei_point_t* oldPoint = malloc(sizeof(ei_point_t));
 	oldPoint->x = event->param.mouse.where.x;
         oldPoint->y = event->param.mouse.where.y;
+//        tampon = widget->children_head;
+//        widget->children_head = NULL;
 	ei_bind(ei_ev_mouse_move, NULL, "all", move_top_onmove, (void *)oldPoint);
 	ei_bind(ei_ev_mouse_buttonup, NULL, "all", move_top_up, NULL);
 	return EI_TRUE;
@@ -396,10 +398,23 @@ ei_bool_t move_top_onmove(ei_widget_t* widget, ei_event_t* event, void* user_par
         }
 
 }
+void force_run(ei_widget_t* widget){
+        ei_widget_t *child = widget->children_head;
+        widget->wclass->geomnotifyfunc(widget);
+        while(child){
+                if (is_defined(child->geom_params))
+                        ei_run_func(child);
+                child = child->next_sibling;
+        }
+}
+
 
 ei_bool_t move_top_up(ei_widget_t* widget, ei_event_t* event, void* user_param)
 {
-	ei_unbind(ei_ev_mouse_move, NULL, "all", move_top_onmove, user_param);
+//        widget->children_head = tampon;
+//        force_run(widget);
+
+        ei_unbind(ei_ev_mouse_move, NULL, "all", move_top_onmove, user_param);
 	ei_unbind(ei_ev_mouse_buttonup, NULL, "all", move_top_up, user_param);
 	free(user_param);
 	return EI_TRUE;
