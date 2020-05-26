@@ -338,31 +338,34 @@ ei_bool_t resize_top_down(ei_widget_t* widget, ei_event_t* event, void* user_par
 }
 
 ei_bool_t resize_top_onmove(ei_widget_t* widget, ei_event_t* event, void* user_param){
-        ei_toplevel *toplvel = (ei_toplevel *)widget;
-        ei_point_t* oldPoint = (ei_point_t *)user_param;
-        int x_mouse = event->param.mouse.where.x;
-        int y_mouse = event->param.mouse.where.y;
-        int ecart_width;
-        int ecart_height;
-        if (toplvel->resizable == ei_axis_x){
-                ecart_width = x_mouse - oldPoint->x + widget->screen_location.size.width;
-                ecart_height = widget->screen_location.size.height;
+        if (widget->wclass == ei_widgetclass_from_name("toplevel")){
+
+                ei_toplevel *toplvel = (ei_toplevel *)widget;
+                ei_point_t* oldPoint = (ei_point_t *)user_param;
+                int x_mouse = event->param.mouse.where.x;
+                int y_mouse = event->param.mouse.where.y;
+                int ecart_width;
+                int ecart_height;
+                if (toplvel->resizable == ei_axis_x){
+                        ecart_width = x_mouse - oldPoint->x + widget->screen_location.size.width;
+                        ecart_height = widget->screen_location.size.height;
+                }
+                else if (toplvel->resizable == ei_axis_y){
+                        ecart_height = y_mouse - oldPoint->y + widget->screen_location.size.height;
+                        ecart_width = widget->screen_location.size.width;
+
+                } else {
+                        ecart_height = y_mouse - oldPoint->y + widget->screen_location.size.height;
+                        ecart_width = x_mouse - oldPoint->x + widget->screen_location.size.width;
+                }
+
+                if (ecart_height >= toplvel->min_size->height && ecart_width >= toplvel->min_size->width)
+                        ei_place(widget, NULL, NULL, NULL, &ecart_width, &ecart_height, NULL, NULL, NULL, NULL);
+
+                oldPoint->x = x_mouse;
+                oldPoint->y = y_mouse;
+                return EI_TRUE;
         }
-        else if (toplvel->resizable == ei_axis_y){
-                ecart_height = y_mouse - oldPoint->y + widget->screen_location.size.height;
-                ecart_width = widget->screen_location.size.width;
-
-        } else {
-                ecart_height = y_mouse - oldPoint->y + widget->screen_location.size.height;
-                ecart_width = x_mouse - oldPoint->x + widget->screen_location.size.width;
-        }
-
-        if (ecart_height >= toplvel->min_size->height && ecart_width >= toplvel->min_size->width)
-                ei_place(widget, NULL, NULL, NULL, &ecart_width, &ecart_height, NULL, NULL, NULL, NULL);
-
-        oldPoint->x = x_mouse;
-        oldPoint->y = y_mouse;
-        return EI_TRUE;
 
 }
 
