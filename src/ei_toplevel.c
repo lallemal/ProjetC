@@ -186,8 +186,8 @@ void                    configure_sub_part                           (ei_topleve
 
         }
         //settings of the subframe
-        int rel_x = 0;
-        int rel_y = 0;
+        float rel_x = 0;
+        float rel_y = 0;
         float rel_width = 1;
         float rel_height = 1;
         ei_frame_configure(to_configure->sub_frame, NULL, &to_configure->color, &to_configure->border_width,
@@ -367,18 +367,17 @@ ei_bool_t resize_top_up(ei_widget_t* widget, ei_event_t* event, void* user_param
         free(user_param);
         return EI_TRUE;
 }
+
 ei_bool_t move_top_down(ei_widget_t* widget, ei_event_t* event, void* user_param)
 {
 	ei_point_t* oldPoint = malloc(sizeof(ei_point_t));
 	oldPoint->x = event->param.mouse.where.x;
-	oldPoint->y = event->param.mouse.where.y;
+        oldPoint->y = event->param.mouse.where.y;
 	ei_bind(ei_ev_mouse_move, NULL, "all", move_top_onmove, (void *)oldPoint);
 	ei_bind(ei_ev_mouse_buttonup, NULL, "all", move_top_up, NULL);
 	return EI_TRUE;
 
 }
-
-
 ei_bool_t move_top_onmove(ei_widget_t* widget, ei_event_t* event, void* user_param)
 {
         if (widget->wclass == ei_widgetclass_from_name("toplevel")){
