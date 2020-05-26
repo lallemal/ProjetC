@@ -1,6 +1,10 @@
-//
-// Created by aymeric on 19/05/2020.
-//
+/******************************************************************************
+* File:             ei_toplevel.h
+*
+* Author:           Robin Bertin, Aymeric Devriésère, Louise Lallemand
+* Created:          05/26/20
+* Description:      
+*****************************************************************************/
 
 #ifndef PROJETC_IG_EI_TOPLEVEL_H
 #define PROJETC_IG_EI_TOPLEVEL_H

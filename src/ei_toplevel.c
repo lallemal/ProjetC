@@ -1,3 +1,11 @@
+/******************************************************************************
+* File:             ei_toplevel.c
+*
+* Author:           Robin Bertin, Aymeric Devriésère, Louise Lallemand
+* Created:          05/26/20
+* Description:      All functions and structure for toplevel type widget  
+*****************************************************************************/
+
 //
 // Created by aymeric on 19/05/2020.
 //

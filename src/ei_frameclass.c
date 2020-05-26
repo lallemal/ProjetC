@@ -1,9 +1,9 @@
 /******************************************************************************
 * File:             ei_widgetclass.c
 *
-* Author:           Robin BERTIN (Nunwan)
+* Author:           Robin Bertin, Aymeric Devriésère, Louise Lallemand
 * Created:          05/12/20
-* Description: 
+* Description:	    All functions and structure for frame type widget
 *****************************************************************************/
 #include <stdlib.h>
 #include <string.h>
@@ -103,6 +103,7 @@ void ei_frame_drawfunc(struct	ei_widget_t*	widget,
                        ei_surface_t	pick_surface,
                        ei_rect_t*	clipper)
 {
+        //set up of the pick color of the frame
 	if (widget->pick_color == NULL) {
 		ei_color_t* pick_color = malloc(sizeof(ei_color_t));
 		*pick_color = ei_map_color(pick_surface, widget->pick_id);
@@ -112,11 +113,13 @@ void ei_frame_drawfunc(struct	ei_widget_t*	widget,
         ei_frame_t* frame = (ei_frame_t*)widget;
         hw_surface_lock(surface);
         hw_surface_lock(pick_surface);
+        //rect_to_fill = "interior" of the frame
         ei_rect_t *rect_to_fill=malloc(sizeof(ei_rect_t));
+        //rect_tot = rectangle of the entire frame
         ei_rect_t* rect_tot = malloc(sizeof(ei_rect_t));
-
         *rect_tot = widget->screen_location;
-        //surface de picking --> GROS PORBLEME
+
+        //draw the pick surface
         ei_rect_t* rect_to_pick = malloc(sizeof(ei_rect_t));
         *rect_to_pick = inter_rect(clipper, rect_tot);
         ei_fill(pick_surface, widget->pick_color, rect_to_pick);
@@ -128,49 +131,41 @@ void ei_frame_drawfunc(struct	ei_widget_t*	widget,
         rect_to_fill->size.width = rect_tot->size.width - 2*frame->border_width;
         rect_to_fill->size.height = rect_tot->size.height - 2*frame->border_width;
 
-
+        //recto_to_fill_on_screen = intersection between rect_to_fill and clipper (what we see on screen)
         ei_rect_t* rect_to_fill_on_screen = malloc(sizeof(ei_rect_t));
         *rect_to_fill_on_screen= inter_rect(clipper, rect_to_fill);
 
-        //Création de relief et bordure
+        //Set up of the relief of the frame
         if (frame->border_width>0) {
+                //rect_tot_on_screen = intersection between rect_tot and clipper
                 ei_rect_t* rect_tot_on_screen = malloc(sizeof(ei_rect_t));
                 *rect_tot_on_screen = inter_rect(clipper, rect_tot);
-
                 if (frame->relief == ei_relief_raised) {
                         draw_down_relief(rect_tot, surface, frame->color, EI_TRUE, rect_tot_on_screen);
-
                         draw_up_relief(rect_tot, surface, frame->color, EI_TRUE, rect_tot_on_screen);
-
-
                 }
                 if (frame->relief == ei_relief_sunken) {
                         draw_up_relief(rect_tot, surface, frame->color, EI_FALSE, rect_tot_on_screen);
                         draw_down_relief(rect_tot, surface, frame->color, EI_FALSE, rect_tot_on_screen);
-
                 }
                 if (frame->relief == ei_relief_none){
                         ei_color_t color_to_fill;
                         color_to_fill = dark_color(frame->color);
-                        ei_rect_t* rect_tot_on_screen = malloc(sizeof(ei_rect_t));
-                        
-                        *rect_tot_on_screen = inter_rect(clipper, rect_tot);
                         ei_fill(surface, &color_to_fill, rect_tot_on_screen);
-
                 }
                 free(rect_tot_on_screen);
 
         }
 
-        //remplissage de la frame
+        //draw of the frame
         ei_fill(surface, &frame->color, rect_to_fill_on_screen);
 
-        //mise en place du texte
+        //set up of the text
         if (frame->text != NULL){
                 draw_text(frame->text, frame->text_font, rect_to_fill, frame->text_anchor, surface, frame->text_color, clipper);
         }
 
-        //mise en place de l'image
+        //set up of the image
         if (frame->img != NULL) {
                 draw_image(frame->img, rect_to_fill, frame->img_anchor, frame->img_rect, clipper, surface);
         }
@@ -214,6 +209,7 @@ void ei_frame_configure(ei_widget_t*		widget,
 			ei_anchor_t*		img_anchor)
 
 {
+	// For explication, see button_configure
 	ei_frame_t* frame = (ei_frame_t *) widget;
 	int requested_size_updated = 0;
 	int ancient_border_width = frame->border_width;
