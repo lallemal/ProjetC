@@ -77,7 +77,6 @@ void                    compute_text_size                               (ei_topl
 
         int left_space = to_draw->widget.screen_location.size.width
                                 - (2 * MARGIN_LEFT + to_draw->close_button->requested_size.width * 2);
-        printf("left space : %d", left_space);
         text_placer->size.width = left_space;
         if (to_draw->title_width > left_space){
                 if (width_of_etc < left_space){
