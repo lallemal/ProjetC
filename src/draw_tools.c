@@ -253,7 +253,7 @@ void draw_image(ei_surface_t image, ei_rect_t* rect_to_fill, ei_anchor_t img_anc
         }
         point_img = anchor_point(rect_to_fill, img_anchor, rectangle->size.width, rectangle->size.height);
         hw_surface_lock(image);
-        ei_rect_t* source_rectangle = copy_rect(img_rect);
+        ei_rect_t* source_rectangle = copy_rect(rectangle);
         ei_rect_t* rect_img = malloc(sizeof(ei_rect_t));
         ei_rect_t* rect_to_fill_on_screen = malloc(sizeof(ei_rect_t));
         *rect_to_fill_on_screen = inter_rect(rect_to_fill, clipper);
