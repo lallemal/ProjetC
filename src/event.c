@@ -256,12 +256,12 @@ void			del_to_listcall	(ei_linked_event_t*	list,
 		// If it is the first element
 		if (isequal_tagcall(cel, tag, callback)) {
 			ei_linked_tagcall_t* next = cel->next;
-			free(cel->user_param);
+			// free(cel->user_param);
 			free(cel);
 			list->tagcall_list = next;
 			return;
 		}
-		while (cel->next != NULL && isequal_tagcall(cel->next, tag, callback)) {
+		while (cel->next != NULL && !isequal_tagcall(cel->next, tag, callback)) {
 			cel = cel->next;
 		}
 		// If the tag,callback is not in the list
@@ -270,7 +270,7 @@ void			del_to_listcall	(ei_linked_event_t*	list,
 		}
 		ei_linked_tagcall_t* to_destroy = cel->next;
 		cel->next = cel->next->next;
-		free(to_destroy->tag);
+		//free(to_destroy->tag);
 		// free(to_destroy->user_param);
 		free(to_destroy);
 		return;
@@ -282,20 +282,20 @@ void			del_to_listcall	(ei_linked_event_t*	list,
 	}
 	if (isequal_widgetcall(cel, widget, callback)) {
 		ei_linked_widgetcall_t* next = cel->next;
-		free(cel->user_param);
+		// free(cel->user_param);
 		free(cel);
 		list->widgetcall_list = next;
 		return;
 	}
-	while (cel != NULL && isequal_widgetcall(cel->next, widget, callback)) {
+	while (cel->next != NULL && !isequal_widgetcall(cel->next, widget, callback)) {
 		cel = cel->next;
 	}
-	if (cel == NULL) {
+	if (cel->next == NULL) {
 		return;
 	}
 	ei_linked_widgetcall_t* to_destroy = cel->next;
 	cel->next = cel->next->next;
-	free(to_destroy->user_param);
+	// free(to_destroy->user_param);
 	free(to_destroy);
 	return;
 }
