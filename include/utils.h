@@ -11,11 +11,6 @@
 #define PROJETC_IG_UTILS_H
 #include "ei_geometrymanager.h"
 /**
- * @brief	Return if two strings are equal, mainly used to simplify code understanding
- */
-int                     is_name_equal(ei_geometrymanager_name_t actual_name, ei_geometrymanager_name_t name);
-
-/**
  * @brief	Do nothing, mainly used to simplify code understanding
  */
  void                   do_nothing();
