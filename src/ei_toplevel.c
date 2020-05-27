@@ -396,12 +396,14 @@ ei_bool_t move_top_onmove(ei_widget_t* widget, ei_event_t* event, void* user_par
 {
         if (widget->wclass == ei_widgetclass_from_name("toplevel")){
                 ei_point_t* oldPoint = (ei_point_t *)user_param;
+                ei_toplevel *toplevel = (ei_toplevel *)widget;
                 ei_placer_t *w_placer = (ei_placer_t *)widget->geom_params;
                 int x_mouse = event->param.mouse.where.x;
                 int y_mouse = event->param.mouse.where.y;
                 int ecart_x = x_mouse - oldPoint->x + w_placer->x;
                 int ecart_y = y_mouse - oldPoint->y + w_placer->y;
                 ei_place(widget, NULL, &ecart_x, &ecart_y, NULL, NULL, NULL, NULL, NULL, NULL);
+
                 oldPoint->x = x_mouse;
                 oldPoint->y = y_mouse;
                 return EI_TRUE;
