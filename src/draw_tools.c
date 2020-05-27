@@ -325,12 +325,16 @@ void draw_image(ei_surface_t image, ei_rect_t* rect_to_fill, ei_anchor_t img_anc
                         source_rectangle->size.height = rect_img->size.height;
                 }
         }
-        ei_copy_surface(surface, rect_img, image, source_rectangle, hw_surface_has_alpha(image));
+        //rect_img_on_screen = intersection between clipper and rect_img (to see only image on screen)
+        ei_rect_t* rect_img_on_screen = malloc(sizeof(ei_rect_t));
+        *rect_img_on_screen = inter_rect(rect_img, clipper);
+        ei_copy_surface(surface, rect_img_on_screen, image, source_rectangle, hw_surface_has_alpha(image));
 
         hw_surface_unlock(image);
         free(point_img);
 
         free(rectangle);
+        free(rect_img_on_screen);
         free(source_rectangle);
         free(rect_to_fill_on_screen);
         free(rect_img);
