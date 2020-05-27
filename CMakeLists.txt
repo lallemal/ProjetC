@@ -135,3 +135,14 @@ target_link_libraries(parsing		ei ${PLATFORM_LIB_FLAGS})
 # target to build the documentation
 
 add_custom_target(doc doxygen		${DOCS_DIR}/doxygen.cfg WORKING_DIRECTORY ${ROOT_DIR})
+
+# target button_frame
+
+add_executable(button_frame			${TESTS_SRC}/button_frame.c)
+target_link_libraries(button_frame		ei ${PLATFORM_LIB_FLAGS})
+
+# target minesweeper_opti
+
+add_executable(minesweeper_opti			${TESTS_SRC}/minesweeper_opti.c)
+target_link_libraries(minesweeper_opti		ei ${PLATFORM_LIB_FLAGS})
+
