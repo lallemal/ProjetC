@@ -94,8 +94,8 @@ void ei_run_func(struct ei_widget_t*	widget){
                 }
                 new_screen_loc.top_left = container->top_left;
 
-                new_screen_loc.top_left.x     +=       container->size.width  * datas->rel_x    + datas->x;
-                new_screen_loc.top_left.y     +=       container->size.height * datas->rel_y    +  datas->y;
+                new_screen_loc.top_left.x     +=       container->size.width  * datas->rel_x    +       datas->x;
+                new_screen_loc.top_left.y     +=       container->size.height * datas->rel_y    +       datas->y;
 
 
 

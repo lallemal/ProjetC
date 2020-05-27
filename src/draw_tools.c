@@ -675,3 +675,22 @@ ei_rect_t* draw_button_relief_up_down(ei_rect_t* rect_tot, int corner_radius, in
         return rect_int;
 
 }
+ei_linked_point_t   rectangle(ei_rect_t* rect, ei_color_t color, ei_surface_t	surface, int border_size, int margin, int text_width){
+        int x = rect->top_left.x;
+        int y = rect->top_left.y;
+        int width = rect->size.width;
+        int height = rect->size.height;
+        perror("je passe la");
+        ei_rect_t up_left = {{x, y},{margin, border_size}};
+        ei_rect_t up_right = {{x + margin + text_width, y},{width - (margin + text_width), border_size}};
+        ei_rect_t down = {{x, y + height - border_size},{width, border_size}};
+        ei_rect_t left = {{x, y},{border_size, height}};
+        ei_rect_t right = {{x + width - border_size, y},{border_size, height}};
+
+        ei_fill(surface, &color, &up_right);
+        ei_fill(surface, &color, &up_left);
+        ei_fill(surface, &color, &down);
+        ei_fill(surface, &color, &left);
+        ei_fill(surface, &color, &right);
+
+}

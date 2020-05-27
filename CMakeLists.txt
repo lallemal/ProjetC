@@ -87,8 +87,9 @@ set(LIB_EI_SOURCES
      		${SRC}/utils.c
      		${SRC}/traverse_tools.c
      		${SRC}/ei_toplevel.c
-		${SRC}/draw_tools.c
-)
+     		${SRC}/ei_radiobutton.c
+			${SRC}/draw_tools.c
+		)
 
 add_library(ei STATIC			${LIB_EI_SOURCES})
 

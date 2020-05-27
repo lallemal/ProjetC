@@ -213,4 +213,6 @@ ei_rect_t* draw_button_relief_up_down(ei_rect_t* rect_tot, int corner_radius, in
 
 ei_linked_point_t*  rounded_top_level(ei_rect_t* rect, int radius, int part);
 
+ei_linked_point_t   rectangle(ei_rect_t* rect, ei_color_t color, ei_surface_t	surface, int border_size, int margin, int text_width);
+
 #endif /* ifndef DRAW_H */

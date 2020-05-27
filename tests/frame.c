@@ -7,6 +7,7 @@
 #include "ei_widget.h"
 #include "ei_geometrymanager.h"
 #include "ei_toplevel.h"
+#include "ei_radiobutton.h"
 
 ei_bool_t process_key(ei_widget_t* widget, ei_event_t* event, void* user_param)
 {
@@ -49,7 +50,7 @@ int main(int argc, char** argv)
 	ei_size_t	screen_size		= {600, 600};
 	ei_color_t	root_bgcol		= {0x52, 0x7f, 0xb4, 0xff};
         ei_size_t       top_level_size          = {300, 300};
-	ei_widget_t*	button;
+	ei_widget_t*	radiobutton;
 	ei_widget_t*	toplevel;
 	ei_size_t	frame_size		= {300,200};
 	char*           text_frame              = "looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooog";
@@ -72,16 +73,20 @@ int main(int argc, char** argv)
 	ei_anchor_t     img_anchor              = ei_anc_center;
         ei_axis_set_t   axis                    = ei_axis_both;
 
+
+        int number_of_choices = 2;
+        char **liste = malloc(number_of_choices * sizeof(char *));
+        liste[0] = "lapin";
+        liste[1] = "chat";
+        char *premie = liste[1];
 	/* Create the application and change the color of the background. */
 	ei_app_create(screen_size, EI_FALSE);
         //ei_toplevel_configure();
 	/* Create, configure and place the frame on screen. */
-	toplevel = ei_widget_create("toplevel", ei_app_root_widget(), NULL, NULL);
-//        button = ei_widget_create("button", ei_app_root_widget(), NULL, NULL);
-//
-        ei_toplevel_configure(toplevel, &top_level_size, &frame_color_2, NULL, &text_frame, &closable, &axis, NULL);
-        ei_place(toplevel, &anchor, &frame_x, &frame_y, NULL, NULL, NULL, NULL, NULL, NULL );
-        ei_place(toplevel, &anchor, &frame_x, &frame_y, NULL, NULL, NULL, NULL, NULL, NULL );
+	radiobutton = ei_widget_create("radiobutton", ei_app_root_widget(), NULL, NULL);
+
+        ei_radiobutton_configure(radiobutton, NULL, &liste, NULL, &number_of_choices);
+        ei_place(radiobutton, &anchor, &button_x, &button_y, NULL, NULL, NULL, NULL, NULL, NULL );
 
 //        ei_button_configure(button, &top_level_size, &frame_color, NULL, NULL, NULL, &text_frame, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 //        ei_place(button, &anchor, &button_x, &button_y, NULL, NULL, NULL, NULL, NULL, NULL );
@@ -93,6 +98,6 @@ int main(int argc, char** argv)
 
 	/* We just exited from the main loop. Terminate the application (cleanup). */
 	ei_app_free();
-
+        free(liste);
 	return (EXIT_SUCCESS);
 }
