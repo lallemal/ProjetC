@@ -680,7 +680,6 @@ ei_linked_point_t   rectangle(ei_rect_t* rect, ei_color_t color, ei_surface_t	su
         int y = rect->top_left.y;
         int width = rect->size.width;
         int height = rect->size.height;
-        perror("je passe la");
         ei_rect_t up_left = {{x, y},{margin, border_size}};
         ei_rect_t up_right = {{x + margin + text_width, y},{width - (margin + text_width), border_size}};
         ei_rect_t down = {{x, y + height - border_size},{width, border_size}};

@@ -74,10 +74,11 @@ int main(int argc, char** argv)
         ei_axis_set_t   axis                    = ei_axis_both;
 
 
-        int number_of_choices = 2;
+        int number_of_choices = 3;
         char **liste = malloc(number_of_choices * sizeof(char *));
         liste[0] = "lapin";
         liste[1] = "chat";
+        liste[2] = "chien";
         char *premie = liste[1];
 	/* Create the application and change the color of the background. */
 	ei_app_create(screen_size, EI_FALSE);
@@ -90,7 +91,7 @@ int main(int argc, char** argv)
 
 //        ei_button_configure(button, &top_level_size, &frame_color, NULL, NULL, NULL, &text_frame, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 //        ei_place(button, &anchor, &button_x, &button_y, NULL, NULL, NULL, NULL, NULL, NULL );
-
+        ei_bind(ei_ev_keydown, NULL, "all", process_key, NULL);
 	ei_app_run();
 //	ei_unbind(ei_ev_keydown, NULL, "all", process_key, NULL);
 //	ei_unbind(ei_ev_keyup, NULL, "all", process_key2, NULL);

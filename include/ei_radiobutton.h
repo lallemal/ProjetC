@@ -14,7 +14,7 @@ typedef struct ei_radio_button {
     char**                      choices;
     char*			title;
     int                         nb_of_choices;
-    ei_widget_t *               current_button;
+    ei_widget_t*               current_button;
     int                         title_height;
     int                         title_width;
 } ei_radio_button;
