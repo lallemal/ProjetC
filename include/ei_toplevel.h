@@ -17,18 +17,17 @@ typedef struct ei_toplevel {
         ei_widget_t		        widget;
         ei_size_t		        requested_size;
         ei_color_t		        color;
-        int 			        border_width;
-        char*			        title;
         ei_bool_t		        closable;
         ei_axis_set_t		        resizable;
         ei_size_t*  	                min_size;
-        //useful data about title
-        int                             title_width;
-        int                             title_height;
-        //subwidgets which are componants of the toplevel
         ei_widget_t                     *sub_frame;
         ei_widget_t                     *resize_tool;
         ei_widget_t                     *close_button;
+        char*			        title;
+        int 			        border_width;
+        int                             title_width;
+        int                             title_height;
+
 
 } ei_toplevel;
 

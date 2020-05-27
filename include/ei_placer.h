@@ -10,7 +10,7 @@
 #include "ei_geometrymanager.h"
 
 typedef struct ei_placer_t{
-        ei_geometry_param_t     *manager;
+        ei_geometrymanager_t    *manager;
         ei_anchor_t             anchor;
         int			x;
         int			y;
