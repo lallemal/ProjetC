@@ -37,7 +37,6 @@ void*                    ei_toplevel_allofunc                            (void){
 }
 
 void                    ei_toplevel_releasefunc                         (ei_widget_t*	widget){
-        //nothing to do here, everything is released when the children are released
 	if (widget->pick_color) {
 		free(widget->pick_color);
 	}
@@ -72,12 +71,14 @@ void                    compute_text_size                               (ei_topl
         int width_of_etc;
         int height_of_etc;
         hw_text_compute_size(etc, ei_default_font, &width_of_etc, &height_of_etc);
+
         text_placer->top_left.x += 2 * MARGIN_LEFT + to_draw->close_button->requested_size.width * 2;
         text_placer->top_left.y += MARGIN_TOP;
-
+        //header width minus tue button and the margin
         int left_space = to_draw->widget.screen_location.size.width
                                 - (2 * MARGIN_LEFT + to_draw->close_button->requested_size.width * 2);
         text_placer->size.width = left_space;
+        //case when the text is too long compare to the window
         if (to_draw->title_width > left_space){
                 if (width_of_etc < left_space){
 
@@ -105,6 +106,7 @@ void                    ei_toplevel_drawfunc                            (struct	
                                                                                 ei_rect_t*	clipper){
         hw_surface_lock(surface);
         ei_toplevel *toplevel = (ei_toplevel *)widget;
+        //settings of the pick colors for the events
 	if (widget->pick_color == NULL) {
 		ei_color_t* pick_color = malloc(sizeof(ei_color_t));
 		*pick_color = ei_map_color(pick_surface, widget->pick_id);
@@ -137,8 +139,8 @@ void                    ei_toplevel_drawfunc                            (struct	
         ei_color_t dark = {0, 0, 0};
         ei_rect_t text_placer = rect_tot;
 
-        compute_text_size(to_draw, &text_placer, &dark, surface, clipper);
         //position of text
+        compute_text_size(to_draw, &text_placer, &dark, surface, clipper);
 
         draw_text(to_draw->title, ei_default_font, &text_placer, ei_anc_northwest, surface, dark, clipper);
 
@@ -176,9 +178,6 @@ void                    configure_sub_part                           (ei_topleve
         //darker color for the resize tool
         ei_color_t rt_color = dark_color(to_configure->color);
 
-        // setting the y axis of subframe in order to be under the header
-        int y_subframe = MARGIN_TOP * 2 + to_configure->title_height;
-
         ei_size_t cb_size;
 
         //settings of the resize tools
@@ -189,7 +188,7 @@ void                    configure_sub_part                           (ei_topleve
                 ei_place(to_configure->resize_tool, &anchor_rt, NULL, NULL, NULL, NULL, &rel_x_rt, &rel_y_rt, NULL, NULL);
 
         }
-        //settings of the subframe
+        //settings of the subframe, we want here to fill all the conten rect
         float rel_x = 0;
         float rel_y = 0;
         float rel_width = 1;
@@ -279,19 +278,16 @@ void			ei_toplevel_configure		          (ei_widget_t*		widget,
         //adding 2 times boder width for the size of the subframe
         widget->requested_size.height   += to_configure->border_width * 2;
         widget->requested_size.width    += to_configure->border_width * 2;
-
+        //settings of the content rect
         widget->content_rect->top_left.x = to_configure->widget.screen_location.top_left.x ;
         widget->content_rect->top_left.y = to_configure->widget.screen_location.top_left.y + MARGIN_TOP * 2 + to_configure->title_height;
         widget->content_rect->size.width = widget->screen_location.size.width;
         widget->content_rect->size.height = widget->screen_location.size.height;
 
-                //configuration of closing button, resize_tool and subframe
+        //configuration of closing button, resize_tool and subframe
         configure_sub_part(to_configure);
 
-
-        //the content rect is now the subframe (all the widget exept the header)
-//        widget->content_rect = to_configure->sub_frame->content_rect;
-
+        //adding the header height to the widget total height
         widget->requested_size.height   += marging_height;
 
         if (border_width != NULL){
@@ -300,7 +296,7 @@ void			ei_toplevel_configure		          (ei_widget_t*		widget,
 }
 
 
-ei_bool_t close_toplevel(ei_widget_t* widget, ei_event_t* event, void* user_param)
+ei_bool_t               close_toplevel                          (ei_widget_t* widget, ei_event_t* event, void* user_param)
 {
 	ei_widget_t* parent = widget->parent;
 	if (strcmp(parent->wclass->name, "toplevel") == 0) {
@@ -311,7 +307,7 @@ ei_bool_t close_toplevel(ei_widget_t* widget, ei_event_t* event, void* user_para
 }
 
 
-ei_bool_t dispatch_event(ei_widget_t* widget, ei_event_t* event, void* user_param)
+ei_bool_t               dispatch_event                          (ei_widget_t* widget, ei_event_t* event, void* user_param)
 {
 	int x_mouse = event->param.mouse.where.x;
 	int y_mouse = event->param.mouse.where.y;
@@ -328,7 +324,7 @@ ei_bool_t dispatch_event(ei_widget_t* widget, ei_event_t* event, void* user_para
 	return EI_FALSE;
 }
 
-ei_bool_t resize_top_down(ei_widget_t* widget, ei_event_t* event, void* user_param){
+ei_bool_t               resize_top_down                         (ei_widget_t* widget, ei_event_t* event, void* user_param){
         ei_point_t* oldPoint = malloc(sizeof(ei_point_t));
         oldPoint->x = event->param.mouse.where.x;
         oldPoint->y = event->param.mouse.where.y;
@@ -337,7 +333,7 @@ ei_bool_t resize_top_down(ei_widget_t* widget, ei_event_t* event, void* user_par
         return EI_TRUE;
 }
 
-ei_bool_t resize_top_onmove(ei_widget_t* widget, ei_event_t* event, void* user_param){
+ei_bool_t               resize_top_onmove                       (ei_widget_t* widget, ei_event_t* event, void* user_param){
         if (widget->wclass == ei_widgetclass_from_name("toplevel")){
 
                 ei_toplevel *toplvel = (ei_toplevel *)widget;
@@ -369,7 +365,7 @@ ei_bool_t resize_top_onmove(ei_widget_t* widget, ei_event_t* event, void* user_p
 
 }
 
-ei_bool_t resize_top_up(ei_widget_t* widget, ei_event_t* event, void* user_param){
+ei_bool_t               resize_top_up                           (ei_widget_t* widget, ei_event_t* event, void* user_param){
         ei_unbind(ei_ev_mouse_move, NULL, "all", resize_top_onmove, user_param);
         ei_unbind(ei_ev_mouse_buttonup, NULL, "all", resize_top_up, user_param);
         free(user_param);
@@ -380,8 +376,7 @@ ei_bool_t move_top_down(ei_widget_t* widget, ei_event_t* event, void* user_param
 	ei_point_t* oldPoint = malloc(sizeof(ei_point_t));
 	oldPoint->x = event->param.mouse.where.x;
         oldPoint->y = event->param.mouse.where.y;
-//        tampon = widget->children_head;
-//        widget->children_head = NULL;
+        //reduciing if the computer's proc is slow
         if (widget->wclass == ei_widgetclass_from_name("toplevel") && LOW_PROC){
 
                 first_child_opti = widget->children_head;
@@ -392,7 +387,7 @@ ei_bool_t move_top_down(ei_widget_t* widget, ei_event_t* event, void* user_param
 	return EI_TRUE;
 
 }
-ei_bool_t move_top_onmove(ei_widget_t* widget, ei_event_t* event, void* user_param)
+ei_bool_t               move_top_onmove                         (ei_widget_t* widget, ei_event_t* event, void* user_param)
 {
         if (widget->wclass == ei_widgetclass_from_name("toplevel")){
                 ei_point_t* oldPoint = (ei_point_t *)user_param;
@@ -408,7 +403,7 @@ ei_bool_t move_top_onmove(ei_widget_t* widget, ei_event_t* event, void* user_par
         }
 
 }
-void force_run(ei_widget_t* widget){
+void                    force_run                               (ei_widget_t* widget){
         ei_widget_t *child = widget->children_head;
         widget->wclass->geomnotifyfunc(widget);
         while(child){
@@ -419,7 +414,7 @@ void force_run(ei_widget_t* widget){
 }
 
 
-ei_bool_t move_top_up(ei_widget_t* widget, ei_event_t* event, void* user_param)
+ei_bool_t               move_top_up                             (ei_widget_t* widget, ei_event_t* event, void* user_param)
 {
 
         if (widget->wclass == ei_widgetclass_from_name("toplevel") && LOW_PROC){

@@ -19,6 +19,20 @@
 int  is_set_relative(float rel){
         return rel != -1.0;
 }
+
+void set_defaults_placer(ei_widget_t *to_set){
+        ei_placer_t *to_configure = (ei_placer_t *)to_set->geom_params;
+        to_configure->anchor            = ei_anc_northwest;
+        to_configure->x                 = 0;
+        to_configure->y                 = 0;
+        to_configure->height            = to_set->requested_size.height;
+        to_configure->width             = to_set->requested_size.width;
+        to_configure->rel_x             = 0;
+        to_configure->rel_y             = 0;
+        to_configure->rel_width         = -1;
+        to_configure->rel_height        = -1;
+}
+
 int  are_old_and_new_diff (ei_rect_t r1, ei_rect_t r2){
         return r1.size.height != r2.size.height ||
                r1.size.width != r2.size.width ||
@@ -26,6 +40,7 @@ int  are_old_and_new_diff (ei_rect_t r1, ei_rect_t r2){
                r1.top_left.y != r2.top_left.y;
 
 }
+
 int  button_case(struct ei_widget_t*	widget){
         if (widget->parent != NULL){
                 if (widget->parent->wclass == ei_widgetclass_from_name("toplevel")){
@@ -37,8 +52,9 @@ int  button_case(struct ei_widget_t*	widget){
         }
         return EI_FALSE;
 }
-int  special_case(struct ei_widget_t*	widget){
 
+void  special_case(struct ei_widget_t*	widget){
+        //this function is only used by the creator of the library to manage the special case of the subframe of a top level
         if (widget->wclass == ei_widgetclass_from_name("toplevel")){
                 ei_toplevel *to_configure = (ei_toplevel *)widget;
                 widget->content_rect->top_left.x = to_configure->widget.screen_location.top_left.x ;
@@ -47,8 +63,8 @@ int  special_case(struct ei_widget_t*	widget){
                 widget->content_rect->size.height = widget->screen_location.size.height - to_configure->title_height - 2 * MARGIN_TOP;
 
         }
-        return EI_FALSE;
 }
+
 void ei_run_func(struct ei_widget_t*	widget){
         ei_placer_t     *datas          = (ei_placer_t  *)widget->geom_params;
         ei_rect_t       *container;
@@ -125,7 +141,7 @@ void ei_run_func(struct ei_widget_t*	widget){
                         widget->wclass->geomnotifyfunc(widget);
                         while(child){
                                 if (is_defined(child->geom_params))
-                                        ei_run_func(child);
+                                        widget->geom_params->manager->runfunc(child);
                                 child = child->next_sibling;
                         }
                 }
