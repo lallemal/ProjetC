@@ -11,6 +11,7 @@
 //
 #include <stdlib.h>
 #include <utils.h>
+#include "ei_radiobutton.h"
 #include "ei_application.h"
 #include "ei_placer.h"
 #include "ei_utils.h"
@@ -65,6 +66,11 @@ void  special_case(struct ei_widget_t*	widget){
                 widget->content_rect->size.width = widget->screen_location.size.width - 2 * to_configure->border_width;
                 widget->content_rect->size.height = widget->screen_location.size.height - to_configure->title_height - 2 * MARGIN_TOP  - 2 * to_configure->border_width;
 
+        }
+        if (widget->wclass == ei_widgetclass_from_name("radiobutton")){
+                ei_radio_button *to_configure = (ei_radio_button *)widget;
+                *widget->content_rect = widget->screen_location;
+                widget->content_rect->size.height -= BORDER_SIZE;
         }
 }
 

@@ -8,6 +8,7 @@
 #include "stdio.h"
 #include "stdlib.h"
 #define MARGIN_LEFT 5
+#define BORDER_SIZE 2
 typedef struct ei_radio_button {
     ei_widget_t		        widget;
     ei_size_t		        requested_size;
@@ -32,7 +33,7 @@ void                    ei_radiobutton_configure                                
                                                                                  ei_color_t      *text_border_color,
                                                                                  ei_color_t      *background_color,
                                                                                  ei_color_t      *press_col,
-                                                                                 ei_color_t      *rel_color)
+                                                                                 ei_color_t      *rel_color);
 
 void                    *ei_radiobutton_allofunc                                (void);
 

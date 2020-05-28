@@ -52,10 +52,10 @@ int main(int argc, char** argv)
         ei_size_t       top_level_size          = {300, 300};
 	ei_widget_t*	radiobutton;
 	ei_widget_t*	toplevel;
-	ei_size_t	frame_size		= {300,100};
+	ei_size_t	frame_size		= {300,300};
 	char*           text_frame              = "looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooog";
 	ei_anchor_t	text_anchor		= ei_anc_northwest;
-        ei_color_t      window_color    ={0x52, 0x7f, 0xb4, 0xff};
+        ei_color_t      window_color            ={210, 210, 210, 0xff};
 	ei_color_t      text_color              = {0, 0, 0, 0xff};
 	int		frame_x			= 400;
 	int		frame_y			= 150;
@@ -63,22 +63,16 @@ int main(int argc, char** argv)
         int		button_x		= 50;
         int		button_y		= 50;
 	ei_anchor_t     anchor                  = ei_anc_northwest;
-	ei_color_t	frame_color		= {250, 0, 0, 0xff};
-	ei_color_t	frame_color_2		= {100, 100, 100, 255};
-	ei_relief_t	frame_relief		= ei_relief_raised;
-	int		frame_border_width	= 6;
-        ei_bool_t       closable = EI_TRUE;
-	ei_surface_t    image;
-	ei_rect_t*      rect_img                = malloc(sizeof(ei_rect_t));
-	ei_anchor_t     img_anchor              = ei_anc_center;
-        ei_axis_set_t   axis                    = ei_axis_both;
-
+        ei_color_t bg_col = {255, 140, 0, 255};
+        ei_color_t on_press = {255, 0, 0, 255};
+        ei_color_t on_rel = {255, 255, 255, 255};
+        ei_color_t text_col = {50, 50, 50, 0xff};
 
         int number_of_choices = 3;
         char **liste = malloc(number_of_choices * sizeof(char *));
-        liste[0] = "lapin";
-        liste[1] = "I";
-        liste[2] = "chien";
+        liste[0] = "Choix 1";
+        liste[1] = "Choix 2";
+        liste[2] = "Choix 3";
         char *premie = liste[1];
 	/* Create the application and change the color of the background. */
 	ei_app_create(screen_size, EI_FALSE);
@@ -88,9 +82,9 @@ int main(int argc, char** argv)
         radiobutton = ei_widget_create("radiobutton", toplevel, NULL, NULL);
         ei_toplevel_configure(toplevel, &frame_size, &window_color, NULL, NULL, NULL, NULL, NULL);
         ei_place(toplevel, &anchor, &button_x, &button_y, NULL, NULL, NULL, NULL, NULL, NULL );
-        ei_radiobutton_configure(radiobutton, NULL, &liste, NULL, &number_of_choices);
+        ei_radiobutton_configure(radiobutton, NULL, &liste, NULL, &number_of_choices, &text_col, &bg_col, &on_press, &on_rel);
         float rel_wid = 0.5;
-        ei_place(radiobutton, &anchor, &button_x, &button_y, &rel_wid, NULL, NULL, NULL, NULL, NULL );
+        ei_place(radiobutton, &anchor, &button_x, &button_y, NULL, NULL, NULL, NULL, &rel_wid, NULL );
 
 //        ei_button_configure(button, &top_level_size, &frame_color, NULL, NULL, NULL, &text_frame, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 //        ei_place(button, &anchor, &button_x, &button_y, NULL, NULL, NULL, NULL, NULL, NULL );

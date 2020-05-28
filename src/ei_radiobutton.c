@@ -65,31 +65,29 @@ void                    ei_radiobutton_drawfunc                                 
                 *pick_color = ei_map_color(pick_surface, widget->pick_id);
                 widget->pick_color = pick_color;
         }
-        int border_size = 2;
+
         //setting the rect height to the header height
         ei_rect_t allow_rec = inter_rect(clipper, &widget->screen_location);
         ei_rect_t   text_rect = widget->screen_location;
         //dark title
-        ei_color_t white = {200, 200, 200};
-        ei_color_t dark = {0, 0, 0};
         //drawing the background
         ei_fill(pick_surface, widget->pick_color, &allow_rec);
-        ei_fill(surface, &white, &allow_rec);
+        ei_fill(surface, &to_draw->bg_color, &allow_rec);
 
         ei_rect_t dborder = widget->screen_location;
         dborder.top_left.y += to_draw->title_height / 2;
         dborder.size.height -= to_draw->title_height / 2;
-        rectangle(&dborder, dark, surface, border_size, MARGIN_LEFT, to_draw->title_width, clipper);
+        rectangle(&dborder, to_draw->tb_color, surface, BORDER_SIZE, MARGIN_LEFT, to_draw->title_width, clipper);
 
         text_rect.top_left.x += MARGIN_LEFT;
         text_rect = inter_rect(&widget->screen_location, &text_rect);
-        draw_text(to_draw->title, ei_default_font, &text_rect, ei_anc_northwest, surface, dark, clipper);
+        draw_text(to_draw->title, ei_default_font, &text_rect, ei_anc_northwest, surface, to_draw->tb_color, clipper);
         text_rect.size.width -= 2 * to_draw->title_height;
         text_rect.top_left.x += to_draw->title_height + 2 * MARGIN_LEFT;
         for (int i = 0; i < to_draw->nb_of_choices; i++) {
                 text_rect.top_left.y += 2 * to_draw->title_height;
                 text_rect = inter_rect(&allow_rec, &text_rect);
-                text_size(to_draw, &text_rect, &dark, surface, clipper, to_draw->choices[i]);
+                text_size(to_draw, &text_rect, &to_draw->tb_color, surface, &allow_rec, to_draw->choices[i]);
         }
 
         hw_surface_unlock(surface);
@@ -108,11 +106,12 @@ char*                   data                                                    
 
 }
 void                    ei_radiobutton_releasefunc                              (ei_widget_t*	widget){
-        do_nothing();
+        free(widget->content_rect);
 }
 
 void*                    ei_radiobutton_allofunc                                (void){
         ei_radio_button *new_radiobutton = safe_malloc(sizeof(ei_radio_button));
+        new_radiobutton->widget.content_rect = safe_malloc(sizeof(ei_rect_t));
         return new_radiobutton;
 }
 
@@ -121,13 +120,20 @@ void                    ei_radiobutton_geomnotifyfunc                           
 }
 
 void                    ei_radiobutton_setdefaults                              (ei_widget_t      *widget){
-        widget->content_rect = &widget->screen_location;
+
+        ei_color_t red = {255, 0, 0, 255};
+        ei_color_t black = {0, 0, 0, 255};
         ei_radio_button *to_configure = (ei_radio_button *)widget;
         to_configure->title                     = "Tadam";
         to_configure->current_button            = NULL;
         to_configure->choices                   = NULL;
         to_configure->requested_size            = ei_size(0, 0);
         to_configure->nb_of_choices             = 0;
+        to_configure->b_rel_col                 = ei_default_background_color;
+        to_configure->tb_color                  = black;
+        to_configure->bg_color                  = ei_default_background_color;
+        to_configure->b_press_col               = red;
+
 
 }
 
@@ -138,15 +144,13 @@ ei_bool_t process_radio(ei_widget_t* widget, ei_event_t* event, void* user_param
         if (parent->current_button != NULL){
                 if (parent->current_button == widget)
                         return EI_TRUE;
-                ei_color_t base = ei_default_background_color;
-                ei_button_configure(parent->current_button, NULL, &base,
+                ei_button_configure(parent->current_button, NULL, &parent->b_rel_col,
                                     NULL, NULL, NULL, NULL, NULL,
                                     NULL, NULL, NULL, NULL, NULL,
                                     NULL, NULL);
         }
         parent->current_button = widget;
-        ei_color_t red = {255, 0, 0 ,255};
-        ei_button_configure(widget, NULL, &red,
+        ei_button_configure(widget, NULL, &parent->b_press_col,
                             NULL, NULL, NULL, NULL, NULL,
                             NULL, NULL, NULL, NULL, NULL,
                             NULL, NULL);
@@ -201,7 +205,7 @@ void                    ei_radiobutton_configure                                
         for (int i = 0; i < to_configure->nb_of_choices; i++) {
                 total_height += 2 * to_configure->title_height;
                 current = ei_widget_create("button", widget, NULL, NULL);
-                ei_button_configure(current, &size_button, NULL,
+                ei_button_configure(current, &size_button, &to_configure->b_rel_col,
                         NULL, &radius, NULL, NULL, NULL,
                         NULL, NULL, NULL, NULL, NULL,
                         &button_callback, NULL);
@@ -221,6 +225,7 @@ void                    ei_radiobutton_configure                                
         if (to_configure->requested_size.width < min_size.width )
                 to_configure->requested_size.width = min_size.width;
         widget->requested_size = to_configure->requested_size;
+
         ei_app_invalidate_rect(&widget->screen_location);
 
 }
