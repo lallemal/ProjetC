@@ -48,6 +48,9 @@ int  button_case(struct ei_widget_t*	widget){
                         if (parent->close_button == widget){
                                 return EI_TRUE;
                         }
+                        if (parent->resize_tool == widget){
+                                return EI_TRUE;
+                        }
                 }
         }
         return EI_FALSE;
@@ -57,10 +60,10 @@ void  special_case(struct ei_widget_t*	widget){
         //this function is only used by the creator of the library to manage the special case of the subframe of a top level
         if (widget->wclass == ei_widgetclass_from_name("toplevel")){
                 ei_toplevel *to_configure = (ei_toplevel *)widget;
-                widget->content_rect->top_left.x = to_configure->widget.screen_location.top_left.x ;
-                widget->content_rect->top_left.y = to_configure->widget.screen_location.top_left.y + MARGIN_TOP * 2 + to_configure->title_height;
-                widget->content_rect->size.width = widget->screen_location.size.width;
-                widget->content_rect->size.height = widget->screen_location.size.height - to_configure->title_height - 2 * MARGIN_TOP;
+                widget->content_rect->top_left.x = to_configure->widget.screen_location.top_left.x + to_configure->border_width ;
+                widget->content_rect->top_left.y = to_configure->widget.screen_location.top_left.y + MARGIN_TOP * 2 + to_configure->title_height + to_configure->border_width;
+                widget->content_rect->size.width = widget->screen_location.size.width - 2 * to_configure->border_width;
+                widget->content_rect->size.height = widget->screen_location.size.height - to_configure->title_height - 2 * MARGIN_TOP  - 2 * to_configure->border_width;
 
         }
 }

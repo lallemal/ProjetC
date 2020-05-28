@@ -52,10 +52,10 @@ int main(int argc, char** argv)
         ei_size_t       top_level_size          = {300, 300};
 	ei_widget_t*	radiobutton;
 	ei_widget_t*	toplevel;
-	ei_size_t	frame_size		= {300,200};
+	ei_size_t	frame_size		= {300,100};
 	char*           text_frame              = "looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooog";
 	ei_anchor_t	text_anchor		= ei_anc_northwest;
-
+        ei_color_t      window_color    ={0x52, 0x7f, 0xb4, 0xff};
 	ei_color_t      text_color              = {0, 0, 0, 0xff};
 	int		frame_x			= 400;
 	int		frame_y			= 150;
@@ -77,17 +77,20 @@ int main(int argc, char** argv)
         int number_of_choices = 3;
         char **liste = malloc(number_of_choices * sizeof(char *));
         liste[0] = "lapin";
-        liste[1] = "chat";
+        liste[1] = "I";
         liste[2] = "chien";
         char *premie = liste[1];
 	/* Create the application and change the color of the background. */
 	ei_app_create(screen_size, EI_FALSE);
         //ei_toplevel_configure();
 	/* Create, configure and place the frame on screen. */
-	radiobutton = ei_widget_create("radiobutton", ei_app_root_widget(), NULL, NULL);
-
+        toplevel = ei_widget_create("toplevel", ei_app_root_widget(), NULL, NULL);
+        radiobutton = ei_widget_create("radiobutton", toplevel, NULL, NULL);
+        ei_toplevel_configure(toplevel, &frame_size, &window_color, NULL, NULL, NULL, NULL, NULL);
+        ei_place(toplevel, &anchor, &button_x, &button_y, NULL, NULL, NULL, NULL, NULL, NULL );
         ei_radiobutton_configure(radiobutton, NULL, &liste, NULL, &number_of_choices);
-        ei_place(radiobutton, &anchor, &button_x, &button_y, NULL, NULL, NULL, NULL, NULL, NULL );
+        float rel_wid = 0.5;
+        ei_place(radiobutton, &anchor, &button_x, &button_y, &rel_wid, NULL, NULL, NULL, NULL, NULL );
 
 //        ei_button_configure(button, &top_level_size, &frame_color, NULL, NULL, NULL, &text_frame, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 //        ei_place(button, &anchor, &button_x, &button_y, NULL, NULL, NULL, NULL, NULL, NULL );

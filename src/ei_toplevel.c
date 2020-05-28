@@ -99,7 +99,37 @@ void                    compute_text_size                               (ei_topl
         text_placer->size.height = to_draw->title_height;
 
 }
+void draw_border                                                        (ei_surface_t	surface,
+                                                                         ei_surface_t	pick_surface,
+                                                                         ei_rect_t*     draw_rect,
+                                                                         ei_widget_t*	widget,
+                                                                         ei_rect_t*     clipper){
+        ei_toplevel *to_draw            = (ei_toplevel *)widget;
+        ei_rect_t border_rect = *draw_rect;
+        border_rect.top_left.y += to_draw->title_height + 2 * MARGIN_TOP;
+        border_rect.size.height -= to_draw->title_height + 2 * MARGIN_TOP;
+        int x = border_rect.top_left.x;
+        int y = border_rect.top_left.y;
+        int width = border_rect.size.width;
+        int height = border_rect.size.height;
+        int border = to_draw->border_width;
+        ei_color_t color = dark_color(to_draw->color);
+        ei_rect_t up = {{x, y},{width, border}};
+        ei_rect_t down = {{x, y + height - border},{width, border}};
+        ei_rect_t left = {{x, y},{border, height}};
+        ei_rect_t right = {{x + width - border, y},{border, height}};
 
+        up = inter_rect(clipper, &up);
+        down = inter_rect(clipper, &down);
+        right = inter_rect(clipper, &right);
+        left = inter_rect(clipper, &left);
+
+        ei_fill(surface, &color, &up);
+        ei_fill(surface, &color, &down);
+        ei_fill(surface, &color, &left);
+        ei_fill(surface, &color, &right);
+
+}
 void                    ei_toplevel_drawfunc                            (struct	ei_widget_t*	widget,
                                                                                 ei_surface_t	surface,
                                                                                 ei_surface_t	pick_surface,
@@ -123,9 +153,10 @@ void                    ei_toplevel_drawfunc                            (struct	
         ei_rect_t   rect_tot;
         ei_rect_t   allow_rec;
         rect_tot = widget->screen_location;
+        allow_rec = inter_rect(clipper, &rect_tot);
+        draw_border(surface, pick_surface, &widget->screen_location, widget, &allow_rec);
         //setting the rect height to the header height
         rect_tot.size.height = to_draw->title_height + 2 * MARGIN_TOP;
-        allow_rec = inter_rect(clipper, &rect_tot);
 
 
 
@@ -193,7 +224,7 @@ void                    configure_sub_part                           (ei_topleve
         float rel_y = 0;
         float rel_width = 1;
         float rel_height = 1;
-        ei_frame_configure(to_configure->sub_frame, NULL, &to_configure->color, &to_configure->border_width,
+        ei_frame_configure(to_configure->sub_frame, NULL, &to_configure->color, NULL,
                            NULL, NULL, NULL, NULL, NULL,
                            NULL, NULL,  NULL);
 //        to_configure->widget.content_rect       = to_configure->sub_frame->content_rect;
@@ -223,10 +254,11 @@ void                    configure_sub_part                           (ei_topleve
 void                    init_the_sub_tools                       (ei_toplevel *toplevel){
         //malloc of the subframe
         if (toplevel->resizable != ei_axis_none && toplevel->resize_tool == NULL)
-                toplevel->resize_tool = ei_widget_create("frame", toplevel->sub_frame, NULL, NULL);
+                toplevel->resize_tool = ei_widget_create("frame", &toplevel->widget, NULL, NULL);
         //malloc of the closing button
-        if (toplevel->closable == EI_TRUE && toplevel->close_button == NULL)
+        if (toplevel->closable == EI_TRUE && toplevel->close_button == NULL) {
                 toplevel->close_button = ei_widget_create("button", &toplevel->widget, NULL, NULL);
+        }
 }
 
 void			ei_toplevel_configure		          (ei_widget_t*		widget,
@@ -259,14 +291,14 @@ void			ei_toplevel_configure		          (ei_widget_t*		widget,
 
         is_defined(title)               ? to_configure->title           = *title                 : do_nothing();
         //if the requested size is lower than the min size, then the size is set to the min size
-        if (requested_size->width < to_configure->min_size->width) {
+        if (to_configure->requested_size.width < to_configure->min_size->width) {
                 to_configure->requested_size.width = to_configure->min_size->width;
         }
 
         //calculating the needed space for title
         hw_text_compute_size(to_configure->title, ei_default_font, &to_configure->title_width, &to_configure->title_height);
 
-        if (requested_size->height < to_configure->min_size->height) {
+        if (to_configure->requested_size.height < to_configure->min_size->height) {
                 to_configure->requested_size.height = to_configure->min_size->height;
         }
 
@@ -281,8 +313,8 @@ void			ei_toplevel_configure		          (ei_widget_t*		widget,
         //settings of the content rect
         widget->content_rect->top_left.x = to_configure->widget.screen_location.top_left.x ;
         widget->content_rect->top_left.y = to_configure->widget.screen_location.top_left.y + MARGIN_TOP * 2 + to_configure->title_height;
-        widget->content_rect->size.width = widget->screen_location.size.width;
-        widget->content_rect->size.height = widget->screen_location.size.height;
+        widget->content_rect->size.width = widget->screen_location.size.width - 2 * to_configure->border_width;
+        widget->content_rect->size.height = widget->screen_location.size.height - 2 * to_configure->border_width;
 
         //configuration of closing button, resize_tool and subframe
         configure_sub_part(to_configure);
