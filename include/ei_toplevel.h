@@ -84,5 +84,5 @@ void                    compute_text_size                               (ei_topl
                                                                          ei_rect_t *text_placer,
                                                                          ei_color_t *color,
                                                                          ei_surface_t *surface,
-                                                                         ei_rect_t *clipper)
+                                                                         ei_rect_t *clipper);
 #endif //PROJETC_IG_EI_TOPLEVEL_H

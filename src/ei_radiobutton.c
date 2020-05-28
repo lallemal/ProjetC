@@ -86,7 +86,6 @@ void                    ei_radiobutton_drawfunc                                 
         text_rect.top_left.x += to_draw->title_height + 2 * MARGIN_LEFT;
         for (int i = 0; i < to_draw->nb_of_choices; i++) {
                 text_rect.top_left.y += 2 * to_draw->title_height;
-                text_rect = inter_rect(&allow_rec, &text_rect);
                 text_size(to_draw, &text_rect, &to_draw->tb_color, surface, &allow_rec, to_draw->choices[i]);
         }
 

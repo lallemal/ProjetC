@@ -23,8 +23,11 @@
 #include "ei_event.h"
 #include "callfunction.h"
 #include "ei_placer.h"
+//default min_size for toplevel
 ei_size_t       min_size_default        = {160, 120};
+// default min_size for the resize tool
 ei_size_t       default_rt_size         = {16, 16};
+//children head in case of optimisation
 ei_widget_t     *first_child_opti;
 
 
@@ -108,17 +111,21 @@ void draw_border                                                        (ei_surf
         ei_rect_t border_rect = *draw_rect;
         border_rect.top_left.y += to_draw->title_height + 2 * MARGIN_TOP;
         border_rect.size.height -= to_draw->title_height + 2 * MARGIN_TOP;
+        //variables to simplify the understanding
         int x = border_rect.top_left.x;
         int y = border_rect.top_left.y;
         int width = border_rect.size.width;
         int height = border_rect.size.height;
         int border = to_draw->border_width;
+        //color of the border
         ei_color_t color = dark_color(to_draw->color);
+        //computation of the borders
         ei_rect_t up = {{x, y},{width, border}};
         ei_rect_t down = {{x, y + height - border},{width, border}};
         ei_rect_t left = {{x, y},{border, height}};
         ei_rect_t right = {{x + width - border, y},{border, height}};
 
+        //intersection with the clipper drawn just what it needed
         up = inter_rect(clipper, &up);
         down = inter_rect(clipper, &down);
         right = inter_rect(clipper, &right);
@@ -139,21 +146,20 @@ void                    ei_toplevel_drawfunc                            (struct	
                                                                                 ei_surface_t	pick_surface,
                                                                                 ei_rect_t*	clipper){
         hw_surface_lock(surface);
-        ei_toplevel *toplevel = (ei_toplevel *)widget;
+        ei_toplevel *to_draw            = (ei_toplevel *)widget;
         //settings of the pick colors for the events
-	if (widget->pick_color == NULL) {
-		ei_color_t* pick_color = malloc(sizeof(ei_color_t));
-		*pick_color = ei_map_color(pick_surface, widget->pick_id);
-		widget->pick_color = pick_color;
-		if (toplevel->resizable != ei_axis_none){
+        if (widget->pick_color == NULL) {
+                ei_color_t* pick_color = malloc(sizeof(ei_color_t));
+                *pick_color = ei_map_color(pick_surface, widget->pick_id);
+                widget->pick_color = pick_color;
+                if (to_draw->resizable != ei_axis_none){
                         ei_color_t* pick_color_rt = malloc(sizeof(ei_color_t));
                         *pick_color_rt = ei_map_color(pick_surface, widget->pick_id);
-                        toplevel->resize_tool->pick_color = pick_color_rt;
-		}
+                        to_draw->resize_tool->pick_color = pick_color_rt;
+                }
 
 
-	}
-        ei_toplevel *to_draw            = (ei_toplevel *)widget;
+        }
         ei_rect_t   rect_tot;
         ei_rect_t   allow_rec;
         rect_tot = widget->screen_location;
