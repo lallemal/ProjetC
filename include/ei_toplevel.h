@@ -13,6 +13,9 @@
 #define MARGIN_TOP 5
 #define MARGIN_LEFT 10
 #define LOW_PROC 0
+/**
+ * \brief	A structure that stores information about a toplevel.
+ */
 typedef struct ei_toplevel {
         ei_widget_t		        widget;
         ei_size_t		        requested_size;
@@ -30,15 +33,31 @@ typedef struct ei_toplevel {
 
 
 } ei_toplevel;
-
+/**
+ * @brief           See the definition of \ref ei_widgetclass_allocfunc_t
+ *
+ */
 void                    *ei_toplevel_allofunc                            (void);
 
+/**
+ * @brief           See the definition of \ref ei_widgetclass_releasefunc_t
+ *
+ */
 void                    ei_toplevel_releasefunc                         (ei_widget_t*	widget);
-
+/**
+ * @brief           See the definition of \ref ei_widgetclass_setdefaultsfunc_t
+ *
+ */
 void                    ei_toplevel_setdefaultsfunc                     (ei_widget_t* widget);
-
+/**
+ * @brief           See the definition of \ref ei_widgetclass_geomnotifyfunc_t
+ *
+ */
 void                    ei_toplevel_geomnotifyfunc                      (struct ei_widget_t* widget);
-
+/**
+ * @brief           See the definition of \ref ei_widgetclass_drawfunc_t
+ *
+ */
 void                    ei_toplevel_drawfunc                            (struct	ei_widget_t*	widget,
                                                                          ei_surface_t	surface,
                                                                          ei_surface_t	pick_surface,
