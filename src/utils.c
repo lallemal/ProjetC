@@ -196,3 +196,4 @@ void simplify_list(ei_linked_rect_t**  begin_pt, ei_linked_rect_t** tail_pt)
 		simplify_list(begin_pt, tail_pt);
 	}
 }
+

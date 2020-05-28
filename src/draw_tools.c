@@ -450,7 +450,7 @@ void fusion_2_list(ei_linked_point_t* list1, ei_linked_point_t* list2, int tokee
 	}
 }
 
-ei_linked_point_t*  rounded_top_level(ei_rect_t* rect, int radius, int part){
+ei_linked_point_t*  rounded_top_level(ei_rect_t* rect, int radius){
         ei_point_t center_top_left;
         center_top_left.x = rect->top_left.x + radius;
         center_top_left.y = rect->top_left.y + radius;
@@ -673,5 +673,29 @@ ei_rect_t* draw_button_relief_up_down(ei_rect_t* rect_tot, int corner_radius, in
                 (int) (center_y - (corner_radius - border_width) * sin(-5 * M_PI / 4)) - decalage_height;
 
         return rect_int;
+
+}
+ei_linked_point_t   rectangle(ei_rect_t* rect, ei_color_t color, ei_surface_t	surface, int border_size, int margin, int text_width, ei_rect_t* clipper){
+        int x = rect->top_left.x;
+        int y = rect->top_left.y;
+        int width = rect->size.width;
+        int height = rect->size.height;
+        ei_rect_t up_left = {{x, y},{margin, border_size}};
+        ei_rect_t up_right = {{x + margin + text_width, y},{width - (margin + text_width), border_size}};
+        ei_rect_t down = {{x, y + height - border_size},{width, border_size}};
+        ei_rect_t left = {{x, y},{border_size, height}};
+        ei_rect_t right = {{x + width - border_size, y},{border_size, height}};
+
+        up_right = inter_rect(&up_right, clipper);
+        up_left = inter_rect(&up_left, clipper);
+        down = inter_rect(&down, clipper);
+        left = inter_rect(&left, clipper);
+        right = inter_rect(&right, clipper);
+
+        ei_fill(surface, &color, &up_right);
+        ei_fill(surface, &color, &up_left);
+        ei_fill(surface, &color, &down);
+        ei_fill(surface, &color, &left);
+        ei_fill(surface, &color, &right);
 
 }

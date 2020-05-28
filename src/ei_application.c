@@ -12,6 +12,7 @@
 
 #include "ei_application.h"
 #include "ei_event.h"
+#include "ei_radiobutton.h"
 #include "ei_widgetclass.h"
 #include "ei_widget.h"
 #include "ei_geometrymanager.h"
@@ -48,6 +49,7 @@ void ei_app_create(ei_size_t main_window_size, ei_bool_t fullscreen)
 	create_base_eventlist();
 	ei_register_placer_manager();
 	ei_frame_register_class();
+        ei_radiobutton_register_class();
 	ei_toplevel_register_class();
 	ei_button_register_class();
 

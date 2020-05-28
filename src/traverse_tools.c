@@ -11,7 +11,8 @@
 #include "traverse_tools.h"
 #include "ei_geometrymanager.h"
 #include "ei_widget.h"
-
+#include "utils.h"
+#include "ei_toplevel.h"
 
 /* Point widget_pt to the next sibling of *widget_pt.
  * Must be called when all the resources are not freed
@@ -43,7 +44,18 @@ void destroy_widgetclass(ei_widgetclass_t* begin)
 	}
 }
 
-
+ei_bool_t toplevel_case (ei_widget_t *widget){
+        if (widget->parent != NULL){
+                if (widget->parent->wclass == ei_widgetclass_from_name("toplevel")){
+                        ei_toplevel *parent = (ei_toplevel *)widget->parent;
+                        if (parent->resize_tool == widget)
+                                return  EI_TRUE;
+                        if (parent->close_button == widget)
+                                return  EI_TRUE;
+                }
+        }
+        return EI_FALSE;
+}
 
 void draw_widgets      (ei_widget_t*	begin,
 			ei_surface_t	surface,
@@ -54,8 +66,14 @@ void draw_widgets      (ei_widget_t*	begin,
 
 	begin->wclass->drawfunc(begin, surface, pick_surface, &clipper);
 	// draw all the child and their child recursively
+	ei_rect_t inter;
+
 	for (child; child != NULL; next_sibling_widget(&child)) {
-		draw_widgets(child, surface, pick_surface, clipper);
+	        if (toplevel_case(child))
+                        inter = inter_rect(&clipper, &child->parent->screen_location);
+                else
+                        inter = inter_rect(&clipper, child->parent->content_rect);
+		draw_widgets(child, surface, pick_surface, inter);
 	}
 }
 

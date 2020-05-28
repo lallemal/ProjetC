@@ -17,6 +17,7 @@
 #include "math.h"
 #include "ei_application.h"
 #include "ei_event.h"
+#include "ei_toplevel.h"
 #include "callfunction.h"
 
 
@@ -102,7 +103,6 @@ void ei_button_drawfunc(struct	ei_widget_t*	widget,
 		widget->pick_color = pick_color;
 	}
 
-
         ei_button_t* button=(ei_button_t*)widget;
         hw_surface_lock(surface);
         hw_surface_lock(pick_surface);
@@ -110,7 +110,6 @@ void ei_button_drawfunc(struct	ei_widget_t*	widget,
 
         //rect_tot is the rectangle representating the entire button
         *rect_tot = widget->screen_location;
-
         //drawing of the button in the surface (relief and border_width included)
         draw_button(surface, rect_tot,  button->color, button->border_width, button->corner_radius, button->relief, clipper);
         //drawing of the button in the pick surface (only one color for the entire button)
