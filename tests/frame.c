@@ -85,7 +85,7 @@ int main(int argc, char** argv)
         ei_radiobutton_configure(radiobutton, NULL, &liste, NULL, &number_of_choices, &text_col, &bg_col, &on_press, &on_rel);
         float rel_wid = 0.5;
         ei_place(radiobutton, &anchor, &button_x, &button_y, NULL, NULL, NULL, NULL, &rel_wid, NULL );
-
+//
 //        ei_button_configure(button, &top_level_size, &frame_color, NULL, NULL, NULL, &text_frame, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 //        ei_place(button, &anchor, &button_x, &button_y, NULL, NULL, NULL, NULL, NULL, NULL );
         ei_bind(ei_ev_keydown, NULL, "all", process_key, NULL);
