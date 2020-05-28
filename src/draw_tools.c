@@ -450,7 +450,7 @@ void fusion_2_list(ei_linked_point_t* list1, ei_linked_point_t* list2, int tokee
 	}
 }
 
-ei_linked_point_t*  rounded_top_level(ei_rect_t* rect, int radius, int part){
+ei_linked_point_t*  rounded_top_level(ei_rect_t* rect, int radius){
         ei_point_t center_top_left;
         center_top_left.x = rect->top_left.x + radius;
         center_top_left.y = rect->top_left.y + radius;

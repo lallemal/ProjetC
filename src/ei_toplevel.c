@@ -128,6 +128,10 @@ void draw_border                                                        (ei_surf
         ei_fill(surface, &color, &down);
         ei_fill(surface, &color, &left);
         ei_fill(surface, &color, &right);
+        ei_fill(pick_surface, to_draw->widget.pick_color, &up);
+        ei_fill(pick_surface, to_draw->widget.pick_color, &down);
+        ei_fill(pick_surface, to_draw->widget.pick_color, &left);
+        ei_fill(pick_surface, to_draw->widget.pick_color, &right);
 
 }
 void                    ei_toplevel_drawfunc                            (struct	ei_widget_t*	widget,
@@ -161,7 +165,7 @@ void                    ei_toplevel_drawfunc                            (struct	
 
 
         //rounded top corner drawing
-        ei_linked_point_t* rounded0 = rounded_top_level(&rect_tot, 20, 0);
+        ei_linked_point_t* rounded0 = rounded_top_level(&rect_tot, 20);
         ei_draw_polygon(surface, rounded0, to_draw->color, &allow_rec);
 	ei_draw_polygon(pick_surface, rounded0, *(widget->pick_color), &allow_rec);
         free_linked_point_list(rounded0);

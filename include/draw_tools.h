@@ -206,13 +206,31 @@ void draw_button(ei_surface_t surface, ei_rect_t* rect_button, ei_color_t color,
  *
  * @return		        the rectangle interior where draw text or image
  */
-
-
 ei_rect_t* draw_button_relief_up_down(ei_rect_t* rect_tot, int corner_radius, int border_width, int decalage_x, int decalage_y, int decalage_width, int decalage_height);
 
+/**
+ * @brief	Function which draws the rounded top corners of the toplevel widget
+ *
+ * @param       rect            Rectangle corresponding to header size and position
+ * @param       radius          Radius for the corners
+ *
+ * @return		        All the points needed to draw the header
+ */
+ei_linked_point_t*  rounded_top_level(ei_rect_t* rect, int radius);
 
-ei_linked_point_t*  rounded_top_level(ei_rect_t* rect, int radius, int part);
-
+/**
+ * @brief	Function which draws teh border of the radiobutton (design func)
+ *
+ * @param       rect            Rectangle corresponding to the radiobutton widget
+ * @param       color           Color of the border
+ * @param       surface         Surface on which the drawing has to bed drawn
+ * @param       border_size     Size of the border
+ * @param       margin          Margin of the title (to cut the border at this point)
+ * @param       text_width      Width of the title
+ * @param       clipper         The actual clipper
+ *
+ * @return		        All the points needed to draw the header
+ */
 ei_linked_point_t   rectangle(ei_rect_t* rect, ei_color_t color, ei_surface_t	surface, int border_size, int margin, int text_width, ei_rect_t* clipper);
 
 #endif /* ifndef DRAW_H */
