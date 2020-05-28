@@ -88,10 +88,15 @@ ei_widget_t* find_with_color(ei_widget_t* begin, uint32_t pick_color, ei_surface
  *			has the good tag
  * @param user_param	user parameters to give to callback.
  *
- * @return		    A boolean telling if the event was consumed by the callback or not. If TRUE, the library does not try to call other callbacks for this event. If FALSE, the library will call the next callback registered for this event, if any. Note: The callback may execute many operations and still return FALSE, or return TRUE without having done anything. 
-
-	
+ * @return		    A boolean telling if the event was consumed by the callback or not. If TRUE, the library does not try to call other callbacks for this event. If FALSE, the library will call the next callback registered for this event, if any. Note: The callback may execute many operations and still return FALSE, or return TRUE without having done anything.
  */
 ei_bool_t call_widgets(ei_widget_t* begin, ei_tag_t tag, ei_event_t* event, ei_callback_t callback, void* user_param);
-
+/**
+ * @brief		Determines if a widget is part of the toplevel construction
+ *
+ * @param widget	The widget to draw
+ *
+ * @return		True if the widget is a closing button or a resize tool of a toplevel, False otherwise
+ */
+ei_bool_t toplevel_case (ei_widget_t *widget);
 #endif /* ifndef TRAVERSE_H */

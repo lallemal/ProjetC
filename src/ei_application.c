@@ -12,6 +12,7 @@
 
 #include "ei_application.h"
 #include "ei_event.h"
+#include "ei_radiobutton.h"
 #include "ei_widgetclass.h"
 #include "ei_widget.h"
 #include "ei_geometrymanager.h"
@@ -42,11 +43,13 @@ void ei_app_create(ei_size_t main_window_size, ei_bool_t fullscreen)
 	// Initialize hardware and different surfaces.
 	hw_init();
 	main_window = hw_create_window(main_window_size, fullscreen);
-	pick_surface = hw_surface_create(main_window, main_window_size, EI_FALSE);
+	ei_size_t surface_size = hw_surface_get_size(main_window);
+	pick_surface = hw_surface_create(main_window, surface_size, EI_FALSE);
 	// Initialize core variables of the API : classes, placer, eventlist
 	create_base_eventlist();
 	ei_register_placer_manager();
 	ei_frame_register_class();
+        ei_radiobutton_register_class();
 	ei_toplevel_register_class();
 	ei_button_register_class();
 
@@ -55,9 +58,9 @@ void ei_app_create(ei_size_t main_window_size, ei_bool_t fullscreen)
 	ei_bind(ei_ev_mouse_buttondown, NULL, "toplevel", dispatch_event, NULL);
 	// Creation of the root Widget
 	rootWidget = ei_widget_create("frame", NULL, NULL, NULL);
-	rootWidget->screen_location.size.width = main_window_size.width;
-	rootWidget->screen_location.size.height = main_window_size.height;
-	ei_frame_configure(rootWidget, &main_window_size, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+	rootWidget->screen_location.size.width = surface_size.width;
+	rootWidget->screen_location.size.height = surface_size.height;
+	ei_frame_configure(rootWidget, &surface_size, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 	// Creation of the default font
 	ei_default_font = hw_text_font_create(ei_default_font_filename, ei_style_normal, ei_font_default_size);
 }

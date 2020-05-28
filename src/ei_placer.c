@@ -11,6 +11,7 @@
 //
 #include <stdlib.h>
 #include <utils.h>
+#include "ei_radiobutton.h"
 #include "ei_application.h"
 #include "ei_placer.h"
 #include "ei_utils.h"
@@ -19,6 +20,20 @@
 int  is_set_relative(float rel){
         return rel != -1.0;
 }
+
+void set_defaults_placer(ei_widget_t *to_set){
+        ei_placer_t *to_configure = (ei_placer_t *)to_set->geom_params;
+        to_configure->anchor            = ei_anc_northwest;
+        to_configure->x                 = 0;
+        to_configure->y                 = 0;
+        to_configure->height            = to_set->requested_size.height;
+        to_configure->width             = to_set->requested_size.width;
+        to_configure->rel_x             = 0;
+        to_configure->rel_y             = 0;
+        to_configure->rel_width         = -1;
+        to_configure->rel_height        = -1;
+}
+
 int  are_old_and_new_diff (ei_rect_t r1, ei_rect_t r2){
         return r1.size.height != r2.size.height ||
                r1.size.width != r2.size.width ||
@@ -26,6 +41,7 @@ int  are_old_and_new_diff (ei_rect_t r1, ei_rect_t r2){
                r1.top_left.y != r2.top_left.y;
 
 }
+
 int  button_case(struct ei_widget_t*	widget){
         if (widget->parent != NULL){
                 if (widget->parent->wclass == ei_widgetclass_from_name("toplevel")){
@@ -33,22 +49,31 @@ int  button_case(struct ei_widget_t*	widget){
                         if (parent->close_button == widget){
                                 return EI_TRUE;
                         }
+                        if (parent->resize_tool == widget){
+                                return EI_TRUE;
+                        }
                 }
         }
         return EI_FALSE;
 }
-int  special_case(struct ei_widget_t*	widget){
 
+void  special_case(struct ei_widget_t*	widget){
+        //this function is only used by the creator of the library to manage the special case of the subframe of a top level
         if (widget->wclass == ei_widgetclass_from_name("toplevel")){
                 ei_toplevel *to_configure = (ei_toplevel *)widget;
-                widget->content_rect->top_left.x = to_configure->widget.screen_location.top_left.x ;
-                widget->content_rect->top_left.y = to_configure->widget.screen_location.top_left.y + MARGIN_TOP * 2 + to_configure->title_height;
-                widget->content_rect->size.width = widget->screen_location.size.width;
-                widget->content_rect->size.height = widget->screen_location.size.height - to_configure->title_height - 2 * MARGIN_TOP;
+                widget->content_rect->top_left.x = to_configure->widget.screen_location.top_left.x + to_configure->border_width ;
+                widget->content_rect->top_left.y = to_configure->widget.screen_location.top_left.y + MARGIN_TOP * 2 + to_configure->title_height + to_configure->border_width;
+                widget->content_rect->size.width = widget->screen_location.size.width - 2 * to_configure->border_width;
+                widget->content_rect->size.height = widget->screen_location.size.height - to_configure->title_height - 2 * MARGIN_TOP  - 2 * to_configure->border_width;
 
         }
-        return EI_FALSE;
+        if (widget->wclass == ei_widgetclass_from_name("radiobutton")){
+                ei_radio_button *to_configure = (ei_radio_button *)widget;
+                *widget->content_rect = widget->screen_location;
+                widget->content_rect->size.height -= BORDER_SIZE;
+        }
 }
+
 void ei_run_func(struct ei_widget_t*	widget){
         ei_placer_t     *datas          = (ei_placer_t  *)widget->geom_params;
         ei_rect_t       *container;
@@ -78,8 +103,8 @@ void ei_run_func(struct ei_widget_t*	widget){
                 }
                 new_screen_loc.top_left = container->top_left;
 
-                new_screen_loc.top_left.x     +=       container->size.width  * datas->rel_x    + datas->x;
-                new_screen_loc.top_left.y     +=       container->size.height * datas->rel_y    +  datas->y;
+                new_screen_loc.top_left.x     +=       container->size.width  * datas->rel_x    +       datas->x;
+                new_screen_loc.top_left.y     +=       container->size.height * datas->rel_y    +       datas->y;
 
 
 
@@ -125,7 +150,7 @@ void ei_run_func(struct ei_widget_t*	widget){
                         widget->wclass->geomnotifyfunc(widget);
                         while(child){
                                 if (is_defined(child->geom_params))
-                                        ei_run_func(child);
+                                        widget->geom_params->manager->runfunc(child);
                                 child = child->next_sibling;
                         }
                 }

@@ -15,7 +15,7 @@ set(TESTS_SRC				"${ROOT_DIR}/tests")
 set(DOCS_DIR				"${ROOT_DIR}/docs")
 set(SRC					"${ROOT_DIR}/src")
 
-set(LIB_FLAGS				-lfreeimage -lSDL2 -lSDL2_ttf -lSDL2_gfx)
+set(LIB_FLAGS				-lfreeimage -lSDL2 -lSDL2_ttf -lSDL2_gfx -pg -ftest-coverage -fprofile-arcs)
 
 # Platform specific definitions
 
@@ -43,7 +43,7 @@ elseif(${UNIX})
 	set(EIBASE			${PLATFORM_DIR}/libeibase${WORDS_BIT_SIZE}.a)
 	set(PLATFORM_LIB_FLAGS		${EIBASE}
 					-L${PLATFORM_DIR} ${LIB_FLAGS} -lm)
-	add_definitions(-g)
+	add_definitions(-g -pg -ftest-coverage -fprofile-arcs)
 
 	message(STATUS "Building for Linux with eibase: ${EI_BASE}")
 
@@ -87,8 +87,9 @@ set(LIB_EI_SOURCES
      		${SRC}/utils.c
      		${SRC}/traverse_tools.c
      		${SRC}/ei_toplevel.c
-		${SRC}/draw_tools.c
-)
+     		${SRC}/ei_radiobutton.c
+			${SRC}/draw_tools.c
+		)
 
 add_library(ei STATIC			${LIB_EI_SOURCES})
 
