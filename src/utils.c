@@ -105,34 +105,36 @@ int is_equal(ei_rect_t* rect1, ei_rect_t* rect2)
 ei_rect_t* fusion_if(ei_rect_t* rect1, ei_rect_t* rect2)
 {
 	ei_rect_t inter = inter_rect(rect1, rect2);
-	int h1 = rect1->size.height;
-	int h2 = rect2->size.height;
-	int h3 = inter.size.height;
-	int w1 = rect1->size.width;
-	int w2 = rect2->size.width;
-	int w3 = inter.size.width;
 	if (is_equal(rect1, &inter)) {
 		return copy_rect(rect2);
 	}
 	if (is_equal(rect2, &inter)) {
 		return copy_rect(rect1);
 	}
-	if (h3 == 0 && w3 == 0) {
-		return NULL;
-	}
-	// Verify if there are more pixel in the two rect than in a rectangle that
-	// surround them : Can be improved
-	if ((h1*w1) + (h2*w2) > (h1 + h2 - h3) * (w1 + w2 - w3)) {
-		return NULL;
-	}
-	else {
-		int x1 = rect1->top_left.x;
-		int x2 = rect2->top_left.x;
-		int y1 = rect1->top_left.y;
-		int y2 = rect2->top_left.y;
-		ei_rect_t newRect = ei_rect(ei_point(min(x1, x2), min(y1, y2)), ei_size(w1 + w2 - w3, h1 + h2 - h3));
+	int h1 = rect1->size.height;
+	int h2 = rect2->size.height;
+	int h3 = inter.size.height;
+	int w1 = rect1->size.width;
+	int w2 = rect2->size.width;
+	int w3 = inter.size.width;
+
+	int x1 = rect1->top_left.x;
+	int x2 = rect2->top_left.x;
+	int x3 = inter.top_left.x;
+	int y1 = rect1->top_left.y;
+	int y2 = rect2->top_left.y;
+	int y3 = inter.top_left.y;
+	int solu_base = h1*w1 + h2*w2;
+	ei_point_t topleft = ei_point(min(x1, x2), min(y1, y2));
+	ei_size_t newsize = ei_size(max(x1+w1, x2+w2) - topleft.x, max(y1 + h1, y2 + h2) - topleft.y);
+	int quadrant = (newsize.width)* (newsize.height);
+	if (quadrant < 1.5 * solu_base) {
+		ei_point_t topleft = ei_point(min(x1, x2), min(y1, y2));
+		ei_size_t newsize = ei_size(max(x1+w1, x2+w2) - topleft.x, max(y1 + h1, y2 + h2) - topleft.y);
+		ei_rect_t newRect = ei_rect(topleft, newsize);
 		return copy_rect(&newRect);
 	}
+	return NULL;
 }
 
 
@@ -196,3 +198,4 @@ void simplify_list(ei_linked_rect_t**  begin_pt, ei_linked_rect_t** tail_pt)
 		simplify_list(begin_pt, tail_pt);
 	}
 }
+

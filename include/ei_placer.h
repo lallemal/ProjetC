@@ -41,7 +41,7 @@ int                     is_set_relative                 (float rel);
  */
 int                     are_old_and_new_diff            (ei_rect_t r1, ei_rect_t r2);
 /**
- * @brief	Configure the content rect for the widget if it's a toplevel
+ * @brief	Configure the content rect for the widget if it's a toplevel's son
  *
  * @param	widget		The widget to treat
  */

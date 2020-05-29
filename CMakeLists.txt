@@ -87,8 +87,9 @@ set(LIB_EI_SOURCES
      		${SRC}/utils.c
      		${SRC}/traverse_tools.c
      		${SRC}/ei_toplevel.c
-		${SRC}/draw_tools.c
-)
+     		${SRC}/ei_radiobutton.c
+			${SRC}/draw_tools.c
+		)
 
 add_library(ei STATIC			${LIB_EI_SOURCES})
 
@@ -141,5 +142,7 @@ add_custom_target(doc doxygen		${DOCS_DIR}/doxygen.cfg WORKING_DIRECTORY ${ROOT_
 add_executable(test_button_frame			${TESTS_SRC}/test_button_frame.c)
 target_link_libraries(test_button_frame		ei ${PLATFORM_LIB_FLAGS})
 
-
+# target radiobutton_test.c
+add_executable(radiobutton_test			${TESTS_SRC}/radiobutton_test.c)
+target_link_libraries(radiobutton_test		ei ${PLATFORM_LIB_FLAGS})
 
