@@ -357,7 +357,7 @@ ei_bool_t               dispatch_event                          (ei_widget_t* wi
 	int y_widget = widget->screen_location.top_left.y;
 	int h_widget = widget->screen_location.size.height;
 	int w_widget = widget->screen_location.size.width;
-	if (y_mouse > y_widget && y_mouse < y_widget + 25) {
+	if (y_mouse > y_widget && y_mouse < y_widget + (widget->screen_location.size.height - widget->content_rect->size.height)) {
                 return move_top_down(widget, event, user_param);
         }
         if (x_mouse > x_widget + w_widget - default_rt_size.width && y_mouse > y_widget + h_widget - default_rt_size.width) {
