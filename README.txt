@@ -4,7 +4,7 @@ Grenoble INP - Ensimag. 2019-2020.
 
 ## Applications de tests
 - frame : Affichage du widget frame avec un relief et son placement.
-- button : Affichage d'un bouton avec relief, bords arrondi, texte et système d'évènements.
+- button : Affichage d'un bouton avec relief, bords arrondis, texte et système d'évènements.
 - hello_world : Affichage d'un toplevel avec header, boutton de fermeture, boutton de redimensionnement avec leur système associé et le déplacement de toplevel.
 - test_button_frame : Affichage de différent cas de boutton et frame pour tester les cas spécifiques aux textes, images et reliefs différents.
 - minesweeper : Application simulant un jeu de démineur avec toplevel, frame, bouttons. Le jeu fonctionne grâce au système d'évènements et teste l'affichage d'image.
