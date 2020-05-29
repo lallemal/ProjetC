@@ -13,6 +13,7 @@
 #include "ei_utils.h"
 #include "draw_tools.h"
 #include "event.h"
+#include "callfunction.h"
 ei_size_t min_size = {100, 120};
 
 void                    text_size                                       (ei_rect_t *text_placer,
@@ -156,7 +157,7 @@ ei_bool_t process_radio(ei_widget_t* widget, ei_event_t* event, void* user_param
                             NULL, NULL, NULL, NULL, NULL,
                             NULL, NULL, NULL, NULL, NULL,
                             NULL, NULL);
-        printf("%s \n", data(widget->parent));
+
         return EI_TRUE;
 
 
@@ -228,7 +229,7 @@ void                    ei_radiobutton_configure                                
         if (to_configure->requested_size.width < min_size.width )
                 to_configure->requested_size.width = min_size.width;
         widget->requested_size = to_configure->requested_size;
-
-        ei_app_invalidate_rect(&widget->screen_location);
+        if (requested_size)
+                ei_place(widget, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
 }
