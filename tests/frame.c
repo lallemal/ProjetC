@@ -6,7 +6,6 @@
 #include "hw_interface.h"
 #include "ei_widget.h"
 #include "ei_geometrymanager.h"
-#include "ei_toplevel.h"
 #include "ei_radiobutton.h"
 
 ei_bool_t process_key(ei_widget_t* widget, ei_event_t* event, void* user_param)
