@@ -76,13 +76,13 @@ void                    ei_radiobutton_drawfunc                                 
         ei_rect_t dborder = widget->screen_location;
         dborder.top_left.y += to_draw->title_height / 2;
         dborder.size.height -= to_draw->title_height / 2;
-        rectangle(&dborder, to_draw->tb_color, surface, BORDER_SIZE, MARGIN_LEFT, to_draw->title_width, clipper);
+        rectangle(&dborder, to_draw->tb_color, surface, BORDER_SIZE, MARGIN_LEFT_RB, to_draw->title_width, clipper);
         //configuring the rectangle which will contain successively all the text choices
-        text_rect.top_left.x += MARGIN_LEFT;
+        text_rect.top_left.x += MARGIN_LEFT_RB;
         text_rect = inter_rect(&widget->screen_location, &text_rect);
         draw_text(to_draw->title, ei_default_font, &text_rect, ei_anc_northwest, surface, to_draw->tb_color, clipper);
         text_rect.size.width -= 2 * to_draw->title_height;
-        text_rect.top_left.x += to_draw->title_height + 2 * MARGIN_LEFT;
+        text_rect.top_left.x += to_draw->title_height + 2 * MARGIN_LEFT_RB;
         //computation of all the text of all chocies
         for (int i = 0; i < to_draw->nb_of_choices; i++) {
                 text_rect.top_left.y += 2 * to_draw->title_height;
@@ -204,7 +204,7 @@ void                    ei_radiobutton_configure                                
         ei_widget_t *current;
         ei_size_t size_button = ei_size(to_configure->title_height, to_configure->title_height);
 
-        int left_side = 2 * MARGIN_LEFT;
+        int left_side = 2 * MARGIN_LEFT_RB;
         int radius = 10;
         ei_callback_t button_callback = process_radio;
         //configuration of all the sub_buttons, one for each choice

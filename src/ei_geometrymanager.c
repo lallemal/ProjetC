@@ -91,10 +91,9 @@ void			ei_place			(ei_widget_t*		widget,
         if (!is_defined(widget->geom_params)){
                 to_configure = safe_malloc(sizeof(ei_placer_t));
                 widget->geom_params = (ei_geometry_param_t *)to_configure;
-                widget->geom_params->manager = (ei_geometry_param_t *)ei_geometrymanager_from_name("placer");
                 set_defaults_placer(widget);
         }
-        to_configure->manager           = (ei_geometry_param_t *)ei_geometrymanager_from_name("placer");
+        to_configure->manager           = (ei_geometrymanager_t *)ei_geometrymanager_from_name("placer");
         to_configure->anchor            = is_defined(anchor)    ? *anchor       : to_configure->anchor ;
         to_configure->x                 = is_defined(x)         ? *x            : to_configure->x;
         to_configure->y                 = is_defined(y)         ? *y            : to_configure->y;

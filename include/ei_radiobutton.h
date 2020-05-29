@@ -7,7 +7,7 @@
 #include "ei_widget.h"
 #include "stdio.h"
 #include "stdlib.h"
-#define MARGIN_LEFT 5
+#define MARGIN_LEFT_RB 5
 #define BORDER_SIZE 2
 /**
  * \brief	A structure that stores information about a radiobutton.
