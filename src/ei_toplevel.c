@@ -425,10 +425,11 @@ ei_bool_t move_top_down(ei_widget_t* widget, ei_event_t* event, void* user_param
                 widget->children_head = NULL;
         }
 	ei_bind(ei_ev_mouse_move, widget, NULL, move_top_onmove, (void *)oldPoint);
-	ei_bind(ei_ev_mouse_buttonup, widget, NULL, move_top_up, NULL);
+	ei_bind(ei_ev_mouse_buttonup, widget, NULL, move_top_up, (void *)oldPoint);
 	return EI_TRUE;
 
 }
+
 ei_bool_t               move_top_onmove                         (ei_widget_t* widget, ei_event_t* event, void* user_param)
 {
         if (widget->wclass == ei_widgetclass_from_name("toplevel")){
