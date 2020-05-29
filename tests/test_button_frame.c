@@ -7,6 +7,8 @@
 #include "ei_widget.h"
 #include "ei_geometrymanager.h"
 
+
+
 /*
  * button_press --
  *
@@ -189,8 +191,10 @@ int main(int argc, char** argv)
         ei_place(frame3, &frame3_anchor, &frame3_x, &frame3_y, NULL, NULL, NULL, NULL, NULL, NULL);
 
 
+        ei_bind(ei_ev_keydown,		NULL, "all", process_key, NULL);
         /* Run the application's main loop. */
         ei_app_run();
+        ei_unbind(ei_ev_keydown,	NULL, "all", process_key, NULL);
 
         ei_app_free();
 
